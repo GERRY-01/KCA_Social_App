@@ -1,0 +1,125 @@
+/* SIDEBAR CONTAINER */
+#sidebar-container {
+    width: 260px; /* slightly smaller to fit all connections */
+    height: 100vh;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    padding: 15px;
+    box-sizing: border-box;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow: hidden; /* no scrolling */
+    font-family: Arial, sans-serif;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+/* PROFILE SECTION */
+.sidebar-profile {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-profile-img {
+    width: 80px; /* smaller profile picture */
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.sidebar-username {
+    margin: 8px 0 2px;
+    font-size: 16px;
+}
+
+.sidebar-role {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+/* STATS */
+.sidebar-stats {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sidebar-stat {
+    text-align: center;
+}
+
+.sidebar-stat-number {
+    font-weight: bold;
+    font-size: 13px;
+    display: block;
+}
+
+.sidebar-stat-label {
+    font-size: 11px;
+    color: #777;
+}
+
+/* NAVIGATION */
+.sidebar-navigation {
+    margin-bottom: 20px;
+}
+
+.sidebar-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* space between icon and text */
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.sidebar-nav-link:hover {
+    background-color: #f2f2f2;
+}
+
+.sidebar-nav-link.active {
+    background-color: orange;
+    color: white;
+}
+
+/* CONNECTIONS */
+.sidebar-connections {
+    margin-top: 25px;
+    max-height: 200px; /* adjust depending on your design */
+    overflow-y: auto; 
+}
+
+.sidebar-section-title {
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: #444;
+}
+
+.sidebar-connection-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.sidebar-connection-img {
+    width: 32px; /* slightly smaller to fit all 3 */
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+    object-fit: cover;
+}
+
+.sidebar-connection-name {
+    font-size: 12px;
+    color: #333;
+}

@@ -1,0 +1,447 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-container {
+    width: 1400px; /* Increased from 1200px */
+    height: 800px; /* Increased from 700px */
+    display: flex;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Left Side - University Info (50% width) */
+.university-side {
+    flex: 0 0 50%;
+    width: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px; /* Increased from 50px */
+    display: flex;
+    align-items: center;
+    overflow-y: auto; /* Add scroll if content overflows */
+}
+
+.university-info {
+    width: 100%;
+    color: white;
+    max-height: 100%;
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Increased from 15px */
+    margin-bottom: 50px; /* Increased from 40px */
+}
+
+.logo i {
+    font-size: 48px; /* Increased from 42px */
+    background: rgba(255, 255, 255, 0.2);
+    width: 80px; /* Increased from 70px */
+    height: 80px; /* Increased from 70px */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.logo h1 {
+    font-size: 36px; /* Increased from 32px */
+    font-weight: 700;
+}
+
+/* Welcome Text */
+.university-info h2 {
+    font-size: 40px; /* Increased from 36px */
+    font-weight: 700;
+    margin-bottom: 15px; /* Increased from 10px */
+}
+
+.subtitle {
+    font-size: 18px; /* Increased from 16px */
+    opacity: 0.9;
+    margin-bottom: 50px; /* Increased from 40px */
+    line-height: 1.6;
+}
+
+/* Features */
+.features {
+    margin-bottom: 50px; /* Increased from 40px */
+}
+
+.feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px; /* Increased from 15px */
+    margin-bottom: 30px; /* Increased from 25px */
+    background: rgba(255, 255, 255, 0.1);
+    padding: 25px; /* Increased from 20px */
+    border-radius: 12px;
+    border-left: 4px solid white;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateX(10px);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.feature i {
+    font-size: 28px; /* Increased from 24px */
+    color: #667eea;
+    background: white;
+    width: 60px; /* Increased from 50px */
+    height: 60px; /* Increased from 50px */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.feature-text h4 {
+    font-size: 20px; /* Increased from 18px */
+    margin-bottom: 8px; /* Increased from 5px */
+    font-weight: 600;
+}
+
+.feature-text p {
+    font-size: 15px; /* Increased from 14px */
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+/* Testimonial */
+.testimonial {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 30px; /* Increased from 25px */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 30px; /* Added margin-top */
+}
+
+.quote {
+    font-style: italic;
+    font-size: 18px; /* Increased from 16px */
+    line-height: 1.7;
+    margin-bottom: 15px; /* Increased from 10px */
+    position: relative;
+}
+
+.quote:before {
+    content: '"';
+    font-size: 28px; /* Increased from 24px */
+    color: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    left: -18px; /* Adjusted */
+    top: -5px;
+}
+
+.author {
+    font-size: 15px; /* Increased from 14px */
+    opacity: 0.8;
+    text-align: right;
+}
+
+/* Right Side - Login Form (50% width) */
+.form-side {
+    flex: 0 0 50%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container {
+    flex: 1;
+    padding: 60px; /* Increased from 50px */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto; /* Add scroll if content overflows */
+}
+
+/* Form Header */
+.form-header {
+    text-align: center;
+    margin-bottom: 50px; /* Increased from 40px */
+}
+
+.form-header h2 {
+    font-size: 36px; /* Increased from 32px */
+    color: #2d3436;
+    margin-bottom: 15px; /* Increased from 10px */
+    font-weight: 700;
+}
+
+.form-header p {
+    color: #636e72;
+    font-size: 18px; /* Increased from 16px */
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 30px; /* Increased from 25px */
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Increased from 10px */
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 10px; /* Increased from 8px */
+    font-size: 15px; /* Increased from 14px */
+}
+
+.form-group label i {
+    color: #667eea;
+    width: 18px; /* Increased from 16px */
+    font-size: 16px; /* Added for better icon size */
+}
+
+.form-group input {
+    width: 100%;
+    padding: 16px 24px; /* Increased from 14px 20px */
+    border: 2px solid #e0e6ed;
+    border-radius: 10px;
+    font-size: 17px; /* Increased from 16px */
+    transition: all 0.3s ease;
+    background: white;
+    color: #2d3436;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #a0aec0;
+    font-size: 16px; /* Added for placeholder */
+}
+
+/* Password Input Container */
+.password-input-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 20px; /* Increased from 15px */
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #667eea;
+    cursor: pointer;
+    font-size: 20px; /* Increased from 18px */
+    padding: 6px; /* Increased from 5px */
+    transition: color 0.3s ease;
+    z-index: 2;
+}
+
+.toggle-password:hover {
+    color: #764ba2;
+}
+
+/* Password Options */
+.password-options {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px; /* Increased from 10px */
+}
+
+.forgot-password {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 15px; /* Increased from 14px */
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Increased from 6px */
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Increased from 10px */
+    margin-bottom: 30px; /* Increased from 25px */
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px; /* Increased from 18px */
+    height: 20px; /* Increased from 18px */
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    font-weight: normal;
+    margin-bottom: 0;
+    cursor: pointer;
+    font-size: 15px; /* Increased from 14px */
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: 18px; /* Increased from 16px */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px; /* Increased from 18px */
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px; /* Increased from 10px */
+    transition: all 0.3s ease;
+    margin: 25px 0 35px 0; /* Increased margins */
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Sign Up Link */
+.signup-link {
+    text-align: center;
+    margin: 25px 0; /* Adjusted */
+    padding: 25px 0; /* Increased from 20px */
+    border-top: 1px solid #e0e6ed;
+    border-bottom: 1px solid #e0e6ed;
+}
+
+.signup-link p {
+    color: #636e72;
+    font-size: 16px; /* Increased from 15px */
+}
+
+.signup-link a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 8px; /* Increased from 5px */
+    font-size: 16px; /* Added */
+}
+
+.signup-link a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+/* Home Link */
+.home-link {
+    text-align: center;
+    margin-top: 25px; /* Increased from 20px */
+}
+
+.home-link a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px; /* Increased from 8px */
+    font-size: 15px; /* Increased from 14px */
+    transition: color 0.3s ease;
+}
+
+.home-link a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+/* Hints */
+.hint {
+    display: block;
+    margin-top: 8px; /* Increased from 5px */
+    font-size: 13px; /* Increased from 12px */
+    color: #636e72;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1500px) {
+    .login-container {
+        width: 1300px;
+        height: 750px;
+    }
+}
+
+@media (max-width: 1400px) {
+    .login-container {
+        width: 1200px;
+        height: 700px;
+    }
+    
+    .university-side,
+    .form-side {
+        padding: 50px;
+    }
+}
+
+@media (max-width: 1300px) {
+    .login-container {
+        width: 1100px;
+        height: 650px;
+    }
+}
+
+@media (max-width: 1150px) {
+    .login-container {
+        width: 1000px;
+        height: 600px;
+    }
+    
+    .university-side,
+    .form-side {
+        padding: 40px;
+    }
+}
+
+/* Custom scrollbar for left side */
+.university-side::-webkit-scrollbar {
+    width: 6px;
+}
+
+.university-side::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.university-side::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.university-side::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
