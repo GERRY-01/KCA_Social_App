@@ -104,6 +104,65 @@
             </div>
 
 
+   <!-- Simple Create Post Modal (Hidden by default) -->
+<div class="simple-post-modal" id="simplePostModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div class="simple-modal-content" style="background: white; width: 500px; max-width: 90%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+        <div class="simple-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #e4e6eb;">
+            <h3 style="margin: 0; font-size: 18px; color: #1c1e21; font-weight: 600;">Create Post</h3>
+            <button type="button" class="simple-close-modal" id="simpleCloseModal" style="background: none; border: none; font-size: 24px; color: #65676b; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background-color 0.2s;">&times;</button>
+        </div>
+        
+        <div class="simple-modal-body" style="padding: 20px;">
+            <!-- User Info -->
+            <div class="simple-post-author" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="simple-author-avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                <div>
+                    <h4 style="margin: 0; font-size: 15px; color: #1c1e21;">Gerry Odhiambo</h4>
+                    <p style="margin: 2px 0 0 0; font-size: 13px; color: #65676b;">Student</p>
+                </div>
+            </div>
+            
+            <!-- Form (no action/method since backend will handle) -->
+            <form id="simplePostForm">
+                <!-- Caption Input -->
+                <textarea 
+                    class="simple-post-caption" 
+                    id="simplePostCaption"
+                    name="caption"
+                    placeholder="What's on your mind, Gerry?"
+                    rows="4"
+                    style="width: 100%; border: none; resize: none; font-size: 16px; font-family: inherit; color: #1c1e21; margin-bottom: 20px; padding: 0; line-height: 1.5;"
+                ></textarea>
+                
+                <!-- Media Upload -->
+                <div class="simple-media-upload" style="margin-bottom: 20px;">
+                    <label for="simpleImageUpload" class="simple-upload-label" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #f0f2f5; border-radius: 8px; cursor: pointer; transition: background-color 0.2s;">
+                        <i class="fas fa-image" style="color: #45bd62; font-size: 18px;"></i>
+                        <span style="color: #1c1e21; font-size: 14px; font-weight: 500;">Add Photo/Video</span>
+                    </label>
+                    <input 
+                        type="file" 
+                        id="simpleImageUpload" 
+                        name="media"
+                        accept="image/*,video/*"
+                        style="display: none;"
+                    >
+                    <div class="simple-media-preview" id="simpleMediaPreview">
+                        <!-- Preview will appear here -->
+                    </div>
+                </div>
+                
+                <!-- Post Button -->
+                <button type="submit" class="simple-post-submit-btn" id="simpleSubmitPost" style="width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s;">
+                    Post
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
             <!-- Stories Section -->
             <div class="stories-container">
                 <h3 class="stories-title">Stories</h3>
@@ -397,4 +456,35 @@
         </aside>
     </div>
 </body>
+
+<script>
+    // Get elements
+    const createPostBtn = document.querySelector('.feed-create-post-btn');
+    const simplePostModal = document.getElementById('simplePostModal');
+    const simpleCloseModal = document.getElementById('simpleCloseModal');
+    
+    // Show modal when Create Post button is clicked
+    createPostBtn.addEventListener('click', function() {
+        simplePostModal.style.display = 'flex';
+    });
+    
+    // Hide modal when X button is clicked
+    simpleCloseModal.addEventListener('click', function() {
+        simplePostModal.style.display = 'none';
+    });
+    
+    // Hide modal when clicking outside
+    simplePostModal.addEventListener('click', function(e) {
+        if (e.target === simplePostModal) {
+            simplePostModal.style.display = 'none';
+        }
+    });
+    
+    // Hide modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && simplePostModal.style.display === 'flex') {
+            simplePostModal.style.display = 'none';
+        }
+    });
+</script>
 </html>

@@ -1,0 +1,312 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - KCA University Social</title>
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="registration-container">
+        <!-- Left Side: KCA University Gate Photo -->
+        <div class="university-side">
+            <div class="gate-photo">
+                <!-- KCA University Image -->
+                <div class="photo-overlay"></div>
+                <div class="university-info">
+                    <h1>KCA University</h1>
+                    <p>Connect, Share, and Engage with Your Campus Community</p>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-users"></i>
+                            <span>Connect with Peers</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Stay Updated with Events</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Access Campus Resources</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Registration Form -->
+        <div class="form-side">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Create Your Account</h2>
+                    <p>Join the KCA University Social Network</p>
+                </div>
+
+                <form id="registrationForm" method="POST" action="#">
+                    {% csrf_token %}
+                    
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Institutional Email
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="username@kca.ac.ke" 
+                            required
+                            pattern=".*@kca\.ac\.ke$"
+                            title="Please use your KCA University email address"
+                        >
+                        <small class="hint">Use your official KCA University email (@kca.ac.ke)</small>
+                    </div>
+
+                    <!-- Name Fields -->
+                    <div class="name-group">
+                        <div class="form-group">
+                            <label for="firstName">
+                                <i class="fas fa-user"></i> First Name
+                            </label>
+                            <input 
+                                type="text" 
+                                id="firstName" 
+                                name="firstName" 
+                                placeholder="John" 
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">
+                                <i class="fas fa-user"></i> Last Name
+                            </label>
+                            <input 
+                                type="text" 
+                                id="lastName" 
+                                name="lastName" 
+                                placeholder="Doe" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- ID Number -->
+                    <div class="form-group">
+                        <label for="idNumber">
+                            <i class="fas fa-id-card"></i> Student/Staff ID Number
+                        </label>
+                        <input 
+                            type="text" 
+                            id="idNumber" 
+                            name="idNumber" 
+                            placeholder="e.g., SCII/00000/2020" 
+                            required
+                        >
+                    </div>
+
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-at"></i> Username
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="johndoe" 
+                            required
+                        >
+                        <small class="hint">This will be your public handle (@username)</small>
+                    </div>
+
+                    <!-- Role Selection -->
+                    <div class="form-group">
+                        <label for="role">
+                            <i class="fas fa-user-graduate"></i> Role
+                        </label>
+                        <select id="role" name="role" required>
+                            <option value="" disabled selected>Select your role</option>
+                            <option value="student">Student</option>
+                            <option value="staff">Staff</option>
+                            <option value="alumni">Alumni</option>
+                        </select>
+                    </div>
+
+                    <!-- Password Fields -->
+                    <div class="password-group">
+                        <div class="form-group">
+                            <label for="password">
+                                <i class="fas fa-lock"></i> Password
+                            </label>
+                            <div class="password-input-container">
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    placeholder="Create a strong password" 
+                                    required
+                                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                                    title="Minimum 8 characters with uppercase, lowercase, number, and special character"
+                                >
+                                <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-bar"></div>
+                                <span class="strength-text">Password strength: <span id="strengthText">None</span></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">
+                                <i class="fas fa-lock"></i> Confirm Password
+                            </label>
+                            <div class="password-input-container">
+                                <input 
+                                    type="password" 
+                                    id="confirmPassword" 
+                                    name="confirmPassword" 
+                                    placeholder="Re-enter your password" 
+                                    required
+                                >
+                                <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-match">
+                                <i class="fas fa-check-circle"></i>
+                                <span id="matchText">Confirm your password</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">
+                            I agree to the <a href="#" class="terms-link">Terms & Conditions</a> and 
+                            <a href="#" class="terms-link">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+
+                    <!-- Login Link -->
+                    <div class="login-link">
+                        Already have an account? <a href="">Sign In</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password toggle functionality
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleButton = passwordField.parentNode.querySelector('.toggle-password');
+            const toggleIcon = toggleButton.querySelector('i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Password strength checker
+        const passwordField = document.getElementById('password');
+        const strengthBar = document.querySelector('.strength-bar');
+        const strengthText = document.getElementById('strengthText');
+        
+        passwordField.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength += 25;
+            if (password.length >= 12) strength += 10;
+            
+            // Complexity checks
+            if (/[a-z]/.test(password)) strength += 15;
+            if (/[A-Z]/.test(password)) strength += 15;
+            if (/[0-9]/.test(password)) strength += 15;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+            
+            // Update strength bar
+            strengthBar.style.width = Math.min(strength, 100) + '%';
+            
+            // Update strength text and color
+            if (strength < 30) {
+                strengthBar.style.backgroundColor = '#ff4757';
+                strengthText.textContent = 'Weak';
+                strengthText.style.color = '#ff4757';
+            } else if (strength < 70) {
+                strengthBar.style.backgroundColor = '#ffa502';
+                strengthText.textContent = 'Moderate';
+                strengthText.style.color = '#ffa502';
+            } else {
+                strengthBar.style.backgroundColor = '#2ed573';
+                strengthText.textContent = 'Strong';
+                strengthText.style.color = '#2ed573';
+            }
+        });
+
+        // Password match checker
+        const confirmPasswordField = document.getElementById('confirmPassword');
+        const matchText = document.getElementById('matchText');
+        const matchIcon = document.querySelector('.password-match i');
+        
+        function checkPasswordMatch() {
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+            
+            if (confirmPassword === '') {
+                matchText.textContent = 'Confirm your password';
+                matchIcon.style.color = '#aaa';
+                matchText.style.color = '#aaa';
+            } else if (password === confirmPassword) {
+                matchText.textContent = 'Passwords match';
+                matchIcon.style.color = '#2ed573';
+                matchText.style.color = '#2ed573';
+            } else {
+                matchText.textContent = 'Passwords do not match';
+                matchIcon.style.color = '#ff4757';
+                matchText.style.color = '#ff4757';
+            }
+        }
+        
+        passwordField.addEventListener('input', checkPasswordMatch);
+        confirmPasswordField.addEventListener('input', checkPasswordMatch);
+
+        // Form validation before submission
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            // Check password match
+            if (passwordField.value !== confirmPasswordField.value) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            // Check terms agreement
+            if (!document.getElementById('terms').checked) {
+                e.preventDefault();
+                alert('Please agree to the Terms & Conditions');
+                return;
+            }
+            
+            // Form will submit normally for backend processing
+        });
+    </script>
+</body>
+</html>

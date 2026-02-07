@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Profile - KCA University Social</title>
+    <link rel="stylesheet" href="{% static 'css/complete_profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Left Side: Information Section -->
+        <div class="info-side">
+            <div class="info-content">
+                <div class="progress-indicator">
+                    <div class="progress-step">1</div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step active">2</div>
+                </div>
+                
+                <h1>Complete Your Profile</h1>
+                <p class="subtitle">Step 2 of 2: Academic Information</p>
+                
+                <div class="info-box">
+                    <h3><i class="fas fa-info-circle"></i> Why We Need This Information</h3>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Connect you with classmates and faculty</li>
+                        <li><i class="fas fa-check-circle"></i> Provide relevant campus announcements</li>
+                        <li><i class="fas fa-check-circle"></i> Suggest relevant clubs and events</li>
+                        <li><i class="fas fa-check-circle"></i> Customize your campus experience</li>
+                    </ul>
+                </div>
+                
+                <div class="info-box">
+                    <h3><i class="fas fa-shield-alt"></i> Your Privacy is Protected</h3>
+                    <ul>
+                        <li><i class="fas fa-lock"></i> Information is only visible to KCA University members</li>
+                        <li><i class="fas fa-user-friends"></i> Control who can see your profile</li>
+                        <li><i class="fas fa-edit"></i> You can update information anytime</li>
+                    </ul>
+                </div>
+                
+                <div class="quick-tips">
+                    <h4><i class="fas fa-lightbulb"></i> Quick Tips</h4>
+                    <p>• Select your actual campus for location-based events</p>
+                    <p>• Choose the correct faculty for course-specific updates</p>
+                    <p>• Add a profile photo to help others recognize you</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Complete Profile Form -->
+        <div class="form-side">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Academic Details</h2>
+                    <p>Tell us about your KCA University journey</p>
+                </div>
+
+                <form id="profileForm" method="POST" action="#">
+                    {% csrf_token %}
+                    
+                    <!-- Campus Selection -->
+                    <div class="form-group">
+                        <label for="campus">
+                            <i class="fas fa-university"></i> Campus
+                        </label>
+                        <select id="campus" name="campus" required>
+                            <option value="" disabled selected>Select your campus</option>
+                            <option value="main">Main Campus</option>
+                            <option value="town">Town Campus</option>
+                            <option value="kitengela">Kitengela Campus</option>
+                            <option value="western">Western Campus</option>
+                        </select>
+                        <small class="hint">Select where you primarily study/work</small>
+                    </div>
+
+                    <!-- Faculty Selection -->
+                    <div class="form-group">
+                        <label for="faculty">
+                            <i class="fas fa-graduation-cap"></i> Faculty/School
+                        </label>
+                        <select id="faculty" name="faculty" required>
+                            <option value="" disabled selected>Select your faculty</option>
+                            <option value="computing">Faculty of Computing & Information Management</option>
+                            <option value="business">School of Business</option>
+                            <option value="education">School of Education</option>
+                            <option value="arts">School of Arts & Social Sciences</option>
+                        </select>
+                    </div>
+
+                    <!-- Program/Course Selection -->
+                    <div class="form-group">
+                        <label for="program">
+                            <i class="fas fa-book"></i> Program/Course
+                        </label>
+                        <select id="program" name="program" required>
+                            <option value="" disabled selected>Select your program</option>
+                            <!-- Computing Programs -->
+                            <option value="bsd" class="computing">Bachelor of Science in Data Science (BSD)</option>
+                            <option value="bbit" class="computing">Bachelor of Business Information Technology (BBIT)</option>
+                            <option value="bisf" class="computing">Bachelor of Information Security & Forensics (BISF)</option>
+                            <!-- Business Programs -->
+                            <option value="bac" class="business">Bachelor of Applied Communication (BAC)</option>
+                            <option value="bcom" class="business">Bachelor of Commerce (BCom)</option>
+                            <option value="procurement" class="business">Bachelor of Procurement and Logistics</option>
+                            <!-- Education Programs -->
+                            <option value="education" class="education">Bachelor of Education</option>
+                            <!-- Arts Programs -->
+                            <option value="psychology" class="arts">Bachelor of Arts in Counselling Psychology</option>
+                        </select>
+                    </div>
+
+                    <!-- Year of Study -->
+                    <div class="form-group">
+                        <label for="year">
+                            <i class="fas fa-calendar-alt"></i> Year of Study
+                        </label>
+                        <select id="year" name="year" required>
+                            <option value="" disabled selected>Select year of study</option>
+                            <option value="1">Year 1</option>
+                            <option value="2">Year 2</option>
+                            <option value="3">Year 3</option>
+                            <option value="4">Year 4</option>
+                            <option value="5">Year 5+</option>
+                            <option value="na">N/A (for staff/alumni)</option>
+                        </select>
+                        <small class="hint">Select N/A if you are staff or alumni</small>
+                    </div>
+
+                    <!-- Profile Picture Upload -->
+                    <div class="form-group">
+                        <label for="profilePicture">
+                            <i class="fas fa-camera"></i> Profile Picture (Optional)
+                        </label>
+                        <div class="file-upload-container">
+                            <input 
+                                type="file" 
+                                id="profilePicture" 
+                                name="profilePicture" 
+                                accept="image/jpeg, image/png, image/gif"
+                                style="display: none;"
+                            >
+                            <button type="button" class="upload-btn" onclick="document.getElementById('profilePicture').click()">
+                                <i class="fas fa-cloud-upload-alt"></i> Upload Photo
+                            </button>
+                            <span class="file-info" id="fileInfo">No file selected</span>
+                        </div>
+                        <small class="hint">Max 5MB. JPG, PNG, or GIF format</small>
+                    </div>
+
+                    <!-- Bio -->
+                    <div class="form-group">
+                        <label for="bio">
+                            <i class="fas fa-edit"></i> Bio (Optional)
+                        </label>
+                        <textarea 
+                            id="bio" 
+                            name="bio" 
+                            placeholder="Tell the KCA community about yourself (e.g., interests, goals, hobbies)..." 
+                            maxlength="150"
+                            rows="3"
+                        ></textarea>
+                        <div class="char-counter">
+                            <span id="charCount">0</span>/150 characters
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="submit-container">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-check-circle"></i> Complete Registration
+                        </button>
+                        <p class="agreement-text">
+                            By continuing, you agree to KCA University's 
+                            <a href="#" class="terms-link">Community Guidelines</a>
+                        </p>
+                    </div>
+
+                    <!-- Back Link -->
+                    <div class="back-link">
+                        <a href="{% url 'signup' %}">
+                            <i class="fas fa-arrow-left"></i> Back to Previous Step
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Program options based on faculty
+        const programOptions = {
+            computing: [
+                { value: 'bsd', text: 'Bachelor of Science in Data Science (BSD)' },
+                { value: 'bbit', text: 'Bachelor of Business Information Technology (BBIT)' },
+                { value: 'bisf', text: 'Bachelor of Information Security & Forensics (BISF)' }
+            ],
+            business: [
+                { value: 'bac', text: 'Bachelor of Applied Communication (BAC)' },
+                { value: 'bcom', text: 'Bachelor of Commerce (BCom)' },
+                { value: 'procurement', text: 'Bachelor of Procurement and Logistics' }
+            ],
+            education: [
+                { value: 'education', text: 'Bachelor of Education' }
+            ],
+            arts: [
+                { value: 'psychology', text: 'Bachelor of Arts in Counselling Psychology' }
+            ]
+        };
+
+        // Update program dropdown based on faculty selection
+        document.getElementById('faculty').addEventListener('change', function() {
+            const faculty = this.value;
+            const programSelect = document.getElementById('program');
+            
+            // Clear existing options except the first one
+            while (programSelect.options.length > 1) {
+                programSelect.remove(1);
+            }
+            
+            // Add new options based on faculty
+            if (faculty && programOptions[faculty]) {
+                programOptions[faculty].forEach(program => {
+                    const option = new Option(program.text, program.value);
+                    programSelect.add(option);
+                });
+            }
+        });
+
+        // Profile picture upload
+        document.getElementById('profilePicture').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileInfo = document.getElementById('fileInfo');
+            
+            if (file) {
+                // Check file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size exceeds 5MB limit. Please choose a smaller image.');
+                    this.value = '';
+                    fileInfo.textContent = 'No file selected';
+                    return;
+                }
+                
+                // Check file type
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!validTypes.includes(file.type)) {
+                    alert('Please upload a JPG, PNG, or GIF image.');
+                    this.value = '';
+                    fileInfo.textContent = 'No file selected';
+                    return;
+                }
+                
+                // Update file info
+                fileInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            } else {
+                fileInfo.textContent = 'No file selected';
+            }
+        });
+
+        // Character counter for bio
+        document.getElementById('bio').addEventListener('input', function() {
+            const charCount = this.value.length;
+            document.getElementById('charCount').textContent = charCount;
+            
+            // Optional: Change color when approaching limit
+            const counter = document.getElementById('charCount');
+            if (charCount > 140) {
+                counter.style.color = '#ff4757';
+            } else if (charCount > 120) {
+                counter.style.color = '#ffa502';
+            } else {
+                counter.style.color = '#2ed573';
+            }
+        });
+
+        // Form validation
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            const campus = document.getElementById('campus').value;
+            const faculty = document.getElementById('faculty').value;
+            const program = document.getElementById('program').value;
+            const year = document.getElementById('year').value;
+            
+            if (!campus || !faculty || !program || !year) {
+                e.preventDefault();
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            // Form will submit normally for backend processing
+        });
+    </script>
+</body>
+</html>
