@@ -1,0 +1,400 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/middle.css' %}">
+    <link rel="stylesheet" href="{% static 'css/right_sidebar.css' %}">
+    <title>Home page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- LEFT SIDEBAR -->
+        <aside id="sidebar-container">
+            <!-- Your existing sidebar code here -->
+            <!-- PROFILE SECTION -->
+            <div class="sidebar-profile">
+                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profile Picture" class="sidebar-profile-img">
+                <h3 class="sidebar-username">Gerry Odhiambo</h3>
+                <p class="sidebar-role">Student</p>
+
+                <div class="sidebar-stats">
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">24</span>
+                        <span class="sidebar-stat-label">Posts</span>
+                    </div>
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">180</span>
+                        <span class="sidebar-stat-label">Followers</span>
+                    </div>
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">150</span>
+                        <span class="sidebar-stat-label">Following</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NAVIGATION LINKS -->
+            <nav class="sidebar-navigation">
+                <ul class="sidebar-nav-list">
+                    <li><a href="#" class="sidebar-nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-users"></i> Clubs & Communities</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-book"></i> Resources</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+
+            <!-- FRIENDS / CONNECTIONS -->
+            <div class="sidebar-connections">
+                <h4 class="sidebar-section-title">Connections</h4>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/women/65.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Alice Mwangi</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/men/66.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Brian Otieno</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/women/67.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Faith Njeri</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MIDDLE FEED SECTION -->
+        <main id="middle-feed-container">
+            <!-- Your middle section code here (search, create post, stories, feeds) -->
+            <!-- Search Bar -->
+            <div class="feed-search-container">
+                <div class="feed-search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search posts, people, or clubs..." class="feed-search-input">
+                </div>
+                <button class="feed-create-post-btn">
+                    <i class="fas fa-plus"></i> Create Post
+                </button>
+            </div>
+
+            <!-- Create Post Box -->
+            <div class="create-post-container">
+                <div class="create-post-header">
+                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="create-post-user-img">
+                    <input type="text" placeholder="What's on your mind, Gerry?" class="create-post-input">
+                </div>
+                <div class="create-post-options">
+                    <button class="post-option-btn">
+                        <i class="fas fa-image" style="color: #45bd62;"></i> Photo/Video
+                    </button>
+                    <button class="post-option-btn">
+                        <i class="fas fa-calendar-alt" style="color: #f7b928;"></i> Event
+                    </button>
+                    <button class="post-option-btn">
+                        <i class="fas fa-poll" style="color: #f5533d;"></i> Poll
+                    </button>
+                    <button class="post-publish-btn">Publish</button>
+                </div>
+            </div>
+
+
+            <!-- Stories Section -->
+            <div class="stories-container">
+                <h3 class="stories-title">Stories</h3>
+                <div class="stories-scroll">
+                    <div class="story-item add-story">
+                        <div class="story-circle">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <p class="story-name">Add Story</p>
+                    </div>
+                    
+                    <!-- Story Items -->
+                    <div class="story-item">
+                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Kate" class="story-img">
+                        <p class="story-name">Kate Lynch</p>
+                    </div>
+                    <div class="story-item">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Katie" class="story-img">
+                        <p class="story-name">Katie Vogel</p>
+                    </div>
+                    <div class="story-item">
+                        <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Kariya" class="story-img">
+                        <p class="story-name">Kariya Vogel</p>
+                    </div>
+                    <div class="story-item">
+                        <img src="https://randomuser.me/api/portraits/women/46.jpg" alt="Kelly" class="story-img">
+                        <p class="story-name">Kelly Doretha</p>
+                    </div>
+                    <div class="story-item">
+                        <img src="https://randomuser.me/api/portraits/women/47.jpg" alt="Shelley" class="story-img">
+                        <p class="story-name">Shelley Clark</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feed Posts (Scrollable) -->
+            <div class="feed-posts-container">
+                <!-- Post 1 -->
+                <div class="feed-post">
+                    <div class="post-header">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" class="post-user-img">
+                        <div class="post-user-info">
+                            <h4 class="post-username">Chanlie Ward</h4>
+                            <p class="post-time">@abcdesignhome · 2 hours ago</p>
+                        </div>
+                        <i class="fas fa-ellipsis-h post-more-btn"></i>
+                    </div>
+                    
+                    <div class="post-content">
+                        <p class="post-text">Cool summer breezes rustling the leaves and the whisper of a mountain stream. Children laughing as they try to catch fireflies in the fading light.</p>
+                        <div class="post-image">
+                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80" alt="Mountain stream">
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">#japan</span>
+                            <span class="post-tag">#abcdesignhome</span>
+                            <span class="post-tag">#bongladash</span>
+                        </div>
+                    </div>
+                    
+                    <div class="post-stats">
+                        <div class="post-stat">
+                            <i class="far fa-heart"></i>
+                            <span>4.5k</span>
+                        </div>
+                        <div class="post-stat">
+                            <i class="far fa-comment"></i>
+                            <span>2.19k</span>
+                        </div>
+                        <div class="post-stat">
+                            <i class="far fa-share-square"></i>
+                            <span>1.75k</span>
+                        </div>
+                    </div>
+                    
+                    <div class="post-actions">
+                        <button class="post-action-btn like-btn">
+                            <i class="far fa-heart"></i> Like
+                        </button>
+                        <button class="post-action-btn comment-btn">
+                            <i class="far fa-comment"></i> Comment
+                        </button>
+                        <button class="post-action-btn share-btn">
+                            <i class="far fa-share-square"></i> Share
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Post 2 -->
+                <div class="feed-post">
+                    <div class="post-header">
+                        <img src="https://randomuser.me/api/portraits/men/69.jpg" alt="User" class="post-user-img">
+                        <div class="post-user-info">
+                            <h4 class="post-username">David Kim</h4>
+                            <p class="post-time">@davidk · 4 hours ago</p>
+                        </div>
+                        <i class="fas fa-ellipsis-h post-more-btn"></i>
+                    </div>
+                    
+                    <div class="post-content">
+                        <p class="post-text">Just finished an amazing hike at Mount Kenya! The views were breathtaking and the air was so fresh. Definitely recommend this trail for beginners!</p>
+                        <div class="post-image">
+                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80" alt="Mountain hike">
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">#hiking</span>
+                            <span class="post-tag">#mountkenya</span>
+                            <span class="post-tag">#nature</span>
+                        </div>
+                    </div>
+                    
+                    <div class="post-stats">
+                        <div class="post-stat">
+                            <i class="far fa-heart"></i>
+                            <span>2.3k</span>
+                        </div>
+                        <div class="post-stat">
+                            <i class="far fa-comment"></i>
+                            <span>845</span>
+                        </div>
+                        <div class="post-stat">
+                            <i class="far fa-share-square"></i>
+                            <span>312</span>
+                        </div>
+                    </div>
+                    
+                    <div class="post-actions">
+                        <button class="post-action-btn like-btn">
+                            <i class="far fa-heart"></i> Like
+                        </button>
+                        <button class="post-action-btn comment-btn">
+                            <i class="far fa-comment"></i> Comment
+                        </button>
+                        <button class="post-action-btn share-btn">
+                            <i class="far fa-share-square"></i> Share
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- RIGHT SIDEBAR (Place it HERE, after the middle section) -->
+        <aside id="right-sidebar-container">
+            <!-- REQUESTS SECTION -->
+            <div class="right-requests-section">
+                <h3 class="right-section-title">Requests</h3>
+                
+                <div class="request-item">
+                    <div class="request-user-info">
+                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Amanda" class="request-user-img">
+                        <div class="request-text">
+                            <span class="request-name">Amanda Smith</span> wants to add your friends
+                        </div>
+                    </div>
+                    <div class="request-actions">
+                        <button class="request-accept-btn">Accept</button>
+                        <button class="request-decline-btn">Decline</button>
+                    </div>
+                </div>
+                
+                <div class="request-item">
+                    <div class="request-user-info">
+                        <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Rosa" class="request-user-img">
+                        <div class="request-text">
+                            <span class="request-name">Rosa Paula</span> wants to add your friends
+                        </div>
+                    </div>
+                    <div class="request-actions">
+                        <button class="request-accept-btn">Accept</button>
+                        <button class="request-decline-btn">Decline</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUGGESTIONS SECTION -->
+            <div class="right-suggestions-section">
+                <h3 class="right-section-title">Suggestion for you</h3>
+                
+                <div class="suggestion-item">
+                    <img src="https://randomuser.me/api/portraits/men/34.jpg" alt="Rand" class="suggestion-img">
+                    <div class="suggestion-info">
+                        <h4 class="suggestion-name">Rand Paul</h4>
+                        <p class="suggestion-location">New York City</p>
+                    </div>
+                </div>
+                
+                <div class="suggestion-item">
+                    <img src="https://randomuser.me/api/portraits/men/35.jpg" alt="Johu" class="suggestion-img">
+                    <div class="suggestion-info">
+                        <h4 class="suggestion-name">Johu Corryn</h4>
+                        <p class="suggestion-location">Bakersfield, CA</p>
+                    </div>
+                </div>
+                
+                <div class="suggestion-item">
+                    <img src="https://randomuser.me/api/portraits/women/36.jpg" alt="Quiin" class="suggestion-img">
+                    <div class="suggestion-info">
+                        <h4 class="suggestion-name">Quiin Home</h4>
+                        <p class="suggestion-location">South Carolina</p>
+                    </div>
+                </div>
+                
+                <div class="suggestion-item">
+                    <img src="https://randomuser.me/api/portraits/women/37.jpg" alt="Tania" class="suggestion-img">
+                    <div class="suggestion-info">
+                        <h4 class="suggestion-name">Tania Bnejo</h4>
+                        <p class="suggestion-location">Washington, DC</p>
+                    </div>
+                </div>
+                
+                <div class="suggestion-item">
+                    <img src="https://randomuser.me/api/portraits/women/38.jpg" alt="Rachel" class="suggestion-img">
+                    <div class="suggestion-info">
+                        <h4 class="suggestion-name">Rachel Taylor</h4>
+                        <p class="suggestion-location">New York, USA</p>
+                    </div>
+                </div>
+                
+                <a href="#" class="view-all-link">[View All]</a>
+            </div>
+
+            <!-- MESSAGES SECTION -->
+            <div class="right-messages-section">
+                <h3 class="right-section-title">Messages</h3>
+                
+                <div class="message-item unread">
+                    <img src="https://randomuser.me/api/portraits/women/39.jpg" alt="Sarah" class="message-user-img">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-user-name">Sarah Johnson</span>
+                            <span class="message-time">2 min ago</span>
+                        </div>
+                        <p class="message-preview">Hey! Are we still meeting for study group?</p>
+                        <span class="unread-badge">2</span>
+                    </div>
+                </div>
+                
+                <div class="message-item">
+                    <img src="https://randomuser.me/api/portraits/men/40.jpg" alt="Mike" class="message-user-img">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-user-name">Mike Chen</span>
+                            <span class="message-time">30 min ago</span>
+                        </div>
+                        <p class="message-preview">Thanks for the notes!</p>
+                    </div>
+                </div>
+                
+                <div class="message-item unread">
+                    <img src="https://randomuser.me/api/portraits/women/41.jpg" alt="Emma" class="message-user-img">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-user-name">Emma Davis</span>
+                            <span class="message-time">1 hour ago</span>
+                        </div>
+                        <p class="message-preview">Can you send me the project files?</p>
+                        <span class="unread-badge">1</span>
+                    </div>
+                </div>
+                
+                <div class="message-item">
+                    <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="David" class="message-user-img">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-user-name">David Wilson</span>
+                            <span class="message-time">3 hours ago</span>
+                        </div>
+                        <p class="message-preview">Meeting moved to 2 PM</p>
+                    </div>
+                </div>
+                
+                <a href="#" class="view-all-link">[View All Messages]</a>
+            </div>
+
+            <!-- FOLLOWER COUNT -->
+            <div class="follower-count-section">
+                <div class="follower-number">147.75K</div>
+                <div class="follower-label">Follower</div>
+                <p class="follower-note">Active now on your profile</p>
+            </div>
+
+            <!-- ABOUT LINKS -->
+            <div class="about-links-section">
+                <a href="#" class="about-link">About</a>
+                <a href="#" class="about-link">Accessibility</a>
+                <a href="#" class="about-link">Help Center</a>
+                <a href="#" class="about-link">Privacy & Terms</a>
+                <a href="#" class="about-link">Advertising</a>
+                <a href="#" class="about-link">Business Services</a>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>
