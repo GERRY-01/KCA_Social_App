@@ -59,3 +59,10 @@ class CompleteProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+class Post(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    caption = models.TextField()
+    media = models.FileField(upload_to='posts/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

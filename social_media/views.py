@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
-from .models import Profile, CompleteProfile
+from .models import Profile, CompleteProfile, Post
 
 # Create your views here.
 @login_required
@@ -15,10 +15,13 @@ def home(request):
     except CompleteProfile.DoesNotExist:
         complete_profile = None
 
+    posts = Post.objects.all().order_by('-created_at')
+
     context = {
         'user': request.user,
         'user_profile': user_profile,
         'complete_profile': complete_profile,
+        'posts': posts
     }
     return render(request, 'home.html', context)
 
@@ -91,3 +94,21 @@ def complete_profile(request):
 
 def login(request):
     return render(request, 'login.html')
+
+def create_post(request):
+    if request.method == 'POST':
+        caption = request.POST.get('caption')
+        media = request.FILES.get('media')
+        user = request.user
+        
+        if not caption:
+            messages.error(request, 'Caption is required')
+            return render(request, 'home.html')
+        
+        post = Post(user=user, caption=caption, media=media)
+        post.save()
+
+        messages.success(request, 'Post created successfully')
+
+        return redirect('home')
+    return render(request, 'home.html')
