@@ -220,7 +220,23 @@
                             <h4 class="post-username">Chanlie Ward</h4>
                             <p class="post-time">@abcdesignhome · 2 hours ago</p>
                         </div>
-                        <i class="fas fa-ellipsis-h post-more-btn"></i>
+
+
+                        <!-- Three dots and dropdown container -->
+                            <div class="post-options-container">
+                                <i class="fas fa-ellipsis-h post-more-btn"></i>
+                                
+                                <!-- Dropdown menu -->
+                                <div class="post-dropdown-menu">
+                                    <button class="dropdown-item edit-post-btn">
+                                        <i class="fas fa-edit"></i> Edit Post
+                                    </button>
+                                    <button class="dropdown-item delete-post-btn">
+                                        <i class="fas fa-trash"></i> Delete Post
+                                    </button>
+                                </div>
+                            </div>
+                        <!--<i class="fas fa-ellipsis-h post-more-btn"></i>-->
                     </div>
                     
                     <div class="post-content">
@@ -498,5 +514,37 @@
             simplePostModal.style.display = 'none';
         }
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Get all three-dot buttons
+    const moreButtons = document.querySelectorAll('.post-more-btn');
+    
+    moreButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent event bubbling
+            
+            // Get the dropdown for this specific button
+            const dropdown = this.closest('.post-options-container')
+                             .querySelector('.post-dropdown-menu');
+            
+            // Toggle this dropdown
+            dropdown.classList.toggle('show');
+        });
+    });
+    
+    // Close all dropdowns when clicking anywhere else
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.post-dropdown-menu.show').forEach(dropdown => {
+            dropdown.classList.remove('show');
+        });
+    });
+    
+    // Don't close when clicking inside dropdown
+    document.querySelectorAll('.post-dropdown-menu').forEach(menu => {
+        menu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+});
 </script>
 </html>
