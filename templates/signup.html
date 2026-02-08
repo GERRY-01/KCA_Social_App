@@ -56,12 +56,12 @@
                             type="email" 
                             id="email" 
                             name="email" 
-                            placeholder="username@kca.ac.ke" 
+                            placeholder="2205474@kcau.ac.ke" 
                             required
-                            pattern=".*@kca\.ac\.ke$"
+                            pattern=".*@.*kcau\.ac\.ke$"
                             title="Please use your KCA University email address"
                         >
-                        <small class="hint">Use your official KCA University email (@kca.ac.ke)</small>
+                        <small class="hint">Use your official KCA University email (@kcau.ac.ke)</small>
                     </div>
 
                     <!-- Name Fields -->
@@ -74,7 +74,7 @@
                                 type="text" 
                                 id="firstName" 
                                 name="firstName" 
-                                placeholder="John" 
+                                placeholder="Lionel" 
                                 required
                             >
                         </div>
@@ -86,7 +86,7 @@
                                 type="text" 
                                 id="lastName" 
                                 name="lastName" 
-                                placeholder="Doe" 
+                                placeholder="Messi" 
                                 required
                             >
                         </div>
@@ -101,7 +101,7 @@
                             type="text" 
                             id="idNumber" 
                             name="idNumber" 
-                            placeholder="e.g., SCII/00000/2020" 
+                            placeholder="e.g., 20/05474" 
                             required
                         >
                     </div>
@@ -115,7 +115,7 @@
                             type="text" 
                             id="username" 
                             name="username" 
-                            placeholder="johndoe" 
+                            placeholder="Messi" 
                             required
                         >
                         <small class="hint">This will be your public handle (@username)</small>
@@ -150,6 +150,7 @@
                                     pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
                                     title="Minimum 8 characters with uppercase, lowercase, number, and special character"
                                 >
+                                <small class="hint">Minimum 8 characters with uppercase, lowercase, number, and special character</small>
                                 <button type="button" class="toggle-password" onclick="togglePassword('password')">
                                     <i class="fas fa-eye"></i>
                                 </button>

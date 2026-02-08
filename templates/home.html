@@ -17,9 +17,13 @@
             <!-- Your existing sidebar code here -->
             <!-- PROFILE SECTION -->
             <div class="sidebar-profile">
+                {% if complete_profile  and complete_profile.profile_picture %}
+                <img src="{{ complete_profile.profile_picture.url }}" alt="Profile Picture" class="sidebar-profile-img">
+                {% else %}
                 <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profile Picture" class="sidebar-profile-img">
-                <h3 class="sidebar-username">Gerry Odhiambo</h3>
-                <p class="sidebar-role">Student</p>
+                {% endif %}
+                <h3 class="sidebar-username">{{user.first_name}} {{user.last_name}}</h3>
+                <p class="sidebar-role">{{user.profile.role}}</p>
 
                 <div class="sidebar-stats">
                     <div class="sidebar-stat">
@@ -86,8 +90,12 @@
             <!-- Create Post Box -->
             <div class="create-post-container">
                 <div class="create-post-header">
+                    {% if complete_profile  and complete_profile.profile_picture %}
+                    <img src="{{ complete_profile.profile_picture.url }}" alt="User" class="create-post-user-img">
+                    {% else %}
                     <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="create-post-user-img">
-                    <input type="text" placeholder="What's on your mind, Gerry?" class="create-post-input">
+                    {% endif %}
+                    <input type="text" placeholder="What's on your mind, {{user.username}}?" class="create-post-input">
                 </div>
                 <div class="create-post-options">
                     <button class="post-option-btn">
@@ -115,10 +123,14 @@
         <div class="simple-modal-body" style="padding: 20px;">
             <!-- User Info -->
             <div class="simple-post-author" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                {% if complete_profile  and complete_profile.profile_picture %}
+                <img src="{{ complete_profile.profile_picture.url }}" alt="User" class="simple-author-avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                {% else %}
                 <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="simple-author-avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                {% endif %}
                 <div>
-                    <h4 style="margin: 0; font-size: 15px; color: #1c1e21;">Gerry Odhiambo</h4>
-                    <p style="margin: 2px 0 0 0; font-size: 13px; color: #65676b;">Student</p>
+                    <h4 style="margin: 0; font-size: 15px; color: #1c1e21;">{{user.first_name}} {{user.last_name}}</h4>
+                    <p style="margin: 2px 0 0 0; font-size: 13px; color: #65676b;">{{user.username}}</p>
                 </div>
             </div>
             
@@ -129,7 +141,7 @@
                     class="simple-post-caption" 
                     id="simplePostCaption"
                     name="caption"
-                    placeholder="What's on your mind, Gerry?"
+                    placeholder="What's on your mind, {{user.username}}?"
                     rows="4"
                     style="width: 100%; border: none; resize: none; font-size: 16px; font-family: inherit; color: #1c1e21; margin-bottom: 20px; padding: 0; line-height: 1.5;"
                 ></textarea>
