@@ -135,7 +135,8 @@
             </div>
             
             <!-- Form (no action/method since backend will handle) -->
-            <form id="simplePostForm">
+            <form id="simplePostForm" method="post" action="{% url 'create_post' %}" enctype="multipart/form-data">
+                {% csrf_token %}
                 <!-- Caption Input -->
                 <textarea 
                     class="simple-post-caption" 
@@ -213,12 +214,17 @@
             <!-- Feed Posts (Scrollable) -->
             <div class="feed-posts-container">
                 <!-- Post 1 -->
+                 {% for post in posts %}
                 <div class="feed-post">
                     <div class="post-header">
-                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" class="post-user-img">
+                        {% if post.user.completeprofile and post.user.completeprofile.profile_picture %}
+                        <img src="{{post.user.completeprofile.profile_picture.url}}" alt="User" class="post-user-img">
+                        {% else %}
+                        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="post-user-img">
+                        {% endif %}
                         <div class="post-user-info">
-                            <h4 class="post-username">Chanlie Ward</h4>
-                            <p class="post-time">@abcdesignhome · 2 hours ago</p>
+                            <h4 class="post-username">{{post.user.first_name}} {{post.user.last_name}}</h4>
+                            <p class="post-time">@{{post.user.username}} · 2 hours ago</p>
                         </div>
 
 
@@ -240,9 +246,9 @@
                     </div>
                     
                     <div class="post-content">
-                        <p class="post-text">Cool summer breezes rustling the leaves and the whisper of a mountain stream. Children laughing as they try to catch fireflies in the fading light.</p>
+                        <p class="post-text">{{post.caption}}</p>
                         <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80" alt="Mountain stream">
+                            <img src="{{post.media.url}}" alt="Mountain stream">
                         </div>
                         <div class="post-tags">
                             <span class="post-tag">#japan</span>
@@ -278,57 +284,7 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Post 2 -->
-                <div class="feed-post">
-                    <div class="post-header">
-                        <img src="https://randomuser.me/api/portraits/men/69.jpg" alt="User" class="post-user-img">
-                        <div class="post-user-info">
-                            <h4 class="post-username">David Kim</h4>
-                            <p class="post-time">@davidk · 4 hours ago</p>
-                        </div>
-                        <i class="fas fa-ellipsis-h post-more-btn"></i>
-                    </div>
-                    
-                    <div class="post-content">
-                        <p class="post-text">Just finished an amazing hike at Mount Kenya! The views were breathtaking and the air was so fresh. Definitely recommend this trail for beginners!</p>
-                        <div class="post-image">
-                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80" alt="Mountain hike">
-                        </div>
-                        <div class="post-tags">
-                            <span class="post-tag">#hiking</span>
-                            <span class="post-tag">#mountkenya</span>
-                            <span class="post-tag">#nature</span>
-                        </div>
-                    </div>
-                    
-                    <div class="post-stats">
-                        <div class="post-stat">
-                            <i class="far fa-heart"></i>
-                            <span>2.3k</span>
-                        </div>
-                        <div class="post-stat">
-                            <i class="far fa-comment"></i>
-                            <span>845</span>
-                        </div>
-                        <div class="post-stat">
-                            <i class="far fa-share-square"></i>
-                            <span>312</span>
-                        </div>
-                    </div>
-                    
-                    <div class="post-actions">
-                        <button class="post-action-btn like-btn">
-                            <i class="far fa-heart"></i> Like
-                        </button>
-                        <button class="post-action-btn comment-btn">
-                            <i class="far fa-comment"></i> Comment
-                        </button>
-                        <button class="post-action-btn share-btn">
-                            <i class="far fa-share-square"></i> Share
-                        </button>
-                    </div>
-                </div>
+                {% endfor %}                
             </div>
         </main>
 
