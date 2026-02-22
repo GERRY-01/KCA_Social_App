@@ -44,14 +44,22 @@
             <!-- NAVIGATION LINKS -->
             <nav class="sidebar-navigation">
                 <ul class="sidebar-nav-list">
-                    <li><a href="#" class="sidebar-nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="{% url 'home' %}" class="sidebar-nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-bullhorn"></i> Announcements</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-users"></i> Clubs & Communities</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-book"></i> Resources</a></li>
-                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-user"></i> My Profile</a></li>
-                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="{% url 'profile' %}" class="sidebar-nav-link"><i class="fas fa-user"></i> My Profile</a></li>
+                    <!-- <li><a href="" class="sidebar-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li> -->
+                     <li>
+                        <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="sidebar-nav-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </li>
                 </ul>
             </nav>
 

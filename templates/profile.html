@@ -1,0 +1,263 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - KCA University Social</title>
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- LEFT SIDEBAR - Reused from homepage -->
+        <aside id="sidebar-container">
+            <!-- PROFILE SECTION -->
+            <div class="sidebar-profile">
+                {% if complete_profile  and complete_profile.profile_picture %}
+                <img src="{{ complete_profile.profile_picture.url }}" alt="Profile Picture" class="sidebar-profile-img">
+                {% else %}
+                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profile Picture" class="sidebar-profile-img">
+                {% endif %}
+                <h3 class="sidebar-username">{{user.first_name}} {{user.last_name}}</h3>
+
+                <div class="sidebar-stats">
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">24</span>
+                        <span class="sidebar-stat-label">Posts</span>
+                    </div>
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">180</span>
+                        <span class="sidebar-stat-label">Followers</span>
+                    </div>
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">150</span>
+                        <span class="sidebar-stat-label">Following</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NAVIGATION LINKS -->
+            <nav class="sidebar-navigation">
+                <ul class="sidebar-nav-list">
+                    <li><a href="{% url 'home' %}" class="sidebar-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-users"></i> Clubs & Communities</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-book"></i> Resources</a></li>
+                    <li><a href="#" class="sidebar-nav-link active"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li>
+                        <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="sidebar-nav-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- FRIENDS / CONNECTIONS -->
+            <div class="sidebar-connections">
+                <h4 class="sidebar-section-title">Connections</h4>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/women/65.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Alice Mwangi</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/men/66.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Brian Otieno</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/women/67.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Faith Njeri</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/men/68.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">James Kimani</span>
+                </div>
+                <a href="#" class="sidebar-view-all">View All Connections</a>
+            </div>
+        </aside>
+
+      <!-- MAIN CONTENT - PROFILE PAGE -->
+        <main class="profile-main-content">
+            <!-- PROFILE HEADER SECTION -->
+            <div class="profile-header">
+                <div class="profile-cover">
+                    <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Cover Photo">
+                    <div class="profile-avatar-wrapper">
+                        {% if complete_profile and complete_profile.profile_picture %}
+                            <img src="{{ complete_profile.profile_picture.url }}" alt="{{ user.first_name }} {{ user.last_name }}" class="profile-avatar">
+                        {% else %}
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="{{ user.first_name }} {{ user.last_name }}" class="profile-avatar">
+                        {% endif %}
+                        <button class="edit-avatar-btn"><i class="fas fa-camera"></i></button>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <div class="profile-name-section">
+                        <h1 class="profile-name">{{user.first_name}} {{user.last_name}}</h1>
+                        <p class="profile-handle">@{{user.username}}</p>
+                        <p class="profile-bio">
+                            {% if complete_profile.bio %}
+                                {{complete_profile.bio}}
+                            {% else %}
+                                No bio yet
+                            {% endif %}
+                        </p>
+                        <p class="profile-website"><i class="fas fa-link"></i> <a href="#">www.mistyphillipsadventure.com</a></p>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button class="btn btn-primary"><i class="fas fa-user-plus"></i> Follow</button>
+                        <button class="btn btn-secondary"><i class="fas fa-envelope"></i> Message</button>
+                        <button class="btn btn-icon"><i class="fas fa-ellipsis-h"></i></button>
+                    </div>
+                </div>
+                
+                <!-- UPDATED STATS: Posts, Followers, Following -->
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">210</span>
+                        <span class="stat-label">Posts</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">85</span>
+                        <span class="stat-label">Followers</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">23</span>
+                        <span class="stat-label">Following</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT GRID - UPDATED -->
+            <div class="profile-content-grid">
+                <!-- LEFT COLUMN - FRIENDS / CONNECTIONS -->
+                <div class="profile-left-column">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-user-friends"></i> Your Friends</h3>
+                            <a href="#" class="view-all">See All</a>
+                        </div>
+                        <div class="friend-list">
+                            <div class="friend-item">
+                                <div class="friend-avatar">
+                                    <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Friend">
+                                </div>
+                                <div class="friend-info">
+                                    <h4>Alice Mwangi</h4>
+                                    <span class="friend-likes"><i class="fas fa-heart"></i> 125 mutual likes</span>
+                                </div>
+                            </div>
+                            <div class="friend-item">
+                                <div class="friend-avatar">
+                                    <img src="https://randomuser.me/api/portraits/men/66.jpg" alt="Friend">
+                                </div>
+                                <div class="friend-info">
+                                    <h4>Brian Otieno</h4>
+                                    <span class="friend-likes"><i class="fas fa-heart"></i> 100 mutual likes</span>
+                                </div>
+                            </div>
+                            <div class="friend-item">
+                                <div class="friend-avatar">
+                                    <img src="https://randomuser.me/api/portraits/women/67.jpg" alt="Friend">
+                                </div>
+                                <div class="friend-info">
+                                    <h4>Faith Njeri</h4>
+                                    <span class="friend-likes"><i class="fas fa-heart"></i> 100 mutual likes</span>
+                                </div>
+                            </div>
+                            <div class="friend-item">
+                                <div class="friend-avatar">
+                                    <img src="https://randomuser.me/api/portraits/men/68.jpg" alt="Friend">
+                                </div>
+                                <div class="friend-info">
+                                    <h4>James Kimani</h4>
+                                    <span class="friend-likes"><i class="fas fa-heart"></i> 89 mutual likes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN - POSTS BY YOU (Combined photos/videos with captions) -->
+                <!-- RIGHT COLUMN - POSTS BY YOU -->
+                    <div class="profile-right-column">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-edit"></i> Posts by You</h3>
+                                <a href="#" class="view-all">See All</a>
+                            </div>
+                            
+                            <!-- Check if there are any posts -->
+                            {% if posts %}
+                                <!-- Loop through all posts -->
+                                {% for post in posts %}
+                                <div class="post-item">
+                                    <div class="post-avatar">
+                                        {% if complete_profile and complete_profile.profile_picture %}
+                                            <img src="{{ complete_profile.profile_picture.url }}" alt="{{ user.first_name }}">
+                                        {% else %}
+                                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="{{ user.first_name }}">
+                                        {% endif %}
+                                    </div>
+                                    <div class="post-content">
+                                        <!-- Post caption/text -->
+                                        <p class="post-text">
+                                            {{ post.caption }}
+                                        </p>
+                                        
+                                        <!-- Check if post has media (image/video) -->
+                                        {% if post.media %}
+                                            <!-- Check if media is image or video based on file extension -->
+                                            {% with media_url=post.media.url %}
+                                                {% if media_url|lower|slice:'-4:' == '.mp4' or media_url|lower|slice:'-4:' == '.mov' or media_url|lower|slice:'-5:' == '.webm' %}
+                                                    <!-- Video post -->
+                                                    <div class="post-media video-thumbnail">
+                                                        <video class="post-video" controls>
+                                                            <source src="{{ post.media.url }}" type="video/mp4">
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                        <!-- Optional: Show video duration if you have that field -->
+                                                        <!-- <span class="video-duration">4:30</span> -->
+                                                    </div>
+                                                {% else %}
+                                                    <!-- Image post -->
+                                                    <div class="post-media">
+                                                        <img src="{{ post.media.url }}" alt="Post image" class="post-image">
+                                                    </div>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                        
+                                        <!-- Post metadata (likes, comments, date) -->
+                                        <span class="post-meta">
+                                            <i class="fas fa-heart"></i> {{ post.likes_count|default:0 }} · 
+                                            <i class="fas fa-comment"></i> {{ post.comments_count|default:0 }} · 
+                                            {{ post.created_at|date:"h:i A d M Y" }}
+                                        </span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <!-- Show message if no posts -->
+                                <div class="no-posts">
+                                    <i class="fas fa-camera" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
+                                    <p>No posts yet</p>
+                                    <a href="{% url 'create_post' %}" class="btn btn-primary" style="display: inline-block; margin-top: 10px;">
+                                        <i class="fas fa-plus-circle"></i> Create Your First Post
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                                </div>
+        </main>
+    </div>
+</body>
+</html>

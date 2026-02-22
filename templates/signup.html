@@ -122,7 +122,7 @@
                     </div>
 
                     <!-- Role Selection -->
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="role">
                             <i class="fas fa-user-graduate"></i> Role
                         </label>
@@ -132,7 +132,7 @@
                             <option value="staff">Staff</option>
                             <option value="alumni">Alumni</option>
                         </select>
-                    </div>
+                    </div> -->
 
                     <!-- Password Fields -->
                     <div class="password-group">
@@ -200,8 +200,13 @@
 
                     <!-- Login Link -->
                     <div class="login-link">
-                        Already have an account? <a href="">Sign In</a>
+                        Already have an account? <a href="{% url 'login' %}">Sign In</a>
                     </div>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p class="error-message">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
                 </form>
             </div>
         </div>
