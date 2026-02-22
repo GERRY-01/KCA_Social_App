@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .models import Profile, CompleteProfile, Post
 
@@ -32,7 +32,6 @@ def signup(request):
         last_name = request.POST.get('lastName')
         id_number = request.POST.get('idNumber')
         username = request.POST.get('username')
-        role = request.POST.get('role')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmPassword')
 
@@ -57,7 +56,7 @@ def signup(request):
         user.last_name = last_name
         user.save()
 
-        profile = Profile(user=user, id_number=id_number, role=role)
+        profile = Profile(user=user, id_number=id_number)
         profile.save()
         
         auth_login(request, user)
@@ -93,6 +92,17 @@ def complete_profile(request):
     return render(request, 'complete_profile.html')
 
 def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            auth_login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid username or password')
     return render(request, 'login.html')
 
 def create_post(request):
@@ -112,3 +122,29 @@ def create_post(request):
 
         return redirect('home')
     return render(request, 'home.html')
+
+def logout(request):
+    auth_logout(request)
+    messages.success(request, 'Logged out successfully')
+    return redirect('login')
+
+def profile(request):
+    # Get or create profile (similar to home view)
+    try:
+        user_profile = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        user_profile = None
+    
+    try:
+        complete_profile = CompleteProfile.objects.get(user=request.user)
+    except CompleteProfile.DoesNotExist:
+        complete_profile = None
+
+    posts = Post.objects.filter(user=request.user).order_by('-created_at')
+    
+    return render(request, 'profile.html', {
+        'user_profile': user_profile,
+        'complete_profile': complete_profile,
+        'user': request.user ,
+        'posts': posts
+    })
