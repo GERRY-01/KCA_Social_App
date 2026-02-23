@@ -326,6 +326,73 @@
     box-shadow: 0 2px 5px rgba(102, 126, 234, 0.2);
 }
 
+
+
+
+.post-user-info {
+    flex: 1;
+}
+
+.post-name-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.post-username {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.post-user-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+}
+
+.post-user-link:hover {
+    color: #667eea;
+    text-decoration: underline;
+}
+
+.post-follow-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    white-space: nowrap;
+    line-height: 1;
+    margin-left: 10; /* Ensure no left margin */
+}
+
+.post-follow-btn i {
+    font-size: 10px;
+}
+
+.post-follow-btn:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b3fa0 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.post-time {
+    margin: 2px 0 0 0;
+    font-size: 12px;
+    color: #666;
+}
+
     </style>
 </head>
 <body>
@@ -516,7 +583,12 @@
                         <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="post-user-img">
                         {% endif %}
                         <div class="post-user-info">
-                            <h4 class="post-username">{{post.user.first_name}} {{post.user.last_name}}</h4>
+                            <h4 class="post-username"><a href="" class="post-user-link">{{post.user.first_name}} {{post.user.last_name}}</a></h4>
+                              {% if post.user != request.user %}
+                                <button class="post-follow-btn" style="margin-left: 20px;">
+                                    <i class="fas fa-user-plus"></i> Follow
+                                </button>
+                                {% endif %}
                             <p class="post-time">@{{post.user.username}} · {{ post.created_at|timesince }} ago</p>
                         </div>
 
@@ -686,9 +758,9 @@
                     <div class="suggestion-info">
                         <h4 class="suggestion-name">{{ suggestion.first_name }} {{ suggestion.last_name }}</h4>
                         {% if suggestion.completeprofile %}
-                        <p class="suggestion-location">{{ suggestion.completeprofile.campus }}</p>
+                        <p class="suggestion-location">{{ suggestion.completeprofile.campus }} Campus</p>
                         {% else %}
-                        <p class="suggestion-location">KCA University</p>
+                        <p class="suggestion-location">Town Campus</p>
                         {% endif %}
                     </div>
                     <button class="suggestion-follow-btn" onclick="followUser('{{ suggestion.id }}')">
