@@ -10,7 +10,7 @@
     <title>Home page</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-       /* ============================= */
+        /* ============================= */
 /* COMMENT OVERLAY STYLING */
 /* ============================= */
 
@@ -217,9 +217,8 @@
     <div class="main-container">
         <!-- LEFT SIDEBAR -->
         <aside id="sidebar-container">
-            <!-- PROFILE SECTION -->
             <div class="sidebar-profile">
-                {% if complete_profile  and complete_profile.profile_picture %}
+                {% if complete_profile and complete_profile.profile_picture %}
                 <img src="{{ complete_profile.profile_picture.url }}" alt="Profile Picture" class="sidebar-profile-img">
                 {% else %}
                 <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profile Picture" class="sidebar-profile-img">
@@ -243,7 +242,6 @@
                 </div>
             </div>
 
-            <!-- NAVIGATION LINKS -->
             <nav class="sidebar-navigation">
                 <ul class="sidebar-nav-list">
                     <li><a href="{% url 'home' %}" class="sidebar-nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
@@ -253,7 +251,7 @@
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-book"></i> Resources</a></li>
                     <li><a href="{% url 'profile' %}" class="sidebar-nav-link"><i class="fas fa-user"></i> My Profile</a></li>
-                     <li>
+                    <li>
                         <form method="POST" action="{% url 'logout' %}" style="display: inline;">
                             {% csrf_token %}
                             <button type="submit" class="sidebar-nav-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
@@ -264,7 +262,6 @@
                 </ul>
             </nav>
 
-            <!-- CONNECTIONS -->
             <div class="sidebar-connections">
                 <h4 class="sidebar-section-title">Connections</h4>
                 <div class="sidebar-connection-item">
@@ -284,7 +281,6 @@
 
         <!-- MIDDLE FEED SECTION -->
         <main id="middle-feed-container">
-            <!-- Search Bar -->
             <div class="feed-search-container">
                 <div class="feed-search-box">
                     <i class="fas fa-search"></i>
@@ -295,10 +291,9 @@
                 </button>
             </div>
 
-            <!-- Create Post Box -->
             <div class="create-post-container">
                 <div class="create-post-header">
-                    {% if complete_profile  and complete_profile.profile_picture %}
+                    {% if complete_profile and complete_profile.profile_picture %}
                     <img src="{{ complete_profile.profile_picture.url }}" alt="User" class="create-post-user-img">
                     {% else %}
                     <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="create-post-user-img">
@@ -307,74 +302,56 @@
                 </div>
                 <div class="create-post-options">
                     <button class="post-option-btn">
-                        <i class="fas fa-image" style="color: #45bd62;"></i> Photo/Video
+                        <i class="fas fa-image"></i> Photo/Video
                     </button>
                     <button class="post-option-btn">
-                        <i class="fas fa-calendar-alt" style="color: #f7b928;"></i> Event
+                        <i class="fas fa-calendar-alt"></i> Event
                     </button>
                     <button class="post-option-btn">
-                        <i class="fas fa-poll" style="color: #f5533d;"></i> Poll
+                        <i class="fas fa-poll"></i> Poll
                     </button>
                     <button class="post-publish-btn">Publish</button>
                 </div>
             </div>
 
-            <!-- Create Post Modal -->
             <div class="simple-post-modal" id="simplePostModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
                 <div class="simple-modal-content" style="background: white; width: 500px; max-width: 90%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
                     <div class="simple-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #e4e6eb;">
-                        <h3 style="margin: 0; font-size: 18px; color: #1c1e21; font-weight: 600;">Create Post</h3>
-                        <button type="button" class="simple-close-modal" id="simpleCloseModal" style="background: none; border: none; font-size: 24px; color: #65676b; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background-color 0.2s;">&times;</button>
+                        <h3 style="margin: 0; font-size: 18px;">Create Post</h3>
+                        <button type="button" class="simple-close-modal" id="simpleCloseModal" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
                     </div>
                     
                     <div class="simple-modal-body" style="padding: 20px;">
                         <div class="simple-post-author" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-                            {% if complete_profile  and complete_profile.profile_picture %}
-                            <img src="{{ complete_profile.profile_picture.url }}" alt="User" class="simple-author-avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                            {% if complete_profile and complete_profile.profile_picture %}
+                            <img src="{{ complete_profile.profile_picture.url }}" alt="User" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                             {% else %}
-                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="simple-author-avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                             {% endif %}
                             <div>
-                                <h4 style="margin: 0; font-size: 15px; color: #1c1e21;">{{user.first_name}} {{user.last_name}}</h4>
-                                <p style="margin: 2px 0 0 0; font-size: 13px; color: #65676b;">{{user.username}}</p>
+                                <h4 style="margin: 0;">{{user.first_name}} {{user.last_name}}</h4>
+                                <p style="margin: 2px 0 0; font-size: 13px;">{{user.username}}</p>
                             </div>
                         </div>
                         
                         <form id="simplePostForm" method="post" action="{% url 'create_post' %}" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <textarea 
-                                class="simple-post-caption" 
-                                id="simplePostCaption"
-                                name="caption"
-                                placeholder="What's on your mind, {{user.username}}?"
-                                rows="4"
-                                style="width: 100%; border: none; resize: none; font-size: 16px; font-family: inherit; color: #1c1e21; margin-bottom: 20px; padding: 0; line-height: 1.5;"
-                            ></textarea>
+                            <textarea name="caption" placeholder="What's on your mind?" rows="4" style="width: 100%; border: none; resize: none; margin-bottom: 20px;"></textarea>
                             
-                            <div class="simple-media-upload" style="margin-bottom: 20px;">
-                                <label for="simpleImageUpload" class="simple-upload-label" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #f0f2f5; border-radius: 8px; cursor: pointer; transition: background-color 0.2s;">
-                                    <i class="fas fa-image" style="color: #45bd62; font-size: 18px;"></i>
-                                    <span style="color: #1c1e21; font-size: 14px; font-weight: 500;">Add Photo/Video</span>
+                            <div style="margin-bottom: 20px;">
+                                <label for="simpleImageUpload" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #f0f2f5; border-radius: 8px; cursor: pointer;">
+                                    <i class="fas fa-image"></i>
+                                    <span>Add Photo/Video</span>
                                 </label>
-                                <input 
-                                    type="file" 
-                                    id="simpleImageUpload" 
-                                    name="media"
-                                    accept="image/*,video/*"
-                                    style="display: none;"
-                                >
-                                <div class="simple-media-preview" id="simpleMediaPreview"></div>
+                                <input type="file" id="simpleImageUpload" name="media" accept="image/*,video/*" style="display: none;">
                             </div>
                             
-                            <button type="submit" class="simple-post-submit-btn" id="simpleSubmitPost" style="width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s;">
-                                Post
-                            </button>
+                            <button type="submit" style="width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">Post</button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <!-- Stories Section -->
             <div class="stories-container">
                 <h3 class="stories-title">Stories</h3>
                 <div class="stories-scroll">
@@ -421,7 +398,7 @@
                         {% endif %}
                         <div class="post-user-info">
                             <h4 class="post-username">{{post.user.first_name}} {{post.user.last_name}}</h4>
-                            <p class="post-time">@{{post.user.username}} · 2 hours ago</p>
+                            <p class="post-time">@{{post.user.username}} · {{ post.created_at|timesince }} ago</p>
                         </div>
 
                         <div class="post-options-container">
@@ -440,97 +417,13 @@
                     <!-- Post Content -->
                     <div class="post-content">
                         <p class="post-text">{{post.caption}}</p>
-
-                        <!-- COMMENTS SECTION - Appears here with slide animation -->
-                        <div class="post-comments-section" id="comments-{{ post.id }}">
-                            <div class="comments-header">
-                                <h4>Comments</h4>
-                                <button class="close-post-comments" onclick="closeComments('{{ post.id }}')">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                            
-                            <div class="post-comments-list">
-                                <!-- Comment 1 -->
-                                <div class="post-comment-item">
-                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="post-comment-avatar">
-                                    <div class="post-comment-content">
-                                        <div class="post-comment-header">
-                                            <span class="post-comment-username">Mike Peters</span>
-                                            <span class="post-comment-time">5h</span>
-                                        </div>
-                                        <p class="post-comment-text">Great photo! What camera did you use?</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- Comment 2 -->
-                                <div class="post-comment-item">
-                                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" class="post-comment-avatar">
-                                    <div class="post-comment-content">
-                                        <div class="post-comment-header">
-                                            <span class="post-comment-username">Emily Chen</span>
-                                            <span class="post-comment-time">1d</span>
-                                        </div>
-                                        <p class="post-comment-text">Adding this to my bucket list! 🎉</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- Comment 3 -->
-                                <div class="post-comment-item">
-                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="post-comment-avatar">
-                                    <div class="post-comment-content">
-                                        <div class="post-comment-header">
-                                            <span class="post-comment-username">John Doe</span>
-                                            <span class="post-comment-time">30m</span>
-                                        </div>
-                                        <p class="post-comment-text">@emily Same here! Let me know if you want to plan a trip together!</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- Comment 4 -->
-                                <div class="post-comment-item">
-                                    <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="User" class="post-comment-avatar">
-                                    <div class="post-comment-content">
-                                        <div class="post-comment-header">
-                                            <span class="post-comment-username">Jessica Williams</span>
-                                            <span class="post-comment-time">3h</span>
-                                        </div>
-                                        <p class="post-comment-text">Beautiful shot! The colors are amazing.</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- Comment 5 -->
-                                <div class="post-comment-item">
-                                    <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="User" class="post-comment-avatar">
-                                    <div class="post-comment-content">
-                                        <div class="post-comment-header">
-                                            <span class="post-comment-username">Alex Thompson</span>
-                                            <span class="post-comment-time">6h</span>
-                                        </div>
-                                        <p class="post-comment-text">Where was this taken? I'd love to visit!</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Comment Input -->
-                            <div class="post-comment-input-container">
-                                <div class="post-comment-input-wrapper">
-                                    {% if complete_profile and complete_profile.profile_picture %}
-                                    <img src="{{ complete_profile.profile_picture.url }}" alt="You" class="post-comment-input-avatar">
-                                    {% else %}
-                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="You" class="post-comment-input-avatar">
-                                    {% endif %}
-                                    <input type="text" placeholder="Write a comment..." class="post-comment-input-field">
-                                    <button class="post-comment-post-btn"><i class="fas fa-paper-plane"></i></button>
-                                </div>
-                            </div>
-                        </div>
-
+                        
                         {% if post.media %}
                         <div class="post-image">
                             <img src="{{post.media.url}}" alt="Post image">
                         </div>
                         {% endif %}
+                        
                         <div class="post-tags">
                             <span class="post-tag">#japan</span>
                             <span class="post-tag">#abcdesignhome</span>
@@ -546,7 +439,7 @@
                         </div>
                         <div class="post-stat">
                             <i class="far fa-comment"></i>
-                            <span>2.19k</span>
+                            <span>{{ post.comments.count }}</span>
                         </div>
                         <div class="post-stat">
                             <i class="far fa-share-square"></i>
@@ -566,6 +459,61 @@
                             <i class="far fa-share-square"></i> Share
                         </button>
                     </div>
+
+                    <!-- COMMENTS SECTION - Now properly placed outside post-content -->
+                    <div class="post-comments-section" id="comments-{{ post.id }}">
+                        <div class="comments-header">
+                            <h4>Comments <span style="font-size: 13px; color: #999;">({{ post.comments.count }})</span></h4>
+                            <button class="close-post-comments" onclick="closeComments('{{ post.id }}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="post-comments-list">
+                            {% for comment in post.comments.all %}
+                            <div class="post-comment-item">
+                                {% if comment.user.completeprofile and comment.user.completeprofile.profile_picture %}
+                                <img src="{{ comment.user.completeprofile.profile_picture.url }}" alt="{{ comment.user.username }}" class="post-comment-avatar">
+                                {% else %}
+                                <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="{{ comment.user.username }}" class="post-comment-avatar">
+                                {% endif %}
+                                
+                                <div class="post-comment-content">
+                                    <div class="post-comment-header">
+                                        <span class="post-comment-username">{{ comment.user.first_name }} {{ comment.user.last_name }}</span>
+                                        <span class="post-comment-time">{{ comment.created_at|timesince }} ago</span>
+                                    </div>
+                                    <p class="post-comment-text">{{ comment.comment }}</p>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div style="text-align: center; padding: 30px 20px; color: #999;">
+                                <i class="far fa-comment-dots" style="font-size: 32px; margin-bottom: 10px;"></i>
+                                <p>No comments yet. Be the first to comment!</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Comment Input Form -->
+                        <form method="POST" action="{% url 'add_comment' post.id %}">
+                            {% csrf_token %}
+                            <div class="post-comment-input-container">
+                                <div class="post-comment-input-wrapper">
+                                    {% if complete_profile and complete_profile.profile_picture %}
+                                    <img src="{{ complete_profile.profile_picture.url }}" alt="You" class="post-comment-input-avatar">
+                                    {% else %}
+                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="You" class="post-comment-input-avatar">
+                                    {% endif %}
+                                    
+                                    <input type="text" name="comment" placeholder="Write a comment..." class="post-comment-input-field" required>
+                                    
+                                    <button type="submit" class="post-comment-post-btn">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 {% endfor %}                
             </div>
@@ -573,7 +521,6 @@
 
         <!-- RIGHT SIDEBAR -->
         <aside id="right-sidebar-container">
-            <!-- REQUESTS SECTION -->
             <div class="right-requests-section">
                 <h3 class="right-section-title">Requests</h3>
                 
@@ -604,7 +551,6 @@
                 </div>
             </div>
 
-            <!-- SUGGESTIONS SECTION -->
             <div class="right-suggestions-section">
                 <h3 class="right-section-title">Suggestion for you</h3>
                 
@@ -632,26 +578,9 @@
                     </div>
                 </div>
                 
-                <div class="suggestion-item">
-                    <img src="https://randomuser.me/api/portraits/women/37.jpg" alt="Tania" class="suggestion-img">
-                    <div class="suggestion-info">
-                        <h4 class="suggestion-name">Tania Bnejo</h4>
-                        <p class="suggestion-location">Washington, DC</p>
-                    </div>
-                </div>
-                
-                <div class="suggestion-item">
-                    <img src="https://randomuser.me/api/portraits/women/38.jpg" alt="Rachel" class="suggestion-img">
-                    <div class="suggestion-info">
-                        <h4 class="suggestion-name">Rachel Taylor</h4>
-                        <p class="suggestion-location">New York, USA</p>
-                    </div>
-                </div>
-                
                 <a href="#" class="view-all-link">[View All]</a>
             </div>
 
-            <!-- MESSAGES SECTION -->
             <div class="right-messages-section">
                 <h3 class="right-section-title">Messages</h3>
                 
@@ -663,7 +592,6 @@
                             <span class="message-time">2 min ago</span>
                         </div>
                         <p class="message-preview">Hey! Are we still meeting for study group?</p>
-                        <span class="unread-badge">2</span>
                     </div>
                 </div>
                 
@@ -686,32 +614,18 @@
                             <span class="message-time">1 hour ago</span>
                         </div>
                         <p class="message-preview">Can you send me the project files?</p>
-                        <span class="unread-badge">1</span>
-                    </div>
-                </div>
-                
-                <div class="message-item">
-                    <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="David" class="message-user-img">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-user-name">David Wilson</span>
-                            <span class="message-time">3 hours ago</span>
-                        </div>
-                        <p class="message-preview">Meeting moved to 2 PM</p>
                     </div>
                 </div>
                 
                 <a href="#" class="view-all-link">[View All Messages]</a>
             </div>
 
-            <!-- FOLLOWER COUNT -->
             <div class="follower-count-section">
                 <div class="follower-number">147.75K</div>
                 <div class="follower-label">Follower</div>
                 <p class="follower-note">Active now on your profile</p>
             </div>
 
-            <!-- ABOUT LINKS -->
             <div class="about-links-section">
                 <a href="#" class="about-link">About</a>
                 <a href="#" class="about-link">Accessibility</a>
@@ -724,46 +638,37 @@
     </div>
 
     <script>
-        // Get elements
         const createPostBtn = document.querySelector('.feed-create-post-btn');
         const simplePostModal = document.getElementById('simplePostModal');
         const simpleCloseModal = document.getElementById('simpleCloseModal');
         
-        // Show modal when Create Post button is clicked
         createPostBtn.addEventListener('click', function() {
             simplePostModal.style.display = 'flex';
         });
         
-        // Hide modal when X button is clicked
         simpleCloseModal.addEventListener('click', function() {
             simplePostModal.style.display = 'none';
         });
         
-        // Hide modal when clicking outside
         simplePostModal.addEventListener('click', function(e) {
             if (e.target === simplePostModal) {
                 simplePostModal.style.display = 'none';
             }
         });
         
-        // Hide modal with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && simplePostModal.style.display === 'flex') {
                 simplePostModal.style.display = 'none';
             }
         });
 
-        // Three-dot dropdown functionality
         document.addEventListener('DOMContentLoaded', function() {
             const moreButtons = document.querySelectorAll('.post-more-btn');
             
             moreButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    
-                    const dropdown = this.closest('.post-options-container')
-                                     .querySelector('.post-dropdown-menu');
-                    
+                    const dropdown = this.closest('.post-options-container').querySelector('.post-dropdown-menu');
                     dropdown.classList.toggle('show');
                 });
             });
@@ -781,18 +686,15 @@
             });
         });
 
-        // Toggle comments for a specific post with slide animation
         function toggleComments(postId) {
             const commentsSection = document.getElementById(`comments-${postId}`);
             
-            // Close any other open comments first
             document.querySelectorAll('.post-comments-section.active').forEach(section => {
                 if (section.id !== `comments-${postId}`) {
                     section.classList.remove('active');
                 }
             });
             
-            // Toggle current comments with animation
             if (commentsSection.classList.contains('active')) {
                 commentsSection.classList.remove('active');
             } else {
@@ -800,7 +702,6 @@
             }
         }
         
-        // Close comments for a specific post
         function closeComments(postId) {
             const commentsSection = document.getElementById(`comments-${postId}`);
             commentsSection.classList.remove('active');
