@@ -224,7 +224,107 @@
 .post-comment-time:hover {
     color: #666;
 }
+.suggestion-follow-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 25px;  /* Rounded corners */
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
 
+.suggestion-follow-btn i {
+    font-size: 12px;
+}
+
+.suggestion-follow-btn:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b3fa0 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.suggestion-follow-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+.suggestion-initials {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+.sidebar-profile-initials {
+    width: 80px;  /* Match your sidebar-profile-img width */
+    height: 80px; /* Match your sidebar-profile-img height */
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 auto 10px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+.comment-avatar-initials {
+    width: 35px;  /* Match your post-comment-avatar width */
+    height: 35px; /* Match your post-comment-avatar height */
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    box-shadow: 0 2px 5px rgba(102, 126, 234, 0.2);
+}
+.comment-input-initials {
+    width: 32px;  /* Match your post-comment-input-avatar width */
+    height: 32px; /* Match your post-comment-input-avatar height */
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+.create-post-initials {
+    width: 40px;  /* Match your create-post-user-img width */
+    height: 40px; /* Match your create-post-user-img height */
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    box-shadow: 0 2px 5px rgba(102, 126, 234, 0.2);
+}
 
     </style>
 </head>
@@ -236,7 +336,9 @@
                 {% if complete_profile and complete_profile.profile_picture %}
                 <img src="{{ complete_profile.profile_picture.url }}" alt="Profile Picture" class="sidebar-profile-img">
                 {% else %}
-                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profile Picture" class="sidebar-profile-img">
+                <div class="sidebar-profile-initials" style="background-color: #667eea;">
+                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                </div>
                 {% endif %}
                 <h3 class="sidebar-username">{{user.first_name}} {{user.last_name}}</h3>
                 <p class="sidebar-role">@{{user.username}}</p>
@@ -311,7 +413,9 @@
                     {% if complete_profile and complete_profile.profile_picture %}
                     <img src="{{ complete_profile.profile_picture.url }}" alt="User" class="create-post-user-img">
                     {% else %}
-                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="create-post-user-img">
+                    <div class="create-post-initials" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                    </div>
                     {% endif %}
                     <input type="text" placeholder="What's on your mind, {{user.username}}?" class="create-post-input">
                 </div>
@@ -439,11 +543,6 @@
                         </div>
                         {% endif %}
                         
-                        <div class="post-tags">
-                            <span class="post-tag">#japan</span>
-                            <span class="post-tag">#abcdesignhome</span>
-                            <span class="post-tag">#bongladash</span>
-                        </div>
                     </div>
                     
                     <!-- Post Stats -->
@@ -490,7 +589,9 @@
                                 {% if comment.user.completeprofile and comment.user.completeprofile.profile_picture %}
                                 <img src="{{ comment.user.completeprofile.profile_picture.url }}" alt="{{ comment.user.username }}" class="post-comment-avatar">
                                 {% else %}
-                                <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="{{ comment.user.username }}" class="post-comment-avatar">
+                                <div class="comment-avatar-initials" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    {{ comment.user.first_name|first|upper }}{{ comment.user.last_name|first|upper }}
+                                </div>
                                 {% endif %}
                                 
                                 <div class="post-comment-content">
@@ -518,7 +619,9 @@
                                     {% if complete_profile and complete_profile.profile_picture %}
                                     <img src="{{ complete_profile.profile_picture.url }}" alt="You" class="post-comment-input-avatar">
                                     {% else %}
-                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="You" class="post-comment-input-avatar">
+                                    <div class="comment-input-initials" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                                    </div>
                                     {% endif %}
                                     
                                     <input type="text" name="comment" placeholder="Write a comment..." class="post-comment-input-field" required>
@@ -570,32 +673,37 @@
             <div class="right-suggestions-section">
                 <h3 class="right-section-title">Suggestion for you</h3>
                 
+                {% for suggestion in suggested_users %}
                 <div class="suggestion-item">
-                    <img src="https://randomuser.me/api/portraits/men/34.jpg" alt="Rand" class="suggestion-img">
+                    {% if suggestion.completeprofile and suggestion.completeprofile.profile_picture %}
+                    <img src="{{ suggestion.completeprofile.profile_picture.url }}" alt="{{ suggestion.username }}" class="suggestion-img">
+                    {% else %}
+                      <div class="suggestion-initials" style="background-color: #667eea;">
+                             {{ suggestion.first_name|first|upper }}{{ suggestion.last_name|first|upper }}
+                      </div>
+                    {% endif %}
+
                     <div class="suggestion-info">
-                        <h4 class="suggestion-name">Rand Paul</h4>
-                        <p class="suggestion-location">New York City</p>
+                        <h4 class="suggestion-name">{{ suggestion.first_name }} {{ suggestion.last_name }}</h4>
+                        {% if suggestion.completeprofile %}
+                        <p class="suggestion-location">{{ suggestion.completeprofile.campus }}</p>
+                        {% else %}
+                        <p class="suggestion-location">KCA University</p>
+                        {% endif %}
                     </div>
+                    <button class="suggestion-follow-btn" onclick="followUser('{{ suggestion.id }}')">
+                        <i class="fas fa-user-plus"></i> Follow
+                    </button>
                 </div>
+                {% empty %}
+                <p style="text-align: center; color: #999; padding: 20px;">No suggestions available</p>
+                {% endfor %}
                 
-                <div class="suggestion-item">
-                    <img src="https://randomuser.me/api/portraits/men/35.jpg" alt="Johu" class="suggestion-img">
-                    <div class="suggestion-info">
-                        <h4 class="suggestion-name">Johu Corryn</h4>
-                        <p class="suggestion-location">Bakersfield, CA</p>
-                    </div>
-                </div>
-                
-                <div class="suggestion-item">
-                    <img src="https://randomuser.me/api/portraits/women/36.jpg" alt="Quiin" class="suggestion-img">
-                    <div class="suggestion-info">
-                        <h4 class="suggestion-name">Quiin Home</h4>
-                        <p class="suggestion-location">South Carolina</p>
-                    </div>
-                </div>
-                
-                <a href="#" class="view-all-link">[View All]</a>
+                {% if all_suggestions.count > 3 %}
+                <a href="{% url 'suggestions' %}" class="view-all-link">[View All ({{ all_suggestions.count }})]</a>
+                {% endif %}
             </div>
+
 
             <div class="right-messages-section">
                 <h3 class="right-section-title">Messages</h3>
