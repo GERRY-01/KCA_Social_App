@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .models import Profile, CompleteProfile, Post
+from .models import Profile, CompleteProfile, Post, Comments
+
 
 # Create your views here.
 @login_required
@@ -148,3 +149,21 @@ def profile(request):
         'user': request.user ,
         'posts': posts
     })
+
+@login_required
+def add_comment(request, post_id):
+    if request.method == 'POST':
+        post = get_object_or_404(Post, id=post_id)
+        comment_text = request.POST.get('comment')
+        
+        if comment_text:  # Only create comment if not empty
+            Comments.objects.create(
+                post=post,
+                user=request.user,
+                comment=comment_text
+            )
+        
+        # Redirect back to the referring page (where the comment came from)
+        return redirect(request.META.get('HTTP_REFERER', 'home'))
+    
+    return redirect('home')
