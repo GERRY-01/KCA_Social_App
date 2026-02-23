@@ -211,6 +211,21 @@
 .post-overlay-blur.active {
     display: block;
 }
+.post-comment-time {
+    font-size: 11px;           /* Small font size */
+    color: #999;               /* Light gray color */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;  /* Modern font stack */
+    font-weight: 400;          /* Normal weight */
+    letter-spacing: 0.3px;      /* Slight letter spacing for better readability */
+    text-transform: lowercase;  /* Makes "ago" lowercase */
+}
+
+/* Optional: If you want it even lighter on hover */
+.post-comment-time:hover {
+    color: #666;
+}
+
+
     </style>
 </head>
 <body>
@@ -481,7 +496,8 @@
                                 <div class="post-comment-content">
                                     <div class="post-comment-header">
                                         <span class="post-comment-username">{{ comment.user.first_name }} {{ comment.user.last_name }}</span>
-                                        <span class="post-comment-time">{{ comment.created_at|timesince }} ago</span>
+                                        <!-- <span class="post-comment-time">{{ comment.created_at|timesince }} ago</span> -->
+                                        <span class="post-comment-time" data-created="{{ comment.created_at|date:'c' }}">{{ comment.created_at|timesince }} ago</span>
                                     </div>
                                     <p class="post-comment-text">{{ comment.comment }}</p>
                                 </div>
@@ -706,6 +722,40 @@
             const commentsSection = document.getElementById(`comments-${postId}`);
             commentsSection.classList.remove('active');
         }
+
+        // Update all comment timestamps every minute
+        function updateTimestamps() {
+            document.querySelectorAll('.post-comment-time').forEach(function(element) {
+                const created = element.getAttribute('data-created');
+                if (created) {
+                    const date = new Date(created);
+                    const now = new Date();
+                    const diffInSeconds = Math.floor((now - date) / 1000);
+                    
+                    let timeAgo;
+                    if (diffInSeconds < 60) {
+                        timeAgo = 'just now';
+                    } else if (diffInSeconds < 3600) {
+                        const minutes = Math.floor(diffInSeconds / 60);
+                        timeAgo = minutes + ' minute' + (minutes > 1 ? 's' : '') + ' ago';
+                    } else if (diffInSeconds < 86400) {
+                        const hours = Math.floor(diffInSeconds / 3600);
+                        timeAgo = hours + ' hour' + (hours > 1 ? 's' : '') + ' ago';
+                    } else {
+                        const days = Math.floor(diffInSeconds / 86400);
+                        timeAgo = days + ' day' + (days > 1 ? 's' : '') + ' ago';
+                    }
+                    
+                    element.textContent = timeAgo;
+                }
+            });
+        }
+
+        // Run every minute
+        setInterval(updateTimestamps, 60000);
+
+        // Run once on page load
+        document.addEventListener('DOMContentLoaded', updateTimestamps);
     </script>
 </body>
 </html>
