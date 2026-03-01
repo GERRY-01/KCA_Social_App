@@ -1148,4 +1148,93 @@
             this.style.display = 'none';
         }
     });
+
+
+
+// Filter resources based on search, category, and file type
+function filterResources() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const categoryFilter = document.getElementById('categoryFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    
+    const resourceCards = document.querySelectorAll('.resource-card');
+    let visibleCount = 0;
+    
+    resourceCards.forEach(card => {
+        const title = card.querySelector('.resource-title').textContent.toLowerCase();
+        const description = card.querySelector('.resource-description').textContent.toLowerCase();
+        const category = card.dataset.category;
+        const fileType = card.dataset.type;
+        
+        // Check if matches search
+        const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+        
+        // Check if matches category (if 'all' is selected, show all)
+        const matchesCategory = categoryFilter === 'all' || category === categoryFilter;
+        
+        // Check if matches file type (if 'all' is selected, show all)
+        const matchesType = typeFilter === 'all' || fileType === typeFilter;
+        
+        // Show card if all conditions match
+        if (matchesSearch && matchesCategory && matchesType) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Handle no results message
+    const resourcesGrid = document.getElementById('resourcesGrid');
+    let noResultsMessage = document.getElementById('noResultsMessage');
+    
+    // Remove existing message if it exists
+    if (noResultsMessage) {
+        noResultsMessage.remove();
+    }
+    
+    // Add message only if no resources are visible
+    if (visibleCount === 0) {
+        const message = document.createElement('div');
+        message.id = 'noResultsMessage';
+        message.style.gridColumn = '1/-1';
+        message.style.textAlign = 'center';
+        message.style.padding = '3rem';
+        message.style.background = 'white';
+        message.style.borderRadius = '15px';
+        message.innerHTML = `
+            <i class="fas fa-search" style="font-size: 3rem; color: #cbd5e0; margin-bottom: 1rem;"></i>
+            <h3 style="color: #2d3748; margin-bottom: 0.5rem;">No Resources Found</h3>
+            <p style="color: #718096;">Try adjusting your search or filter criteria</p>
+            <button onclick="resetFilters()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                Clear Filters
+            </button>
+        `;
+        resourcesGrid.appendChild(message);
+    }
+}
+
+// Reset all filters
+function resetFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = 'all';
+    document.getElementById('typeFilter').value = 'all';
+    filterResources();
+}
+
+// Add debounce to search for better performance
+let searchTimeout;
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(filterResources, 300);
+});
+
+// Add event listeners for dropdown changes
+document.getElementById('categoryFilter').addEventListener('change', filterResources);
+document.getElementById('typeFilter').addEventListener('change', filterResources);
+
+// Run filter on page load in case there are no resources
+document.addEventListener('DOMContentLoaded', function() {
+    filterResources();
+});
 </script>
