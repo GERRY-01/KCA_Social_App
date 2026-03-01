@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - KCAU Social</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Resources Page Specific Styles */
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #48bb78;
+            --warning-color: #fbbf24;
+            --danger-color: #f56565;
+            --dark-bg: #1a202c;
+            --light-bg: #f7fafc;
+            --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        /* Main Layout */
+        .dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        /* Sidebar Styles (your original) */
+        #sidebar-container {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-profile {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-profile-initials {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #667eea;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .sidebar-username {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-role {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .sidebar-stat {
+            text-align: center;
+        }
+
+        .sidebar-stat-number {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .sidebar-stat-label {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .sidebar-navigation {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-nav-list {
+            list-style: none;
+        }
+
+        .sidebar-nav-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #4a5568;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            gap: 0.75rem;
+        }
+
+        .sidebar-nav-link:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .sidebar-nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .sidebar-nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-connections {
+            margin-top: auto;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #a0aec0;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-connection-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 10px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .sidebar-connection-item:hover {
+            background: #f7fafc;
+        }
+
+        .sidebar-connection-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .sidebar-connection-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        /* Main Content Area */
+        .resources-main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .resources-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .resources-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 2rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-title p {
+            color: #718096;
+            font-size: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            border: 2px solid var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Search and Filter Bar */
+        .search-filter-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 2;
+            min-width: 300px;
+            display: flex;
+            align-items: center;
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+        }
+
+        .search-box i {
+            color: #a0aec0;
+            margin-right: 0.5rem;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            padding: 0.5rem 0;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+        }
+
+        .filter-options {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-select {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            color: #4a5568;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .category-card.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .category-count {
+            font-size: 0.8rem;
+            color: #a0aec0;
+            margin-top: 0.25rem;
+        }
+
+        .category-card.active .category-count {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Resources Grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .resource-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .resource-thumbnail {
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .resource-thumbnail.pdf {
+            background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+        }
+
+        .resource-thumbnail.word {
+            background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
+        }
+
+        .resource-thumbnail.excel {
+            background: linear-gradient(135deg, #48bb78 0%, #2f855a 100%);
+        }
+
+        .resource-thumbnail.video {
+            background: linear-gradient(135deg, #ed8936 0%, #c05621 100%);
+        }
+
+        .resource-type-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .resource-content {
+            padding: 1.5rem;
+        }
+
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .resource-category {
+            background: #e9eef9;
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .resource-date {
+            color: #a0aec0;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .resource-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .resource-description {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .resource-author {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .author-info {
+            font-size: 0.9rem;
+        }
+
+        .author-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .author-role {
+            color: #a0aec0;
+            font-size: 0.75rem;
+        }
+
+        .resource-stats {
+            display: flex;
+            gap: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .stat-item i {
+            color: var(--primary-color);
+        }
+
+        .resource-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .download-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .save-btn {
+            background: #f7fafc;
+            color: #4a5568;
+        }
+
+        .save-btn:hover {
+            background: #e2e8f0;
+        }
+
+        /* Upload Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            color: #2d3748;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #a0aec0;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .file-upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background: #f7fafc;
+        }
+
+        .file-upload-area i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-area p {
+            color: #718096;
+        }
+
+        .file-info {
+            font-size: 0.9rem;
+            color: #48bb78;
+            margin-top: 0.5rem;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            color: #4a5568;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .page-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 99;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            #sidebar-container {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            #sidebar-container.active {
+                transform: translateX(0);
+            }
+
+            .resources-main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- LEFT SIDEBAR - Your original sidebar -->
+        <aside id="sidebar-container">
+            <div class="sidebar-profile">
+                <!-- Replace with your dynamic content later -->
+                <div class="sidebar-profile-initials" style="background-color: #667eea;">
+                    JD
+                </div>
+                <h3 class="sidebar-username">John Doe</h3>
+                <p class="sidebar-role">@johndoe</p>
+
+                <div class="sidebar-stats">
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">24</span>
+                        <span class="sidebar-stat-label">Posts</span>
+                    </div>
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">180</span>
+                        <span class="sidebar-stat-label">Followers</span>
+                    </div>
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">150</span>
+                        <span class="sidebar-stat-label">Following</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-navigation">
+                <ul class="sidebar-nav-list">
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-users"></i> Clubs & Communities</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
+                    <li><a href="#" class="sidebar-nav-link active"><i class="fas fa-book"></i> Resources</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li>
+                        <button class="sidebar-nav-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-connections">
+                <h4 class="sidebar-section-title">Connections</h4>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/women/65.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Alice Mwangi</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/men/66.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Brian Otieno</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/women/67.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Faith Njeri</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile menu toggle -->
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Main Content Area -->
+        <main class="resources-main">
+            <div class="resources-container">
+                <!-- Header Section -->
+                <div class="resources-header">
+                    <div class="header-title">
+                        <h1>📚 Resource Hub</h1>
+                        <p>Share, discover, and collaborate with study materials and resources</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-outline" onclick="filterByMyUploads()">
+                            <i class="fas fa-cloud-upload-alt"></i> My Uploads
+                        </button>
+                        <button class="btn-primary" onclick="openUploadModal()">
+                            <i class="fas fa-plus"></i> Share Resource
+                        </button>
+                    </div>
+                </div>
+
+
+
+<!-- Share Resource Modal Container -->
+<div id="shareResourceContainer" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+    
+    <!-- Modal Content -->
+    <div style="background: white; border-radius: 20px; padding: 2rem; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; animation: slideIn 0.3s ease;">
+        
+        <!-- Header with X button -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid #e2e8f0;">
+            <h2 style="font-size: 1.5rem; color: #2d3748; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-cloud-upload-alt" style="color: #667eea;"></i> Share a Resource
+            </h2>
+            <button onclick="document.getElementById('shareResourceContainer').style.display = 'none'" 
+                    style="background: none; border: none; font-size: 2rem; cursor: pointer; color: #a0aec0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                &times;
+            </button>
+        </div>
+        
+        <!-- Form -->
+            <form method="POST" enctype="multipart/form-data" action="" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                {% csrf_token %}
+                
+                <!-- Title - Required -->
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label style="font-weight: 600; color: #4a5568; font-size: 0.95rem;">
+                        Title <span style="color: #f56565;">*</span>
+                    </label>
+                    <input type="text" name="title" placeholder="e.g., Introduction to Database Systems Notes" 
+                        style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;" required>
+                </div>
+
+                <!-- Description - Required -->
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label style="font-weight: 600; color: #4a5568; font-size: 0.95rem;">
+                        Description <span style="color: #f56565;">*</span>
+                    </label>
+                    <textarea name="description" rows="4" placeholder="Describe what this resource contains..." 
+                            style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem; font-family: inherit;" required></textarea>
+                </div>
+
+                <!-- Category Dropdown - Required -->
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label style="font-weight: 600; color: #4a5568; font-size: 0.95rem;">
+                        Category <span style="color: #f56565;">*</span>
+                    </label>
+                    <select name="category" style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;" required>
+                        <option value="">Select Category</option>
+                        <option value="notes">📝 Notes</option>
+                        <option value="past-papers">📄 Past Papers</option>
+                        <option value="textbooks">📚 Textbooks</option>
+                        <option value="tutorials">🎥 Video Tutorials</option>
+                        <option value="projects">💻 Projects</option>
+                        <option value="research">🔬 Research Papers</option>
+                    </select>
+                </div>
+
+                <!-- File Type Dropdown - Required -->
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label style="font-weight: 600; color: #4a5568; font-size: 0.95rem;">
+                        File Type <span style="color: #f56565;">*</span>
+                    </label>
+                    <select name="file_type" id="fileTypeSelect" onchange="toggleUploadSection()" 
+                            style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;" required>
+                        <option value="">Select File Type</option>
+                        <option value="pdf">PDF</option>
+                        <option value="word">Word</option>
+                        <option value="excel">Excel</option>
+                        <option value="video">Video</option>
+                        <option value="link">Link</option>
+                        <option value="zip">Zip</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <!-- File Upload Section (hidden when link is selected) -->
+                <div id="fileUploadSection" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label style="font-weight: 600; color: #4a5568; font-size: 0.95rem;">
+                        Upload File <span style="color: #f56565;">*</span>
+                    </label>
+                    <div onclick="document.getElementById('fileInput').click()" 
+                        style="border: 2px dashed #cbd5e0; border-radius: 10px; padding: 2rem; text-align: center; cursor: pointer; background: #f7fafc;">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;"></i>
+                        <p style="color: #718096; margin: 0.25rem 0;">Click to upload or drag and drop</p>
+                        <p style="font-size: 0.8rem; color: #a0aec0;">Maximum file size: 100MB</p>
+                        <input type="file" name="file" id="fileInput" style="display: none;">
+                        <div id="fileInfo" style="font-size: 0.9rem; color: #48bb78; margin-top: 0.5rem; font-weight: 500;"></div>
+                    </div>
+                </div>
+
+                <!-- External Link Section (hidden by default, shows when link is selected) -->
+                <div id="linkSection" style="display: none; flex-direction: column; gap: 0.5rem;">
+                    <label style="font-weight: 600; color: #4a5568; font-size: 0.95rem;">
+                        External Link <span style="color: #f56565;">*</span>
+                    </label>
+                    <input type="url" name="external_link" id="externalLink" placeholder="https://example.com/resource" 
+                        style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                    <p style="font-size: 0.8rem; color: #a0aec0; margin-top: 0.25rem;">Enter the full URL including https://</p>
+                </div>
+                
+                <!-- Share Button -->
+                <button type="submit" 
+                        style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1rem; border-radius: 10px; border: none; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
+                    <i class="fas fa-share"></i> Share Resource
+                </button>
+            </form>
+            </div>
+        </div>
+
+
+
+
+
+
+                <!-- Search and Filter Bar -->
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search resources..." onkeyup="filterResources()">
+                    </div>
+                    <div class="filter-options">
+                        <select class="filter-select" id="categoryFilter" onchange="filterResources()">
+                            <option value="all">All Categories</option>
+                            <option value="notes">📝 Notes</option>
+                            <option value="past-papers">📄 Past Papers</option>
+                            <option value="textbooks">📚 Textbooks</option>
+                            <option value="tutorials">🎥 Video Tutorials</option>
+                            <option value="projects">💻 Projects</option>
+                            <option value="research">🔬 Research Papers</option>
+                        </select>
+                        <select class="filter-select" id="typeFilter" onchange="filterResources()">
+                            <option value="all">All Types</option>
+                            <option value="pdf">PDF</option>
+                            <option value="word">Word</option>
+                            <option value="excel">Excel</option>
+                            <option value="video">Video</option>
+                            <option value="link">Link</option>
+                            <option value="zip">Zip</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Categories Quick Access -->
+                <div class="categories-grid">
+                    <div class="category-card active" onclick="filterByCategory('all')">
+                        <div class="category-icon">📋</div>
+                        <div class="category-name">All Resources</div>
+                        <div class="category-count">248 items</div>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('notes')">
+                        <div class="category-icon">📝</div>
+                        <div class="category-name">Notes</div>
+                        <div class="category-count">89 items</div>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('past-papers')">
+                        <div class="category-icon">📄</div>
+                        <div class="category-name">Past Papers</div>
+                        <div class="category-count">56 items</div>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('textbooks')">
+                        <div class="category-icon">📚</div>
+                        <div class="category-name">Textbooks</div>
+                        <div class="category-count">34 items</div>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('tutorials')">
+                        <div class="category-icon">🎥</div>
+                        <div class="category-name">Tutorials</div>
+                        <div class="category-count">42 items</div>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('projects')">
+                        <div class="category-icon">💻</div>
+                        <div class="category-name">Projects</div>
+                        <div class="category-count">27 items</div>
+                    </div>
+                </div>
+
+                <!-- Resources Grid -->
+                <div class="resources-grid" id="resourcesGrid">
+                    <!-- Resource Card 1 -->
+                    <div class="resource-card" data-category="notes" data-type="pdf">
+                        <div class="resource-thumbnail pdf">
+                            <i class="fas fa-file-pdf"></i>
+                            <span class="resource-type-badge">PDF</span>
+                        </div>
+                        <div class="resource-content">
+                            <div class="resource-meta">
+                                <span class="resource-category">📝 Notes</span>
+                                <span class="resource-date"><i class="far fa-clock"></i> 2 days ago</span>
+                            </div>
+                            <h3 class="resource-title">Introduction to Database Systems - Complete Notes</h3>
+                            <p class="resource-description">Comprehensive notes covering ER diagrams, normalization, SQL queries, and transaction management. Includes practice questions.</p>
+                            
+                            <div class="resource-author">
+                                <div class="author-avatar">JD</div>
+                                <div class="author-info">
+                                    <div class="author-name">John Doe</div>
+                                    <div class="author-role">Computer Science, Year 3</div>
+                                </div>
+                            </div>
+
+                            <div class="resource-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-download"></i> 234
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-heart"></i> 45
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-comment"></i> 12
+                                </div>
+                            </div>
+
+                            <div class="resource-actions">
+                                <button class="action-btn download-btn" onclick="downloadResource(1)">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                                <button class="action-btn save-btn" onclick="saveResource(1)">
+                                    <i class="far fa-bookmark"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resource Card 2 -->
+                    <div class="resource-card" data-category="past-papers" data-type="pdf">
+                        <div class="resource-thumbnail pdf">
+                            <i class="fas fa-file-pdf"></i>
+                            <span class="resource-type-badge">PDF</span>
+                        </div>
+                        <div class="resource-content">
+                            <div class="resource-meta">
+                                <span class="resource-category">📄 Past Papers</span>
+                                <span class="resource-date"><i class="far fa-clock"></i> 1 week ago</span>
+                            </div>
+                            <h3 class="resource-title">Data Structures & Algorithms - Final Exam 2023</h3>
+                            <p class="resource-description">Complete past paper with marking scheme. Covers arrays, linked lists, trees, graphs, and sorting algorithms.</p>
+                            
+                            <div class="resource-author">
+                                <div class="author-avatar">SM</div>
+                                <div class="author-info">
+                                    <div class="author-name">Sarah Mwangi</div>
+                                    <div class="author-role">Computer Science, Year 2</div>
+                                </div>
+                            </div>
+
+                            <div class="resource-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-download"></i> 567
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-heart"></i> 89
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-comment"></i> 23
+                                </div>
+                            </div>
+
+                            <div class="resource-actions">
+                                <button class="action-btn download-btn" onclick="downloadResource(2)">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                                <button class="action-btn save-btn" onclick="saveResource(2)">
+                                    <i class="far fa-bookmark"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resource Card 3 -->
+                    <div class="resource-card" data-category="tutorials" data-type="video">
+                        <div class="resource-thumbnail video">
+                            <i class="fas fa-video"></i>
+                            <span class="resource-type-badge">Video</span>
+                        </div>
+                        <div class="resource-content">
+                            <div class="resource-meta">
+                                <span class="resource-category">🎥 Tutorials</span>
+                                <span class="resource-date"><i class="far fa-clock"></i> 3 days ago</span>
+                            </div>
+                            <h3 class="resource-title">Web Development with Django - Full Course</h3>
+                            <p class="resource-description">Complete video tutorial series on building web applications with Django. Covers models, views, templates, and deployment.</p>
+                            
+                            <div class="resource-author">
+                                <div class="author-avatar">PK</div>
+                                <div class="author-info">
+                                    <div class="author-name">Peter Kimani</div>
+                                    <div class="author-role">Software Engineering, Year 4</div>
+                                </div>
+                            </div>
+
+                            <div class="resource-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i> 892
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-thumbs-up"></i> 156
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-comment"></i> 34
+                                </div>
+                            </div>
+
+                            <div class="resource-actions">
+                                <button class="action-btn download-btn" onclick="watchVideo(3)">
+                                    <i class="fas fa-play"></i> Watch Now
+                                </button>
+                                <button class="action-btn save-btn" onclick="saveResource(3)">
+                                    <i class="far fa-bookmark"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resource Card 4 -->
+                    <div class="resource-card" data-category="projects" data-type="link">
+                        <div class="resource-thumbnail">
+                            <i class="fas fa-code"></i>
+                            <span class="resource-type-badge">GitHub</span>
+                        </div>
+                        <div class="resource-content">
+                            <div class="resource-meta">
+                                <span class="resource-category">💻 Projects</span>
+                                <span class="resource-date"><i class="far fa-clock"></i> 5 days ago</span>
+                            </div>
+                            <h3 class="resource-title">E-commerce Platform - Open Source Project</h3>
+                            <p class="resource-description">Full-stack e-commerce application built with React and Django. Features include user authentication, payment integration, and admin dashboard.</p>
+                            
+                            <div class="resource-author">
+                                <div class="author-avatar">MO</div>
+                                <div class="author-info">
+                                    <div class="author-name">Mary Odhiambo</div>
+                                    <div class="author-role">Computer Science, Year 4</div>
+                                </div>
+                            </div>
+
+                            <div class="resource-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-star"></i> 45
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-code-branch"></i> 23
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-external-link-alt"></i> 12
+                                </div>
+                            </div>
+
+                            <div class="resource-actions">
+                                <button class="action-btn download-btn" onclick="viewGithub(4)">
+                                    <i class="fab fa-github"></i> View on GitHub
+                                </button>
+                                <button class="action-btn save-btn" onclick="saveResource(4)">
+                                    <i class="far fa-bookmark"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resource Card 5 -->
+                    <div class="resource-card" data-category="textbooks" data-type="pdf">
+                        <div class="resource-thumbnail pdf">
+                            <i class="fas fa-file-pdf"></i>
+                            <span class="resource-type-badge">PDF</span>
+                        </div>
+                        <div class="resource-content">
+                            <div class="resource-meta">
+                                <span class="resource-category">📚 Textbooks</span>
+                                <span class="resource-date"><i class="far fa-clock"></i> 2 weeks ago</span>
+                            </div>
+                            <h3 class="resource-title">Computer Networks - Kurose & Ross (8th Edition)</h3>
+                            <p class="resource-description">Complete textbook covering network layers, protocols, security, and wireless networking. Includes chapter summaries and exercises.</p>
+                            
+                            <div class="resource-author">
+</body>
+<script>
+    // Function to open the container
+    function openUploadModal() {
+        document.getElementById('shareResourceContainer').style.display = 'flex';
+    }
+
+    // Function to toggle between file upload and link
+    function toggleUploadSection() {
+        const fileType = document.getElementById('fileTypeSelect').value;
+        const fileSection = document.getElementById('fileUploadSection');
+        const linkSection = document.getElementById('linkSection');
+
+        if (fileType === 'link') {
+            fileSection.style.display = 'none';
+            linkSection.style.display = 'flex';
+        } else {
+            fileSection.style.display = 'flex';
+            linkSection.style.display = 'none';
+        }
+    }
+
+    // Update file name when selected
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        const fileInfo = document.getElementById('fileInfo');
+        if (this.files.length > 0) {
+            const file = this.files[0];
+            const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+            fileInfo.innerHTML = `📎 Selected: ${file.name} (${fileSize} MB)`;
+        } else {
+            fileInfo.innerHTML = '';
+        }
+    });
+
+    // Share button function (just closes for demo)
+    function shareResource() {
+        alert('Resource shared successfully!');
+        document.getElementById('shareResourceContainer').style.display = 'none';
+    }
+
+    // Close when clicking outside
+    document.getElementById('shareResourceContainer').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+</script>
