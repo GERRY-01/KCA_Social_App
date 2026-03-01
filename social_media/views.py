@@ -3,8 +3,9 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .models import Profile, CompleteProfile, Post, Comments
-
+from .models import Profile, CompleteProfile, Post, Comments,Resource
+import random
+from django.core.paginator import Paginator
 
 # Create your views here.
 @login_required
@@ -17,12 +18,17 @@ def home(request):
         complete_profile = None
 
     posts = Post.objects.all().order_by('-created_at')
+    all_users = User.objects.exclude(id=request.user.id)
+    suggested_users = random.sample(list(all_users), min(3, all_users.count()))
+    all_suggestions = all_users
 
     context = {
         'user': request.user,
         'user_profile': user_profile,
         'complete_profile': complete_profile,
-        'posts': posts
+        'posts': posts,
+        'suggested_users': suggested_users,
+        'all_suggestions': all_suggestions
     }
     return render(request, 'home.html', context)
 
@@ -167,3 +173,100 @@ def add_comment(request, post_id):
         return redirect(request.META.get('HTTP_REFERER', 'home'))
     
     return redirect('home')
+
+
+@login_required
+def view_all_suggestions(request):
+    # Get all users except current user
+    all_users = User.objects.exclude(id=request.user.id)
+    
+    # Paginate results (show 10 per page)
+    paginator = Paginator(all_users, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'suggestions.html', {
+        'page_obj': page_obj,
+        'user': request.user
+    })
+
+@login_required
+def resources(request):
+    # Handle POST request - saving new resource
+    if request.method == 'POST':
+        # Get data from the form
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        category = request.POST.get('category')
+        file_type = request.POST.get('file_type')
+        external_link = request.POST.get('external_link')
+        
+        # Handle file upload
+        file = request.FILES.get('file')
+        
+        # Validate required fields
+        if not title or not description or not category or not file_type:
+            messages.error(request, 'Please fill in all required fields')
+            return redirect('resources')
+        
+        # Create new resource instance
+        resource = Resource(
+            title=title,
+            description=description,
+            category=category,
+            file_type=file_type,
+            uploaded_by=request.user
+        )
+        
+        # Set either file or external link based on file type
+        if file_type == 'link':
+            if not external_link:
+                messages.error(request, 'Please provide an external link')
+                return redirect('resources')
+            resource.external_link = external_link
+        else:
+            if not file:
+                messages.error(request, 'Please upload a file')
+                return redirect('resources')
+            resource.file = file
+        
+        # Save to database
+        resource.save()
+        
+        messages.success(request, 'Resource shared successfully!')
+        return redirect('resources')
+    
+    # GET request - fetch and display resources
+    else:
+        # Get all resources ordered by most recent
+        resources = Resource.objects.all().order_by('-uploaded_at')
+        
+        # Get user's complete profile for the sidebar
+        try:
+            complete_profile = CompleteProfile.objects.get(user=request.user)
+        except CompleteProfile.DoesNotExist:
+            complete_profile = None
+        
+        # Get resources uploaded by the current user
+        my_uploads = Resource.objects.filter(uploaded_by=request.user)
+        my_uploads_count = my_uploads.count()
+        
+        # Get total resources count
+        total_resources = Resource.objects.count()
+        
+        # Get category counts for the filter buttons
+        category_counts = {}
+        for category_code, category_name in Resource.CATEGORY_CHOICES:
+            count = Resource.objects.filter(category=category_code).count()
+            category_counts[category_code] = count
+        
+        context = {
+            'resources': resources,
+            'complete_profile': complete_profile,
+            'my_uploads': my_uploads,
+            'my_uploads_count': my_uploads_count,
+            'total_resources': total_resources,
+            'category_counts': category_counts,
+        }
+        
+        return render(request, 'resources.html', context)
