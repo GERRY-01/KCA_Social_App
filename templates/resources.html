@@ -762,11 +762,15 @@
         <aside id="sidebar-container">
             <div class="sidebar-profile">
                 <!-- Replace with your dynamic content later -->
-                <div class="sidebar-profile-initials" style="background-color: #667eea;">
-                    JD
-                </div>
-                <h3 class="sidebar-username">John Doe</h3>
-                <p class="sidebar-role">@johndoe</p>
+                 {% if complete_profile and complete_profile.profile_picture %}
+                    <img src="{{ complete_profile.profile_picture.url }}" alt="Profile Picture" class="sidebar-profile-img">
+                {% else %}
+                    <div class="sidebar-profile-initials" style="background-color: #667eea;">
+                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                    </div>
+                {% endif %}
+                <h3 class="sidebar-username">{{ user.first_name }} {{ user.last_name }}</h3>
+                <p class="sidebar-role">@{{ user.username }}</p>
 
                 <div class="sidebar-stats">
                     <div class="sidebar-stat">
@@ -990,232 +994,114 @@
                     <div class="category-card active" onclick="filterByCategory('all')">
                         <div class="category-icon">📋</div>
                         <div class="category-name">All Resources</div>
-                        <div class="category-count">248 items</div>
+                        <div class="category-count">{{ total_resources }} items</div>
                     </div>
                     <div class="category-card" onclick="filterByCategory('notes')">
                         <div class="category-icon">📝</div>
                         <div class="category-name">Notes</div>
-                        <div class="category-count">89 items</div>
+                        <div class="category-count">{{ category_counts.notes }} items</div>
                     </div>
                     <div class="category-card" onclick="filterByCategory('past-papers')">
                         <div class="category-icon">📄</div>
                         <div class="category-name">Past Papers</div>
-                        <div class="category-count">56 items</div>
+                        <div class="category-count">{{ category_counts.past_papers }} items</div>
                     </div>
                     <div class="category-card" onclick="filterByCategory('textbooks')">
                         <div class="category-icon">📚</div>
                         <div class="category-name">Textbooks</div>
-                        <div class="category-count">34 items</div>
+                        <div class="category-count">{{ category_counts.textbooks }} items</div>
                     </div>
                     <div class="category-card" onclick="filterByCategory('tutorials')">
                         <div class="category-icon">🎥</div>
                         <div class="category-name">Tutorials</div>
-                        <div class="category-count">42 items</div>
+                        <div class="category-count">{{ category_counts.tutorials }} items</div>
                     </div>
                     <div class="category-card" onclick="filterByCategory('projects')">
                         <div class="category-icon">💻</div>
                         <div class="category-name">Projects</div>
-                        <div class="category-count">27 items</div>
+                        <div class="category-count">{{ category_counts.projects }} items</div>
                     </div>
                 </div>
 
-                <!-- Resources Grid -->
-                <div class="resources-grid" id="resourcesGrid">
-                    <!-- Resource Card 1 -->
-                    <div class="resource-card" data-category="notes" data-type="pdf">
-                        <div class="resource-thumbnail pdf">
-                            <i class="fas fa-file-pdf"></i>
-                            <span class="resource-type-badge">PDF</span>
+                        <!-- Resources Grid -->
+        <div class="resources-grid" id="resourcesGrid">
+            {% for resource in resources %}
+            <!-- Resource Card -->
+            <div class="resource-card" data-category="{{ resource.category }}" data-type="{{ resource.file_type }}">
+                <div class="resource-thumbnail {% if resource.file_type == 'pdf' %}pdf{% elif resource.file_type == 'video' %}video{% elif resource.file_type == 'word' %}word{% elif resource.file_type == 'excel' %}excel{% endif %}">
+                    {% if resource.file_type == 'pdf' %}
+                        <i class="fas fa-file-pdf"></i>
+                    {% elif resource.file_type == 'word' %}
+                        <i class="fas fa-file-word"></i>
+                    {% elif resource.file_type == 'excel' %}
+                        <i class="fas fa-file-excel"></i>
+                    {% elif resource.file_type == 'video' %}
+                        <i class="fas fa-video"></i>
+                    {% elif resource.file_type == 'link' %}
+                        <i class="fas fa-link"></i>
+                    {% elif resource.file_type == 'zip' %}
+                        <i class="fas fa-file-archive"></i>
+                    {% else %}
+                        <i class="fas fa-file"></i>
+                    {% endif %}
+                    <span class="resource-type-badge">{{ resource.get_file_type_display|upper }}</span>
+                </div>
+                
+                <div class="resource-content">
+                    <div class="resource-meta">
+                        <span class="resource-category">{{ resource.get_category_display }}</span>
+                        <span class="resource-date">
+                            <i class="far fa-clock"></i> {{ resource.uploaded_at|timesince }} ago
+                        </span>
+                    </div>
+                    
+                    <h3 class="resource-title">{{ resource.title }}</h3>
+                    <p class="resource-description">{{ resource.description|truncatechars:120 }}</p>
+                    
+                    <div class="resource-author">
+                        <div class="author-avatar">
+                            {{ resource.uploaded_by.first_name|first|upper }}{{ resource.uploaded_by.last_name|first|upper }}
                         </div>
-                        <div class="resource-content">
-                            <div class="resource-meta">
-                                <span class="resource-category">📝 Notes</span>
-                                <span class="resource-date"><i class="far fa-clock"></i> 2 days ago</span>
-                            </div>
-                            <h3 class="resource-title">Introduction to Database Systems - Complete Notes</h3>
-                            <p class="resource-description">Comprehensive notes covering ER diagrams, normalization, SQL queries, and transaction management. Includes practice questions.</p>
-                            
-                            <div class="resource-author">
-                                <div class="author-avatar">JD</div>
-                                <div class="author-info">
-                                    <div class="author-name">John Doe</div>
-                                    <div class="author-role">Computer Science, Year 3</div>
-                                </div>
-                            </div>
-
-                            <div class="resource-stats">
-                                <div class="stat-item">
-                                    <i class="fas fa-download"></i> 234
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fas fa-heart"></i> 45
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fas fa-comment"></i> 12
-                                </div>
-                            </div>
-
-                            <div class="resource-actions">
-                                <button class="action-btn download-btn" onclick="downloadResource(1)">
-                                    <i class="fas fa-download"></i> Download
-                                </button>
-                                <button class="action-btn save-btn" onclick="saveResource(1)">
-                                    <i class="far fa-bookmark"></i> Save
-                                </button>
-                            </div>
+                        <div class="author-info">
+                            <div class="author-name">{{ resource.uploaded_by.get_full_name|default:resource.uploaded_by.username }}</div>
+                            <div class="author-role">@{{ resource.uploaded_by.username }}</div>
                         </div>
                     </div>
 
-                    <!-- Resource Card 2 -->
-                    <div class="resource-card" data-category="past-papers" data-type="pdf">
-                        <div class="resource-thumbnail pdf">
-                            <i class="fas fa-file-pdf"></i>
-                            <span class="resource-type-badge">PDF</span>
-                        </div>
-                        <div class="resource-content">
-                            <div class="resource-meta">
-                                <span class="resource-category">📄 Past Papers</span>
-                                <span class="resource-date"><i class="far fa-clock"></i> 1 week ago</span>
-                            </div>
-                            <h3 class="resource-title">Data Structures & Algorithms - Final Exam 2023</h3>
-                            <p class="resource-description">Complete past paper with marking scheme. Covers arrays, linked lists, trees, graphs, and sorting algorithms.</p>
-                            
-                            <div class="resource-author">
-                                <div class="author-avatar">SM</div>
-                                <div class="author-info">
-                                    <div class="author-name">Sarah Mwangi</div>
-                                    <div class="author-role">Computer Science, Year 2</div>
-                                </div>
-                            </div>
-
-                            <div class="resource-stats">
-                                <div class="stat-item">
-                                    <i class="fas fa-download"></i> 567
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fas fa-heart"></i> 89
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fas fa-comment"></i> 23
-                                </div>
-                            </div>
-
-                            <div class="resource-actions">
-                                <button class="action-btn download-btn" onclick="downloadResource(2)">
-                                    <i class="fas fa-download"></i> Download
-                                </button>
-                                <button class="action-btn save-btn" onclick="saveResource(2)">
-                                    <i class="far fa-bookmark"></i> Save
-                                </button>
-                            </div>
+                    <!-- Only downloads stat (no likes/comments) -->
+                    <div class="resource-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-download"></i> {{ resource.downloads }}
                         </div>
                     </div>
 
-                    <!-- Resource Card 3 -->
-                    <div class="resource-card" data-category="tutorials" data-type="video">
-                        <div class="resource-thumbnail video">
-                            <i class="fas fa-video"></i>
-                            <span class="resource-type-badge">Video</span>
-                        </div>
-                        <div class="resource-content">
-                            <div class="resource-meta">
-                                <span class="resource-category">🎥 Tutorials</span>
-                                <span class="resource-date"><i class="far fa-clock"></i> 3 days ago</span>
-                            </div>
-                            <h3 class="resource-title">Web Development with Django - Full Course</h3>
-                            <p class="resource-description">Complete video tutorial series on building web applications with Django. Covers models, views, templates, and deployment.</p>
-                            
-                            <div class="resource-author">
-                                <div class="author-avatar">PK</div>
-                                <div class="author-info">
-                                    <div class="author-name">Peter Kimani</div>
-                                    <div class="author-role">Software Engineering, Year 4</div>
-                                </div>
-                            </div>
-
-                            <div class="resource-stats">
-                                <div class="stat-item">
-                                    <i class="fas fa-eye"></i> 892
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fas fa-thumbs-up"></i> 156
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fas fa-comment"></i> 34
-                                </div>
-                            </div>
-
-                            <div class="resource-actions">
-                                <button class="action-btn download-btn" onclick="watchVideo(3)">
-                                    <i class="fas fa-play"></i> Watch Now
-                                </button>
-                                <button class="action-btn save-btn" onclick="saveResource(3)">
-                                    <i class="far fa-bookmark"></i> Save
-                                </button>
-                            </div>
-                        </div>
+                    <div class="resource-actions">
+                        {% if resource.file %}
+                        <a href="{{ resource.file.url }}" class="action-btn download-btn" download>
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        {% elif resource.external_link %}
+                        <a href="{{ resource.external_link }}" target="_blank" class="action-btn download-btn">
+                            <i class="fas fa-external-link-alt"></i> Visit Link
+                        </a>
+                        {% endif %}
                     </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Empty state when no resources -->
+            <div style="grid-column: 1/-1; text-align: center; padding: 4rem 2rem; background: white; border-radius: 15px;">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 4rem; color: #cbd5e0; margin-bottom: 1rem;"></i>
+                <h3 style="color: #2d3748; margin-bottom: 0.5rem; font-size: 1.5rem;">No Resources Yet</h3>
+                <p style="color: #718096; margin-bottom: 1.5rem;">Be the first to share a resource with the KCA community!</p>
+                <button class="btn-primary" onclick="openUploadModal()">
+                    <i class="fas fa-plus"></i> Share Resource
+                </button>
+            </div>
+            {% endfor %}
+        </div>
 
-                    <!-- Resource Card 4 -->
-                    <div class="resource-card" data-category="projects" data-type="link">
-                        <div class="resource-thumbnail">
-                            <i class="fas fa-code"></i>
-                            <span class="resource-type-badge">GitHub</span>
-                        </div>
-                        <div class="resource-content">
-                            <div class="resource-meta">
-                                <span class="resource-category">💻 Projects</span>
-                                <span class="resource-date"><i class="far fa-clock"></i> 5 days ago</span>
-                            </div>
-                            <h3 class="resource-title">E-commerce Platform - Open Source Project</h3>
-                            <p class="resource-description">Full-stack e-commerce application built with React and Django. Features include user authentication, payment integration, and admin dashboard.</p>
-                            
-                            <div class="resource-author">
-                                <div class="author-avatar">MO</div>
-                                <div class="author-info">
-                                    <div class="author-name">Mary Odhiambo</div>
-                                    <div class="author-role">Computer Science, Year 4</div>
-                                </div>
-                            </div>
-
-                            <div class="resource-stats">
-                                <div class="stat-item">
-                                    <i class="fas fa-star"></i> 45
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fas fa-code-branch"></i> 23
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fas fa-external-link-alt"></i> 12
-                                </div>
-                            </div>
-
-                            <div class="resource-actions">
-                                <button class="action-btn download-btn" onclick="viewGithub(4)">
-                                    <i class="fab fa-github"></i> View on GitHub
-                                </button>
-                                <button class="action-btn save-btn" onclick="saveResource(4)">
-                                    <i class="far fa-bookmark"></i> Save
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Resource Card 5 -->
-                    <div class="resource-card" data-category="textbooks" data-type="pdf">
-                        <div class="resource-thumbnail pdf">
-                            <i class="fas fa-file-pdf"></i>
-                            <span class="resource-type-badge">PDF</span>
-                        </div>
-                        <div class="resource-content">
-                            <div class="resource-meta">
-                                <span class="resource-category">📚 Textbooks</span>
-                                <span class="resource-date"><i class="far fa-clock"></i> 2 weeks ago</span>
-                            </div>
-                            <h3 class="resource-title">Computer Networks - Kurose & Ross (8th Edition)</h3>
-                            <p class="resource-description">Complete textbook covering network layers, protocols, security, and wireless networking. Includes chapter summaries and exercises.</p>
-                            
-                            <div class="resource-author">
+                    
 </body>
 <script>
     // Function to open the container
