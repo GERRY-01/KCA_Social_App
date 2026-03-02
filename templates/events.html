@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1024,202 +1025,90 @@
                                 Upcoming Events
                             </h2>
                             <div class="event-filters">
-                                <button class="filter-chip active">All</button>
-                                <button class="filter-chip">Today</button>
-                                <button class="filter-chip">This Week</button>
-                                <button class="filter-chip">This Month</button>
+                                <button class="filter-chip active" onclick="filterEvents('all')">All</button>
+                                <button class="filter-chip" onclick="filterEvents('today')">Today</button>
+                                <button class="filter-chip" onclick="filterEvents('week')">This Week</button>
+                                <button class="filter-chip" onclick="filterEvents('month')">This Month</button>
                             </div>
                         </div>
 
                         <div class="events-list">
-                            <!-- Event Card 1 -->
-                            <div class="event-card">
+                            
+                            <!-- Events List - Upcoming Events -->
+                        <div class="events-list" id="eventsList">
+                            {% for event in events %}
+                            <!-- Event Card -->
+                            <div class="event-card" data-category="{{ event.category }}" data-date="{{ event.date|date:'Y-m-d' }}">
                                 <div class="event-date-badge">
-                                    <span class="day">22</span>
-                                    <span class="month">MAR</span>
+                                    <span class="day">{{ event.date|date:"d" }}</span>
+                                    <span class="month">{{ event.date|date:"M"|upper }}</span>
                                 </div>
+                                
                                 <div class="event-details">
-                                    <h3 class="event-title">Tech Talk: AI in Healthcare</h3>
-                                    <div class="event-meta">
-                                        <span><i class="far fa-clock"></i> 2:00 PM - 4:00 PM</span>
-                                        <span><i class="fas fa-map-marker-alt"></i> Main Campus, LT 101</span>
-                                    </div>
-                                    <span class="event-location">Faculty of Computing</span>
+                                    <h3 class="event-title">{{ event.title }}</h3>
                                     
+                                    <div class="event-meta">
+                                        <span><i class="far fa-clock"></i> {{ event.time|time:"g:i A" }}</span>
+                                        <span><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
+                                    </div>
+                                    
+                                    <span class="event-location">{{ event.get_category_display }}</span>
+                                    
+                                    <!-- Optional: Show event description preview -->
+                                    <p class="event-description-preview" style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">
+                                        {{ event.description|truncatechars:60 }}
+                                    </p>
+                                    
+                                    <!-- Attendees Section - You'll need an EventAttendee model for this -->
                                     <div class="event-attendees">
                                         <div class="attendee-avatars">
-                                            <div class="attendee-avatar" style="background: linear-gradient(135deg, #f56565, #c53030);">JD</div>
-                                            <div class="attendee-avatar" style="background: linear-gradient(135deg, #48bb78, #2f855a);">SM</div>
-                                            <div class="attendee-avatar" style="background: linear-gradient(135deg, #ed8936, #c05621);">PK</div>
-                                            <div class="attendee-avatar">+12</div>
+                                            {% with attendees=event.attendees.all|slice:":3" %}
+                                                {% for attendee in attendees %}
+                                                <div class="attendee-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                                                    {{ attendee.user.first_name|first|upper }}{{ attendee.user.last_name|first|upper }}
+                                                </div>
+                                                {% empty %}
+                                                <div class="attendee-avatar" style="background: #cbd5e0;">0</div>
+                                                {% endfor %}
+                                                
+                                                {% if event.attendees.count > 3 %}
+                                                <div class="attendee-avatar">+{{ event.attendees.count|add:"-3" }}</div>
+                                                {% endif %}
+                                            {% endwith %}
                                         </div>
-                                        <span class="attendee-count">15 attending</span>
+                                        <span class="attendee-count">{{ event.attendees.count }} attending</span>
                                     </div>
                                 </div>
+                                
                                 <div class="event-actions">
-                                    <button class="attend-btn" onclick="attendEvent(this)">Attend</button>
-                                    <button class="save-event-btn"><i class="far fa-bookmark"></i></button>
-                                </div>
-                            </div>
-
-                            <!-- Event Card 2 -->
-                            <div class="event-card">
-                                <div class="event-date-badge" style="background: linear-gradient(135deg, #f56565, #c53030);">
-                                    <span class="day">25</span>
-                                    <span class="month">MAR</span>
-                                </div>
-                                <div class="event-details">
-                                    <h3 class="event-title">Campus Career Fair 2026</h3>
-                                    <div class="event-meta">
-                                        <span><i class="far fa-clock"></i> 10:00 AM - 5:00 PM</span>
-                                        <span><i class="fas fa-map-marker-alt"></i> Graduation Square</span>
-                                    </div>
-                                    <span class="event-location">Career Services</span>
+                                    {% if event.event_link %}
+                                    <a href="{{ event.event_link }}" target="_blank" class="attend-btn" style="text-decoration: none; text-align: center;">
+                                        <i class="fas fa-external-link-alt"></i> Info
+                                    </a>
+                                    {% else %}
+                                    <button class="attend-btn">
+                                        <i class="far fa-calendar-check"></i> Attend
+                                    </button>
+                                    {% endif %}
                                     
-                                    <div class="event-attendees">
-                                        <div class="attendee-avatars">
-                                            <div class="attendee-avatar">AN</div>
-                                            <div class="attendee-avatar">BK</div>
-                                            <div class="attendee-avatar">CM</div>
-                                            <div class="attendee-avatar">+45</div>
-                                        </div>
-                                        <span class="attendee-count">48 attending</span>
-                                    </div>
-                                </div>
-                                <div class="event-actions">
-                                    <button class="attend-btn" onclick="attendEvent(this)">Attend</button>
-                                    <button class="save-event-btn"><i class="far fa-bookmark"></i></button>
+                                    <button class="save-event-btn">
+                                        <i class="far fa-bookmark"></i>
+                                    </button>
                                 </div>
                             </div>
-
-                            <!-- Event Card 3 -->
-                            <div class="event-card">
-                                <div class="event-date-badge" style="background: linear-gradient(135deg, #48bb78, #2f855a);">
-                                    <span class="day">28</span>
-                                    <span class="month">MAR</span>
-                                </div>
-                                <div class="event-details">
-                                    <h3 class="event-title">Hackathon: Code for Change</h3>
-                                    <div class="event-meta">
-                                        <span><i class="far fa-clock"></i> 8:00 AM (24h)</span>
-                                        <span><i class="fas fa-map-marker-alt"></i> Innovation Hub</span>
-                                    </div>
-                                    <span class="event-location">CS Department</span>
+                            {% empty %}
+                            <!-- Empty State - No Events -->
+                            <div style="text-align: center; padding: 3rem; background: white; border-radius: 15px;">
+                                <i class="far fa-calendar-times" style="font-size: 3rem; color: #cbd5e0; margin-bottom: 1rem;"></i>
+                                <h3 style="color: #2d3748; margin-bottom: 0.5rem;">No Upcoming Events</h3>
+                                <p style="color: #718096;">Be the first to create an event!</p>
+                                <button class="btn-primary" onclick="openEventModal()" style="margin-top: 1rem;">
+                                    <i class="fas fa-plus"></i> Create Event
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>        
                                     
-                                    <div class="event-attendees">
-                                        <div class="attendee-avatars">
-                                            <div class="attendee-avatar">JO</div>
-                                            <div class="attendee-avatar">MW</div>
-                                            <div class="attendee-avatar">KO</div>
-                                            <div class="attendee-avatar">+23</div>
-                                        </div>
-                                        <span class="attendee-count">26 attending</span>
-                                    </div>
-                                </div>
-                                <div class="event-actions">
-                                    <button class="attend-btn" onclick="attendEvent(this)">Attend</button>
-                                    <button class="save-event-btn"><i class="far fa-bookmark"></i></button>
-                                </div>
-                            </div>
-
-                            <!-- Event Card 4 -->
-                            <div class="event-card">
-                                <div class="event-date-badge" style="background: linear-gradient(135deg, #ed8936, #c05621);">
-                                    <span class="day">30</span>
-                                    <span class="month">MAR</span>
-                                </div>
-                                <div class="event-details">
-                                    <h3 class="event-title">Guest Lecture: Entrepreneurship</h3>
-                                    <div class="event-meta">
-                                        <span><i class="far fa-clock"></i> 11:00 AM - 1:00 PM</span>
-                                        <span><i class="fas fa-map-marker-alt"></i> Business School</span>
-                                    </div>
-                                    <span class="event-location">School of Business</span>
-                                    
-                                    <div class="event-attendees">
-                                        <div class="attendee-avatars">
-                                            <div class="attendee-avatar">PO</div>
-                                            <div class="attendee-avatar">LN</div>
-                                            <div class="attendee-avatar">JK</div>
-                                            <div class="attendee-avatar">+8</div>
-                                        </div>
-                                        <span class="attendee-count">11 attending</span>
-                                    </div>
-                                </div>
-                                <div class="event-actions">
-                                    <button class="attend-btn" onclick="attendEvent(this)">Attend</button>
-                                    <button class="save-event-btn"><i class="far fa-bookmark"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Featured Events Section -->
-                <div class="featured-events">
-                    <div class="section-header">
-                        <h2>
-                            <i class="fas fa-star" style="color: #fbbf24;"></i>
-                            Featured Events
-                        </h2>
-                    </div>
-
-                    <div class="featured-grid">
-                        <!-- Featured Card 1 -->
-                        <div class="featured-card">
-                            <div class="featured-image">
-                                <i class="fas fa-laptop-code"></i>
-                                <span class="featured-badge">🔥 Popular</span>
-                            </div>
-                            <div class="featured-content">
-                                <h3 class="featured-title">Annual Tech Symposium 2026</h3>
-                                <p class="featured-description">Join industry leaders for a day of talks, workshops, and networking. Featuring speakers from Google, Microsoft, and Safaricom.</p>
-                                <div class="featured-footer">
-                                    <div class="featured-date">
-                                        <i class="far fa-calendar"></i> Apr 15, 2026
-                                    </div>
-                                    <button class="attend-btn" style="padding: 0.5rem 1rem;">Learn More</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Featured Card 2 -->
-                        <div class="featured-card">
-                            <div class="featured-image" style="background: linear-gradient(135deg, #f56565, #c53030);">
-                                <i class="fas fa-music"></i>
-                                <span class="featured-badge">🎵 Music</span>
-                            </div>
-                            <div class="featured-content">
-                                <h3 class="featured-title">Campus Battle of the Bands</h3>
-                                <p class="featured-description">Watch talented students compete for the title of best campus band. Food, drinks, and great music!</p>
-                                <div class="featured-footer">
-                                    <div class="featured-date">
-                                        <i class="far fa-calendar"></i> Apr 22, 2026
-                                    </div>
-                                    <button class="attend-btn" style="padding: 0.5rem 1rem;">Get Tickets</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Featured Card 3 -->
-                        <div class="featured-card">
-                            <div class="featured-image" style="background: linear-gradient(135deg, #48bb78, #2f855a);">
-                                <i class="fas fa-handshake"></i>
-                                <span class="featured-badge">🤝 Networking</span>
-                            </div>
-                            <div class="featured-content">
-                                <h3 class="featured-title">Alumni Networking Mixer</h3>
-                                <p class="featured-description">Connect with successful KCA alumni working in top companies. Great opportunity for mentorship and internships.</p>
-                                <div class="featured-footer">
-                                    <div class="featured-date">
-                                        <i class="far fa-calendar"></i> May 5, 2026
-                                    </div>
-                                    <button class="attend-btn" style="padding: 0.5rem 1rem;">RSVP</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </main>
 
@@ -1234,72 +1123,63 @@
                     <button class="close-modal" onclick="closeEventModal()">&times;</button>
                 </div>
 
-                <form class="event-form">
+                <form class="event-form" method="POST" action="{% url 'events' %}">
+                    {% csrf_token %}
+                    
+                    <!-- Event Title - Required -->
                     <div class="form-group">
                         <label>Event Title <span style="color: #f56565;">*</span></label>
-                        <input type="text" placeholder="e.g., Tech Talk: AI in Healthcare" required>
+                        <input type="text" name="title" placeholder="e.g., Tech Talk: AI in Healthcare" required>
                     </div>
 
+                    <!-- Description - Required -->
                     <div class="form-group">
                         <label>Description <span style="color: #f56565;">*</span></label>
-                        <textarea rows="4" placeholder="Describe your event..." required></textarea>
+                        <textarea name="description" rows="4" placeholder="Describe your event..." required></textarea>
                     </div>
 
+                    <!-- Date and Time -->
                     <div class="datetime-group">
                         <div class="form-group">
                             <label>Date <span style="color: #f56565;">*</span></label>
-                            <input type="date" required>
+                            <input type="date" name="date" required>
                         </div>
                         <div class="form-group">
                             <label>Time <span style="color: #f56565;">*</span></label>
-                            <input type="time" required>
+                            <input type="time" name="time" required>
                         </div>
                     </div>
 
-                    <div class="datetime-group">
-                        <div class="form-group">
-                            <label>End Date</label>
-                            <input type="date">
-                        </div>
-                        <div class="form-group">
-                            <label>End Time</label>
-                            <input type="time">
-                        </div>
-                    </div>
-
+                    <!-- Location - Required -->
                     <div class="form-group">
                         <label>Location <span style="color: #f56565;">*</span></label>
-                        <input type="text" placeholder="e.g., Main Campus, LT 101" required>
+                        <input type="text" name="location" placeholder="e.g., Main Campus, LT 101" required>
                     </div>
 
+                    <!-- Category - Required -->
                     <div class="form-group">
-                        <label>Category</label>
-                        <select>
-                            <option>Academic</option>
-                            <option>Social</option>
-                            <option>Sports</option>
-                            <option>Career</option>
-                            <option>Cultural</option>
-                            <option>Workshop</option>
+                        <label>Category <span style="color: #f56565;">*</span></label>
+                        <select name="category" required>
+                            <option value="">Select a category</option>
+                            <option value="academic">Academic</option>
+                            <option value="social">Social</option>
+                            <option value="sports">Sports</option>
+                            <option value="career">Career</option>
+                            <option value="cultural">Cultural</option>
+                            <option value="workshop">Workshop</option>
+                            <option value="club">Club</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
 
+                    <!-- Event Link (Optional) -->
                     <div class="form-group">
-                        <label>Event Color</label>
-                        <div class="color-options">
-                            <div class="color-option" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="selectColor(this)"></div>
-                            <div class="color-option" style="background: linear-gradient(135deg, #f56565, #c53030);" onclick="selectColor(this)"></div>
-                            <div class="color-option" style="background: linear-gradient(135deg, #48bb78, #2f855a);" onclick="selectColor(this)"></div>
-                            <div class="color-option" style="background: linear-gradient(135deg, #ed8936, #c05621);" onclick="selectColor(this)"></div>
-                            <div class="color-option" style="background: linear-gradient(135deg, #9f7aea, #6b46c1);" onclick="selectColor(this)"></div>
-                        </div>
+                        <label>Event Link (Optional)</label>
+                        <input type="url" name="event_link" placeholder="https://example.com/event-details">
+                        <p style="font-size: 0.8rem; color: #a0aec0; margin-top: 0.25rem;">Link for registration or more information</p>
                     </div>
 
-                    <div class="form-group">
-                        <label>Max Attendees (Optional)</label>
-                        <input type="number" placeholder="e.g., 100">
-                    </div>
-
+                    <!-- Submit Button -->
                     <button type="submit" class="btn-primary" style="width: 100%;">
                         <i class="fas fa-calendar-check"></i> Create Event
                     </button>
@@ -1388,6 +1268,134 @@
 
         // Mobile menu toggle (if needed)
         // Add your mobile menu toggle code here
+
+
+
+      // Filter events by time period
+function filterEvents(filter) {
+    // Update active filter chip
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    const today = new Date();
+    const events = document.querySelectorAll('.event-card');
+    let visibleCount = 0;
+    
+    events.forEach(card => {
+        const eventDate = new Date(card.dataset.date);
+        let show = false;
+        
+        if (filter === 'all') {
+            show = true;
+        } else if (filter === 'today') {
+            show = eventDate.toDateString() === today.toDateString();
+        } else if (filter === 'week') {
+            const nextWeek = new Date(today);
+            nextWeek.setDate(today.getDate() + 7);
+            show = eventDate >= today && eventDate <= nextWeek;
+        } else if (filter === 'month') {
+            show = eventDate.getMonth() === today.getMonth() && 
+                   eventDate.getFullYear() === today.getFullYear();
+        }
+        
+        if (show) {
+            card.style.display = 'flex';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Show "no events" message if needed
+    checkNoEvents(visibleCount, filter);
+}
+
+// Check if there are any visible events
+function checkNoEvents(visibleCount, currentFilter) {
+    const eventsList = document.getElementById('eventsList');
+    let noEventsMsg = document.getElementById('noEventsMessage');
+    
+    // Remove existing message if it exists
+    if (noEventsMsg) {
+        noEventsMsg.remove();
+    }
+    
+    // Only show message if NO events are visible
+    if (visibleCount === 0) {
+        const msg = document.createElement('div');
+        msg.id = 'noEventsMessage';
+        msg.style.textAlign = 'center';
+        msg.style.padding = '2rem';
+        msg.style.background = 'white';
+        msg.style.borderRadius = '10px';
+        msg.style.gridColumn = '1/-1'; // Make it span full width
+        
+        // Customize message based on filter
+        let filterText = '';
+        if (currentFilter === 'today') filterText = 'today';
+        else if (currentFilter === 'week') filterText = 'this week';
+        else if (currentFilter === 'month') filterText = 'this month';
+        else filterText = '';
+        
+        msg.innerHTML = `
+            <i class="far fa-calendar-times" style="font-size: 3rem; color: #cbd5e0; margin-bottom: 1rem;"></i>
+            <h3 style="color: #2d3748; margin-bottom: 0.5rem;">No Events ${filterText}</h3>
+            <p style="color: #718096; margin-bottom: 1rem;">Try another filter or create a new event</p>
+            <button onclick="openEventModal()" class="btn-primary" style="padding: 0.75rem 1.5rem;">
+                <i class="fas fa-plus"></i> Create Event
+            </button>
+        `;
+        eventsList.appendChild(msg);
+    }
+}
+
+// Also update your initial page load to check for events
+document.addEventListener('DOMContentLoaded', function() {
+    const events = document.querySelectorAll('.event-card');
+    checkNoEvents(events.length, 'all');
+});
+
+// Attend event function (you'll need to implement the backend)
+function attendEvent(button, eventId) {
+    if (button.classList.contains('attending')) {
+        button.classList.remove('attending');
+        button.innerHTML = '<i class="far fa-calendar-check"></i> Attend';
+        button.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+    } else {
+        button.classList.add('attending');
+        button.innerHTML = '<i class="fas fa-check"></i> Attending';
+        button.style.background = '#48bb78';
+        
+        // You can make an AJAX call here to save attendance
+        console.log('User attending event:', eventId);
+    }
+}
+
+// Save event function
+function saveEvent(eventId) {
+    const button = event.currentTarget;
+    const icon = button.querySelector('i');
+    
+    if (icon.classList.contains('far')) {
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        button.style.borderColor = '#667eea';
+        button.style.color = '#667eea';
+        
+        // You can make an AJAX call here to save the event
+        console.log('Event saved:', eventId);
+    } else {
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+        button.style.borderColor = '#e2e8f0';
+        button.style.color = '#718096';
+        
+        // You can make an AJAX call here to unsave the event
+        console.log('Event unsaved:', eventId);
+    }
+}
     </script>
 </body>
 </html>
