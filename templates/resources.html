@@ -836,10 +836,10 @@
                         <h1>📚 Resource Hub</h1>
                         <p>Share, discover, and collaborate with study materials and resources</p>
                     </div>
-                    <div class="header-actions">
-                        <button class="btn-outline" onclick="filterByMyUploads()">
-                            <i class="fas fa-cloud-upload-alt"></i> My Uploads
-                        </button>
+                   <div class="header-actions">
+                        <a href="{% url 'resources' %}?filter=my_uploads" class="btn-outline">
+                            <i class="fas fa-cloud-upload-alt"></i> My Uploads ({{ my_uploads_count }})
+                        </a>
                         <button class="btn-primary" onclick="openUploadModal()">
                             <i class="fas fa-plus"></i> Share Resource
                         </button>
@@ -1092,8 +1092,8 @@
             <!-- Empty state when no resources -->
             <div style="grid-column: 1/-1; text-align: center; padding: 4rem 2rem; background: white; border-radius: 15px;">
                 <i class="fas fa-cloud-upload-alt" style="font-size: 4rem; color: #cbd5e0; margin-bottom: 1rem;"></i>
-                <h3 style="color: #2d3748; margin-bottom: 0.5rem; font-size: 1.5rem;">No Resources Yet</h3>
-                <p style="color: #718096; margin-bottom: 1.5rem;">Be the first to share a resource with the KCA community!</p>
+                <h3 style="color: #2d3748; margin-bottom: 0.5rem; font-size: 1.5rem;">You haven't shared any resources Yet</h3>
+                <p style="color: #718096; margin-bottom: 1.5rem;">Share a resource to get started</p>
                 <button class="btn-primary" onclick="openUploadModal()">
                     <i class="fas fa-plus"></i> Share Resource
                 </button>
@@ -1237,4 +1237,88 @@ document.getElementById('typeFilter').addEventListener('change', filterResources
 document.addEventListener('DOMContentLoaded', function() {
     filterResources();
 });
+
+
+
+
+function filterByCategory(category) {
+    // Update URL to remove my_uploads filter if it exists
+    if (category === 'all') {
+        // Redirect to the base resources URL (removes any filters)
+        window.location.href = "{% url 'resources' %}";
+        return;
+    }
+    
+    // For other categories, do the client-side filtering
+    const resourceCards = document.querySelectorAll('.resource-card');
+    let visibleCount = 0;
+    
+    // Update active class on category cards
+    document.querySelectorAll('.category-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    // Filter resources
+    resourceCards.forEach(card => {
+        const cardCategory = card.dataset.category;
+        
+        if (cardCategory === category) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Reset search and type filters
+    document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = 'all';
+    document.getElementById('typeFilter').value = 'all';
+    
+    // Handle no results
+    handleNoResults(visibleCount, `No ${getCategoryName(category)} found`);
+}
+
+// Helper function to get category display name
+function getCategoryName(category) {
+    const names = {
+        'notes': 'Notes',
+        'past_papers': 'Past Papers',
+        'textbooks': 'Textbooks',
+        'tutorials': 'Video Tutorials',
+        'projects': 'Projects',
+        'research': 'Research Papers'
+    };
+    return names[category] || 'Resources';
+}
+
+// Handle no results message
+function handleNoResults(count, message) {
+    const resourcesGrid = document.getElementById('resourcesGrid');
+    let noResultsMessage = document.getElementById('noResultsMessage');
+    
+    if (noResultsMessage) {
+        noResultsMessage.remove();
+    }
+    
+    if (count === 0) {
+        const messageDiv = document.createElement('div');
+        messageDiv.id = 'noResultsMessage';
+        messageDiv.style.gridColumn = '1/-1';
+        messageDiv.style.textAlign = 'center';
+        messageDiv.style.padding = '3rem';
+        messageDiv.style.background = 'white';
+        messageDiv.style.borderRadius = '15px';
+        messageDiv.innerHTML = `
+            <i class="fas fa-search" style="font-size: 3rem; color: #cbd5e0; margin-bottom: 1rem;"></i>
+            <h3 style="color: #2d3748; margin-bottom: 0.5rem;">No ${message}</h3>
+            <p style="color: #718096; margin-bottom: 1rem;">Try another category or share a resource</p>
+            <button onclick="openUploadModal()" style="padding: 0.5rem 1rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                Share Resource
+            </button>
+        `;
+        resourcesGrid.appendChild(messageDiv);
+    }
+}
 </script>
