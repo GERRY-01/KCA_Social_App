@@ -116,3 +116,42 @@ class Resource(models.Model):
     
     def __str__(self):
         return self.title
+
+
+# Add this to your existing models.py
+
+class Event(models.Model):
+    # Event Categories
+    CATEGORY_CHOICES = [
+        ('academic', 'Academic'),
+        ('social', 'Social'),
+        ('sports', 'Sports'),
+        ('career', 'Career'),
+        ('cultural', 'Cultural'),
+        ('workshop', 'Workshop'),
+        ('club', 'Club'),
+        ('other', 'Other'),
+    ]
+    
+    # Basic Information
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    location = models.CharField(max_length=200, help_text="Where the event is happening")
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='social')
+    event_link = models.URLField(blank=True, null=True, help_text="Link for registration or more info")
+    
+    # Date and Time 
+    date = models.DateField(help_text="When is the event?")
+    time = models.TimeField(help_text="What time does it start?")
+    
+    # Organizer
+    organized_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='events')
+    
+    # Timestamps (when the event was created in the system)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['date', 'time']
+    
+    def __str__(self):
+        return f"{self.title} - {self.date}"
