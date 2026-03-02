@@ -13,4 +13,5 @@ urlpatterns = [
     path('post/<int:post_id>/add_comment/', views.add_comment, name='add_comment'),
     path('suggestions/', views.view_all_suggestions, name='suggestions'),
     path('resources', views.resources, name='resources'),
+    path('events', views.events, name='events'),
 ]

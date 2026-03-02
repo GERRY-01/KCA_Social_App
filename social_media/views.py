@@ -3,9 +3,12 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .models import Profile, CompleteProfile, Post, Comments,Resource
+from .models import Profile, CompleteProfile, Post, Comments,Resource,Event
 import random
+import calendar
+from datetime import datetime
 from django.core.paginator import Paginator
+from django.utils import timezone
 
 # Create your views here.
 @login_required
@@ -315,3 +318,145 @@ def resources(request):
     }
     
     return render(request, 'resources.html', context)
+
+def events(request):
+    # Handle POST request - saving new event
+    if request.method == 'POST':
+        # Get data from the form
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        location = request.POST.get('location')
+        category = request.POST.get('category')
+        event_link = request.POST.get('event_link')
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+        
+        # Validate required fields
+        if not title or not description or not location or not category or not date or not time:
+            messages.error(request, 'Please fill in all required fields')
+            return redirect('events')
+        
+        # Create new event instance
+        event = Event(
+            title=title,
+            description=description,
+            location=location,
+            category=category,
+            event_link=event_link,
+            date=date,
+            time=time,
+            organized_by=request.user
+        )
+        
+        # Save to database
+        event.save()
+        
+        messages.success(request, 'Event created successfully!')
+        return redirect('events')
+    
+    # GET request - fetch and display events
+    else:
+        # Get current month and year (default to current month)
+        today = timezone.now().date()
+        current_year = today.year
+        current_month = today.month
+        
+        # Check if month is passed via GET parameters
+        month_param = request.GET.get('month')
+        year_param = request.GET.get('year')
+        
+        if month_param and year_param:
+            try:
+                current_month = int(month_param)
+                current_year = int(year_param)
+            except ValueError:
+                pass
+        
+        # Get all upcoming events
+        events = Event.objects.filter(date__gte=timezone.now().date()).order_by('date', 'time')
+        
+        # Get events for the current month
+        month_events = Event.objects.filter(
+            date__year=current_year,
+            date__month=current_month
+        )
+        
+        # Create a list of dates that have events
+        event_dates = [event.date.day for event in month_events]
+        
+        # Generate calendar data for the current month
+        cal = calendar.monthcalendar(current_year, current_month)
+        
+        # Get month name
+        month_name = datetime(current_year, current_month, 1).strftime('%B')
+        
+        # Previous and next month navigation
+        prev_month = current_month - 1
+        prev_year = current_year
+        if prev_month == 0:
+            prev_month = 12
+            prev_year = current_year - 1
+            
+        next_month = current_month + 1
+        next_year = current_year
+        if next_month == 13:
+            next_month = 1
+            next_year = current_year + 1
+        
+        # Get past events (last 5)
+        past_events = Event.objects.filter(date__lt=timezone.now().date()).order_by('-date', '-time')[:5]
+        
+        # Get user's complete profile for the sidebar
+        try:
+            complete_profile = CompleteProfile.objects.get(user=request.user)
+        except CompleteProfile.DoesNotExist:
+            complete_profile = None
+        
+        # Get events organized by the current user
+        my_events = Event.objects.filter(organized_by=request.user)
+        my_events_count = my_events.count()
+        
+        # Get total events count
+        total_events = Event.objects.count()
+        
+        # Get upcoming events count (next 7 days)
+        next_week = timezone.now().date() + timezone.timedelta(days=7)
+        upcoming_week_count = Event.objects.filter(
+            date__gte=timezone.now().date(),
+            date__lte=next_week
+        ).count()
+        
+        # Get category counts for filters
+        category_counts = {}
+        for category_code, category_name in Event.CATEGORY_CHOICES:
+            count = Event.objects.filter(category=category_code, date__gte=timezone.now().date()).count()
+            # Replace hyphens with underscores for safe template access
+            safe_key = category_code.replace('-', '_')
+            category_counts[safe_key] = count
+        
+        context = {
+            'events': events,
+            'past_events': past_events,
+            'complete_profile': complete_profile,
+            'my_events': my_events,
+            'my_events_count': my_events_count,
+            'total_events': total_events,
+            'upcoming_week_count': upcoming_week_count,
+            'category_counts': category_counts,
+            'category_choices': Event.CATEGORY_CHOICES,
+            # Calendar data
+            'cal': cal,
+            'current_month': current_month,
+            'current_year': current_year,
+            'month_name': month_name,
+            'event_dates': event_dates,
+            'today_day': today.day,
+            'today_month': today.month,
+            'today_year': today.year,
+            'prev_month': prev_month,
+            'prev_year': prev_year,
+            'next_month': next_month,
+            'next_year': next_year,
+        }
+        
+        return render(request, 'events.html', context)
