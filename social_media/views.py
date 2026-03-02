@@ -270,3 +270,48 @@ def resources(request):
         }
         
         return render(request, 'resources.html', context)
+
+
+@login_required
+def resources(request):
+    # Get filter parameter from URL
+    filter_type = request.GET.get('filter', 'all')
+    
+    # Base queryset
+    resources = Resource.objects.all().order_by('-uploaded_at')
+    
+    # Apply filter if needed
+    if filter_type == 'my_uploads':
+        resources = resources.filter(uploaded_by=request.user)
+    
+    # Rest of your context remains the same
+    try:
+        complete_profile = CompleteProfile.objects.get(user=request.user)
+    except CompleteProfile.DoesNotExist:
+        complete_profile = None
+    
+    my_uploads = Resource.objects.filter(uploaded_by=request.user)
+    my_uploads_count = my_uploads.count()
+    total_resources = Resource.objects.count()
+    
+    # Category counts
+    category_counts = {}
+    for category_code, category_name in Resource.CATEGORY_CHOICES:
+        safe_key = category_code.replace('-', '_')
+        if filter_type == 'my_uploads':
+            count = Resource.objects.filter(category=category_code, uploaded_by=request.user).count()
+        else:
+            count = Resource.objects.filter(category=category_code).count()
+        category_counts[safe_key] = count
+    
+    context = {
+        'resources': resources,
+        'complete_profile': complete_profile,
+        'my_uploads': my_uploads,
+        'my_uploads_count': my_uploads_count,
+        'total_resources': total_resources,
+        'category_counts': category_counts,
+        'current_filter': filter_type,  # Pass current filter to template
+    }
+    
+    return render(request, 'resources.html', context)
