@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events & Calendar - KCAU Social</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --warning: #fbbf24;
+            --danger: #f56565;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray-100: #f7fafc;
+            --gray-200: #edf2f7;
+            --gray-300: #e2e8f0;
+            --gray-400: #cbd5e0;
+            --gray-500: #a0aec0;
+            --gray-600: #718096;
+            --gray-700: #4a5568;
+            --gray-800: #2d3748;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        /* Main Layout */
+        .dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles (your original) */
+        #sidebar-container {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-profile {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-profile-initials {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .sidebar-username {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-role {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-stats {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .sidebar-stat {
+            text-align: center;
+        }
+
+        .sidebar-stat-number {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .sidebar-stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .sidebar-nav-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .sidebar-nav-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            gap: 0.75rem;
+        }
+
+        .sidebar-nav-link:hover,
+        .sidebar-nav-link.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .sidebar-nav-link i {
+            width: 20px;
+        }
+
+        .sidebar-connections {
+            margin-top: auto;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-500);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-connection-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 10px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .sidebar-connection-item:hover {
+            background: var(--gray-100);
+        }
+
+        .sidebar-connection-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .sidebar-connection-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        /* Main Content */
+        .events-main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .events-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .events-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 2rem;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-title p {
+            color: var(--gray-600);
+            font-size: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Calendar and Events Grid */
+        .calendar-events-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Calendar Section */
+        .calendar-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar-header h2 {
+            font-size: 1.3rem;
+            color: var(--gray-800);
+            font-weight: 700;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .calendar-nav button {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 2px solid var(--gray-200);
+            background: white;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .calendar-nav button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.25rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: var(--gray-100);
+        }
+
+        .calendar-day.today {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            width: 5px;
+            height: 5px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5px;
+        }
+
+        .calendar-day.today.has-event::after {
+            background: white;
+        }
+
+        .calendar-day.other-month {
+            color: var(--gray-400);
+        }
+
+        .calendar-day.selected {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Upcoming Events Section */
+        .upcoming-events {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.3rem;
+            color: var(--gray-800);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .event-filters {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-chip {
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            border: 2px solid var(--gray-200);
+            background: white;
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-chip:hover,
+        .filter-chip.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Events List */
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .events-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .events-list::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+
+        .events-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .event-card {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--gray-100);
+            border-radius: 15px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .event-card:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .event-date-badge {
+            min-width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .event-date-badge .day {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .event-date-badge .month {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .event-details {
+            flex: 1;
+        }
+
+        .event-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .event-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .event-meta i {
+            margin-right: 0.25rem;
+            color: var(--primary);
+        }
+
+        .event-location {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--gray-200);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--gray-700);
+        }
+
+        .event-attendees {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .attendee-avatars {
+            display: flex;
+        }
+
+        .attendee-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid white;
+            margin-left: -8px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .attendee-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .attendee-count {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .event-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .attend-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--primary);
+            color: white;
+        }
+
+        .attend-btn:hover {
+            background: var(--secondary);
+        }
+
+        .attend-btn.attending {
+            background: var(--success);
+        }
+
+        .save-event-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 2px solid var(--gray-200);
+            background: white;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .save-event-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Featured Events Section */
+        .featured-events {
+            margin-top: 2rem;
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .featured-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s;
+        }
+
+        .featured-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+        .featured-image {
+            height: 160px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .featured-content {
+            padding: 1.5rem;
+        }
+
+        .featured-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .featured-description {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .featured-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .featured-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .featured-date i {
+            color: var(--primary);
+        }
+
+        /* Create Event Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--gray-500);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            background: var(--gray-100);
+            color: var(--danger);
+        }
+
+        .event-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .datetime-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .color-option:hover,
+        .color-option.selected {
+            border-color: var(--gray-800);
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            #sidebar-container {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            #sidebar-container.active {
+                transform: translateX(0);
+            }
+
+            .events-main {
+                margin-left: 0;
+            }
+
+            .calendar-events-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- LEFT SIDEBAR - Your original sidebar -->
+        <aside id="sidebar-container">
+            <div class="sidebar-profile">
+                {% if complete_profile and complete_profile.profile_picture %}
+                    <img src="{{ complete_profile.profile_picture.url }}" alt="Profile Picture" class="sidebar-profile-img">
+                {% else %}
+                    <div class="sidebar-profile-initials" style="background-color: #667eea;">
+                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                    </div>
+                {% endif %}
+                <h3 class="sidebar-username">{{ user.first_name }} {{ user.last_name }}</h3>
+                <p class="sidebar-role">@{{ user.username }}</p>
+
+                <div class="sidebar-stats">
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">24</span>
+                        <span class="sidebar-stat-label">Posts</span>
+                    </div>
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">180</span>
+                        <span class="sidebar-stat-label">Followers</span>
+                    </div>
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">150</span>
+                        <span class="sidebar-stat-label">Following</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-navigation">
+                <ul class="sidebar-nav-list">
+                    <li><a href="{% url 'home' %}" class="sidebar-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                    <li><a href="#" class="sidebar-nav-link active"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-users"></i> Clubs & Communities</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
+                    <li><a href="{% url 'resources' %}" class="sidebar-nav-link"><i class="fas fa-book"></i> Resources</a></li>
+                    <li><a href="{% url 'profile' %}" class="sidebar-nav-link"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li>
+                        <button class="sidebar-nav-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-connections">
+                <h4 class="sidebar-section-title">Connections</h4>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/women/65.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Alice Mwangi</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/men/66.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Brian Otieno</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/women/67.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Faith Njeri</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="events-main">
+            <div class="events-container">
+                <!-- Header Section -->
+                <div class="events-header">
+                    <div class="header-title">
+                        <h1>
+                            <i class="fas fa-calendar-alt" style="color: #667eea;"></i> 
+                            Events & Calendar
+                        </h1>
+                        <p>Discover and join campus events, workshops, and social gatherings</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-outline" onclick="filterEvents('my-events')">
+                            <i class="fas fa-calendar-check"></i> My Events (3)
+                        </button>
+                        <button class="btn-primary" onclick="openEventModal()">
+                            <i class="fas fa-plus"></i> Create Event
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Calendar and Events Grid -->
+                <div class="calendar-events-grid">
+                    <!-- Calendar Section -->
+                    <div class="calendar-section">
+                        <div class="calendar-header">
+                            <h2>March 2026</h2>
+                            <div class="calendar-nav">
+                                <button><i class="fas fa-chevron-left"></i></button>
+                                <button><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="weekdays">
+                            <div>Sun</div>
+                            <div>Mon</div>
+                            <div>Tue</div>
+                            <div>Wed</div>
+                            <div>Thu</div>
+                            <div>Fri</div>
+                            <div>Sat</div>
+                        </div>
+
+                        <div class="calendar-days">
+                            <!-- Previous month days -->
+                            <div class="calendar-day other-month">24</div>
+                            <div class="calendar-day other-month">25</div>
+                            <div class="calendar-day other-month">26</div>
+                            <div class="calendar-day other-month">27</div>
+                            <div class="calendar-day other-month">28</div>
+                            
+                            <!-- Current month days -->
+                            <div class="calendar-day">1</div>
+                            <div class="calendar-day">2</div>
+                            <div class="calendar-day">3</div>
+                            <div class="calendar-day has-event">4</div>
+                            <div class="calendar-day">5</div>
+                            <div class="calendar-day">6</div>
+                            <div class="calendar-day">7</div>
+                            <div class="calendar-day">8</div>
+                            <div class="calendar-day">9</div>
+                            <div class="calendar-day has-event">10</div>
+                            <div class="calendar-day">11</div>
+                            <div class="calendar-day">12</div>
+                            <div class="calendar-day">13</div>
+                            <div class="calendar-day">14</div>
+                            <div class="calendar-day">15</div>
+                            <div class="calendar-day has-event">16</div>
+                            <div class="calendar-day">17</div>
+                            <div class="calendar-day">18</div>
+                            <div class="calendar-day">19</div>
+                            <div class="calendar-day">20</div>
+                            <div class="calendar-day">21</div>
+                            <div class="calendar-day today has-event">22</div>
+                            <div class="calendar-day">23</div>
+                            <div class="calendar-day">24</div>
+                            <div class="calendar-day">25</div>
+                            <div class="calendar-day has-event">26</div>
+                            <div class="calendar-day">27</div>
+                            <div class="calendar-day">28</div>
+                            <div class="calendar-day">29</div>
+                            <div class="calendar-day">30</div>
+                            <div class="calendar-day">31</div>
+                            
+                            <!-- Next month days -->
+                            <div class="calendar-day other-month">1</div>
+                            <div class="calendar-day other-month">2</div>
+                            <div class="calendar-day other-month">3</div>
+                            <div class="calendar-day other-month">4</div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Events Section -->
+                    <div class="upcoming-events">
+                        <div class="section-header">
+                            <h2>
+                                <i class="fas fa-clock" style="color: #667eea;"></i>
+                                Upcoming Events
+                            </h2>
+                            <div class="event-filters">
+                                <button class="filter-chip active">All</button>
+                                <button class="filter-chip">Today</button>
+                                <button class="filter-chip">This Week</button>
+                                <button class="filter-chip">This Month</button>
+                            </div>
+                        </div>
+
+                        <div class="events-list">
+                            <!-- Event Card 1 -->
+                            <div class="event-card">
+                                <div class="event-date-badge">
+                                    <span class="day">22</span>
+                                    <span class="month">MAR</span>
+                                </div>
+                                <div class="event-details">
+                                    <h3 class="event-title">Tech Talk: AI in Healthcare</h3>
+                                    <div class="event-meta">
+                                        <span><i class="far fa-clock"></i> 2:00 PM - 4:00 PM</span>
+                                        <span><i class="fas fa-map-marker-alt"></i> Main Campus, LT 101</span>
+                                    </div>
+                                    <span class="event-location">Faculty of Computing</span>
+                                    
+                                    <div class="event-attendees">
+                                        <div class="attendee-avatars">
+                                            <div class="attendee-avatar" style="background: linear-gradient(135deg, #f56565, #c53030);">JD</div>
+                                            <div class="attendee-avatar" style="background: linear-gradient(135deg, #48bb78, #2f855a);">SM</div>
+                                            <div class="attendee-avatar" style="background: linear-gradient(135deg, #ed8936, #c05621);">PK</div>
+                                            <div class="attendee-avatar">+12</div>
+                                        </div>
+                                        <span class="attendee-count">15 attending</span>
+                                    </div>
+                                </div>
+                                <div class="event-actions">
+                                    <button class="attend-btn" onclick="attendEvent(this)">Attend</button>
+                                    <button class="save-event-btn"><i class="far fa-bookmark"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Event Card 2 -->
+                            <div class="event-card">
+                                <div class="event-date-badge" style="background: linear-gradient(135deg, #f56565, #c53030);">
+                                    <span class="day">25</span>
+                                    <span class="month">MAR</span>
+                                </div>
+                                <div class="event-details">
+                                    <h3 class="event-title">Campus Career Fair 2026</h3>
+                                    <div class="event-meta">
+                                        <span><i class="far fa-clock"></i> 10:00 AM - 5:00 PM</span>
+                                        <span><i class="fas fa-map-marker-alt"></i> Graduation Square</span>
+                                    </div>
+                                    <span class="event-location">Career Services</span>
+                                    
+                                    <div class="event-attendees">
+                                        <div class="attendee-avatars">
+                                            <div class="attendee-avatar">AN</div>
+                                            <div class="attendee-avatar">BK</div>
+                                            <div class="attendee-avatar">CM</div>
+                                            <div class="attendee-avatar">+45</div>
+                                        </div>
+                                        <span class="attendee-count">48 attending</span>
+                                    </div>
+                                </div>
+                                <div class="event-actions">
+                                    <button class="attend-btn" onclick="attendEvent(this)">Attend</button>
+                                    <button class="save-event-btn"><i class="far fa-bookmark"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Event Card 3 -->
+                            <div class="event-card">
+                                <div class="event-date-badge" style="background: linear-gradient(135deg, #48bb78, #2f855a);">
+                                    <span class="day">28</span>
+                                    <span class="month">MAR</span>
+                                </div>
+                                <div class="event-details">
+                                    <h3 class="event-title">Hackathon: Code for Change</h3>
+                                    <div class="event-meta">
+                                        <span><i class="far fa-clock"></i> 8:00 AM (24h)</span>
+                                        <span><i class="fas fa-map-marker-alt"></i> Innovation Hub</span>
+                                    </div>
+                                    <span class="event-location">CS Department</span>
+                                    
+                                    <div class="event-attendees">
+                                        <div class="attendee-avatars">
+                                            <div class="attendee-avatar">JO</div>
+                                            <div class="attendee-avatar">MW</div>
+                                            <div class="attendee-avatar">KO</div>
+                                            <div class="attendee-avatar">+23</div>
+                                        </div>
+                                        <span class="attendee-count">26 attending</span>
+                                    </div>
+                                </div>
+                                <div class="event-actions">
+                                    <button class="attend-btn" onclick="attendEvent(this)">Attend</button>
+                                    <button class="save-event-btn"><i class="far fa-bookmark"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Event Card 4 -->
+                            <div class="event-card">
+                                <div class="event-date-badge" style="background: linear-gradient(135deg, #ed8936, #c05621);">
+                                    <span class="day">30</span>
+                                    <span class="month">MAR</span>
+                                </div>
+                                <div class="event-details">
+                                    <h3 class="event-title">Guest Lecture: Entrepreneurship</h3>
+                                    <div class="event-meta">
+                                        <span><i class="far fa-clock"></i> 11:00 AM - 1:00 PM</span>
+                                        <span><i class="fas fa-map-marker-alt"></i> Business School</span>
+                                    </div>
+                                    <span class="event-location">School of Business</span>
+                                    
+                                    <div class="event-attendees">
+                                        <div class="attendee-avatars">
+                                            <div class="attendee-avatar">PO</div>
+                                            <div class="attendee-avatar">LN</div>
+                                            <div class="attendee-avatar">JK</div>
+                                            <div class="attendee-avatar">+8</div>
+                                        </div>
+                                        <span class="attendee-count">11 attending</span>
+                                    </div>
+                                </div>
+                                <div class="event-actions">
+                                    <button class="attend-btn" onclick="attendEvent(this)">Attend</button>
+                                    <button class="save-event-btn"><i class="far fa-bookmark"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Events Section -->
+                <div class="featured-events">
+                    <div class="section-header">
+                        <h2>
+                            <i class="fas fa-star" style="color: #fbbf24;"></i>
+                            Featured Events
+                        </h2>
+                    </div>
+
+                    <div class="featured-grid">
+                        <!-- Featured Card 1 -->
+                        <div class="featured-card">
+                            <div class="featured-image">
+                                <i class="fas fa-laptop-code"></i>
+                                <span class="featured-badge">🔥 Popular</span>
+                            </div>
+                            <div class="featured-content">
+                                <h3 class="featured-title">Annual Tech Symposium 2026</h3>
+                                <p class="featured-description">Join industry leaders for a day of talks, workshops, and networking. Featuring speakers from Google, Microsoft, and Safaricom.</p>
+                                <div class="featured-footer">
+                                    <div class="featured-date">
+                                        <i class="far fa-calendar"></i> Apr 15, 2026
+                                    </div>
+                                    <button class="attend-btn" style="padding: 0.5rem 1rem;">Learn More</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Featured Card 2 -->
+                        <div class="featured-card">
+                            <div class="featured-image" style="background: linear-gradient(135deg, #f56565, #c53030);">
+                                <i class="fas fa-music"></i>
+                                <span class="featured-badge">🎵 Music</span>
+                            </div>
+                            <div class="featured-content">
+                                <h3 class="featured-title">Campus Battle of the Bands</h3>
+                                <p class="featured-description">Watch talented students compete for the title of best campus band. Food, drinks, and great music!</p>
+                                <div class="featured-footer">
+                                    <div class="featured-date">
+                                        <i class="far fa-calendar"></i> Apr 22, 2026
+                                    </div>
+                                    <button class="attend-btn" style="padding: 0.5rem 1rem;">Get Tickets</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Featured Card 3 -->
+                        <div class="featured-card">
+                            <div class="featured-image" style="background: linear-gradient(135deg, #48bb78, #2f855a);">
+                                <i class="fas fa-handshake"></i>
+                                <span class="featured-badge">🤝 Networking</span>
+                            </div>
+                            <div class="featured-content">
+                                <h3 class="featured-title">Alumni Networking Mixer</h3>
+                                <p class="featured-description">Connect with successful KCA alumni working in top companies. Great opportunity for mentorship and internships.</p>
+                                <div class="featured-footer">
+                                    <div class="featured-date">
+                                        <i class="far fa-calendar"></i> May 5, 2026
+                                    </div>
+                                    <button class="attend-btn" style="padding: 0.5rem 1rem;">RSVP</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Create Event Modal -->
+        <div class="modal" id="eventModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>
+                        <i class="fas fa-calendar-plus" style="color: #667eea;"></i>
+                        Create New Event
+                    </h2>
+                    <button class="close-modal" onclick="closeEventModal()">&times;</button>
+                </div>
+
+                <form class="event-form">
+                    <div class="form-group">
+                        <label>Event Title <span style="color: #f56565;">*</span></label>
+                        <input type="text" placeholder="e.g., Tech Talk: AI in Healthcare" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description <span style="color: #f56565;">*</span></label>
+                        <textarea rows="4" placeholder="Describe your event..." required></textarea>
+                    </div>
+
+                    <div class="datetime-group">
+                        <div class="form-group">
+                            <label>Date <span style="color: #f56565;">*</span></label>
+                            <input type="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Time <span style="color: #f56565;">*</span></label>
+                            <input type="time" required>
+                        </div>
+                    </div>
+
+                    <div class="datetime-group">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date">
+                        </div>
+                        <div class="form-group">
+                            <label>End Time</label>
+                            <input type="time">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location <span style="color: #f56565;">*</span></label>
+                        <input type="text" placeholder="e.g., Main Campus, LT 101" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select>
+                            <option>Academic</option>
+                            <option>Social</option>
+                            <option>Sports</option>
+                            <option>Career</option>
+                            <option>Cultural</option>
+                            <option>Workshop</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Event Color</label>
+                        <div class="color-options">
+                            <div class="color-option" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="selectColor(this)"></div>
+                            <div class="color-option" style="background: linear-gradient(135deg, #f56565, #c53030);" onclick="selectColor(this)"></div>
+                            <div class="color-option" style="background: linear-gradient(135deg, #48bb78, #2f855a);" onclick="selectColor(this)"></div>
+                            <div class="color-option" style="background: linear-gradient(135deg, #ed8936, #c05621);" onclick="selectColor(this)"></div>
+                            <div class="color-option" style="background: linear-gradient(135deg, #9f7aea, #6b46c1);" onclick="selectColor(this)"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Max Attendees (Optional)</label>
+                        <input type="number" placeholder="e.g., 100">
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%;">
+                        <i class="fas fa-calendar-check"></i> Create Event
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Open event modal
+        function openEventModal() {
+            document.getElementById('eventModal').classList.add('active');
+        }
+
+        // Close event modal
+        function closeEventModal() {
+            document.getElementById('eventModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('eventModal');
+            if (event.target == modal) {
+                closeEventModal();
+            }
+        }
+
+        // Attend event function
+        function attendEvent(button) {
+            if (button.classList.contains('attending')) {
+                button.classList.remove('attending');
+                button.textContent = 'Attend';
+                button.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+            } else {
+                button.classList.add('attending');
+                button.textContent = 'Attending ✓';
+                button.style.background = '#48bb78';
+            }
+        }
+
+        // Select color option
+        function selectColor(element) {
+            document.querySelectorAll('.color-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        // Filter events
+        function filterEvents(filter) {
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Add your filtering logic here
+        }
+
+        // Calendar day selection
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            day.addEventListener('click', function() {
+                document.querySelectorAll('.calendar-day').forEach(d => {
+                    d.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        // Save event
+        document.querySelectorAll('.save-event-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (icon.classList.contains('far')) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    this.style.borderColor = '#667eea';
+                    this.style.color = '#667eea';
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    this.style.borderColor = '#e2e8f0';
+                    this.style.color = '#718096';
+                }
+            });
+        });
+
+        // Mobile menu toggle (if needed)
+        // Add your mobile menu toggle code here
+    </script>
+</body>
+</html>
