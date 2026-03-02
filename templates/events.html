@@ -981,7 +981,7 @@
                                     <div class="calendar-day 
                                         {% if day == today_day and current_month == today_month and current_year == today_year %}today{% endif %}
                                         {% if day in event_dates %}has-event{% endif %}"
-                                        onclick="filterByDate({{ day }}, {{ current_month }}, {{ current_year }})">
+                                        onclick="filterByDate('{{ day }}', '{{ current_month }}', '{{ current_year }}')">
                                         {{ day }}
                                     </div>
                                 {% endif %}
