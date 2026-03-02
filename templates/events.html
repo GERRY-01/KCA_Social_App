@@ -949,73 +949,46 @@
                 <!-- Calendar and Events Grid -->
                 <div class="calendar-events-grid">
                     <!-- Calendar Section -->
-                    <div class="calendar-section">
-                        <div class="calendar-header">
-                            <h2>March 2026</h2>
-                            <div class="calendar-nav">
-                                <button><i class="fas fa-chevron-left"></i></button>
-                                <button><i class="fas fa-chevron-right"></i></button>
-                            </div>
-                        </div>
-                        
-                        <div class="weekdays">
-                            <div>Sun</div>
-                            <div>Mon</div>
-                            <div>Tue</div>
-                            <div>Wed</div>
-                            <div>Thu</div>
-                            <div>Fri</div>
-                            <div>Sat</div>
-                        </div>
-
-                        <div class="calendar-days">
-                            <!-- Previous month days -->
-                            <div class="calendar-day other-month">24</div>
-                            <div class="calendar-day other-month">25</div>
-                            <div class="calendar-day other-month">26</div>
-                            <div class="calendar-day other-month">27</div>
-                            <div class="calendar-day other-month">28</div>
-                            
-                            <!-- Current month days -->
-                            <div class="calendar-day">1</div>
-                            <div class="calendar-day">2</div>
-                            <div class="calendar-day">3</div>
-                            <div class="calendar-day has-event">4</div>
-                            <div class="calendar-day">5</div>
-                            <div class="calendar-day">6</div>
-                            <div class="calendar-day">7</div>
-                            <div class="calendar-day">8</div>
-                            <div class="calendar-day">9</div>
-                            <div class="calendar-day has-event">10</div>
-                            <div class="calendar-day">11</div>
-                            <div class="calendar-day">12</div>
-                            <div class="calendar-day">13</div>
-                            <div class="calendar-day">14</div>
-                            <div class="calendar-day">15</div>
-                            <div class="calendar-day has-event">16</div>
-                            <div class="calendar-day">17</div>
-                            <div class="calendar-day">18</div>
-                            <div class="calendar-day">19</div>
-                            <div class="calendar-day">20</div>
-                            <div class="calendar-day">21</div>
-                            <div class="calendar-day today has-event">22</div>
-                            <div class="calendar-day">23</div>
-                            <div class="calendar-day">24</div>
-                            <div class="calendar-day">25</div>
-                            <div class="calendar-day has-event">26</div>
-                            <div class="calendar-day">27</div>
-                            <div class="calendar-day">28</div>
-                            <div class="calendar-day">29</div>
-                            <div class="calendar-day">30</div>
-                            <div class="calendar-day">31</div>
-                            
-                            <!-- Next month days -->
-                            <div class="calendar-day other-month">1</div>
-                            <div class="calendar-day other-month">2</div>
-                            <div class="calendar-day other-month">3</div>
-                            <div class="calendar-day other-month">4</div>
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <h2>{{ month_name }} {{ current_year }}</h2>
+                        <div class="calendar-nav">
+                            <a href="?month={{ prev_month }}&year={{ prev_year }}" class="calendar-nav-btn">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                            <a href="?month={{ next_month }}&year={{ next_year }}" class="calendar-nav-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
                         </div>
                     </div>
+                    
+                    <div class="weekdays">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                    </div>
+
+                    <div class="calendar-days">
+                        {% for week in cal %}
+                            {% for day in week %}
+                                {% if day == 0 %}
+                                    <div class="calendar-day other-month"></div>
+                                {% else %}
+                                    <div class="calendar-day 
+                                        {% if day == today_day and current_month == today_month and current_year == today_year %}today{% endif %}
+                                        {% if day in event_dates %}has-event{% endif %}"
+                                        onclick="filterByDate({{ day }}, {{ current_month }}, {{ current_year }})">
+                                        {{ day }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
 
                     <!-- Upcoming Events Section -->
                     <div class="upcoming-events">
@@ -1395,6 +1368,37 @@ function saveEvent(eventId) {
         // You can make an AJAX call here to unsave the event
         console.log('Event unsaved:', eventId);
     }
+}
+
+
+
+function filterByDate(day, month, year) {
+    // Format the date as YYYY-MM-DD
+    const selectedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    
+    // Filter events by this date
+    const events = document.querySelectorAll('.event-card');
+    let visibleCount = 0;
+    
+    events.forEach(card => {
+        const eventDate = card.dataset.date; // This should be in YYYY-MM-DD format
+        
+        if (eventDate === selectedDate) {
+            card.style.display = 'flex';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Update active state on calendar days
+    document.querySelectorAll('.calendar-day').forEach(dayEl => {
+        dayEl.classList.remove('selected');
+    });
+    event.currentTarget.classList.add('selected');
+    
+    // Check if any events are visible
+    checkNoEvents(visibleCount, `on ${selectedDate}`);
 }
     </script>
 </body>
