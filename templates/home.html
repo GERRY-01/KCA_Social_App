@@ -433,7 +433,7 @@
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-users"></i> Clubs & Communities</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
-                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-book"></i> Resources</a></li>
+                    <li><a href="{% url 'resources' %}" class="sidebar-nav-link"><i class="fas fa-book"></i> Resources</a></li>
                     <li><a href="{% url 'profile' %}" class="sidebar-nav-link"><i class="fas fa-user"></i> My Profile</a></li>
                     <li>
                         <form method="POST" action="{% url 'logout' %}" style="display: inline;">
