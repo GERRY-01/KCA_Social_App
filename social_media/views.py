@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .models import Profile, CompleteProfile, Post, Comments,Resource,Event
+from .models import Profile, CompleteProfile, Post, Comments,Resource,Event,AdminProfile,Announcement,AnnouncementLike
 import random
 import calendar
 from datetime import datetime
@@ -460,3 +460,269 @@ def events(request):
         }
         
         return render(request, 'events.html', context)
+    
+
+
+@login_required
+def announcements(request):
+    # Handle POST request - saving new announcement (only admins can post)
+    if request.method == 'POST':
+        # Check if user is admin before allowing post
+        if not request.user.is_staff:
+            messages.error(request, 'Only administrators can post announcements.')
+            return redirect('announcements')
+            
+        # Get data from the form
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        link = request.POST.get('link')
+        image = request.FILES.get('image')
+        
+        # Validate required fields
+        if not title or not content:
+            messages.error(request, 'Title and content are required')
+            return redirect('announcements')
+        
+        # Create new announcement
+        announcement = Announcement(
+            title=title,
+            content=content,
+            link=link,
+            image=image,
+            created_by=request.user
+        )
+        announcement.save()
+        
+        messages.success(request, 'Announcement posted successfully!')
+        return redirect('announcements')
+    
+    # GET request - fetch and display announcements (everyone can view)
+    else:
+        # Get all announcements ordered by most recent
+        announcements = Announcement.objects.all().order_by('-created_at')
+        
+        # Get user's complete profile for the sidebar
+        try:
+            complete_profile = CompleteProfile.objects.get(user=request.user)
+        except CompleteProfile.DoesNotExist:
+            complete_profile = None
+        
+        # Check which announcements the current user has liked
+        user_likes = {}
+        if request.user.is_authenticated:
+            liked_announcements = AnnouncementLike.objects.filter(
+                user=request.user
+            ).values_list('announcement_id', flat=True)
+            user_likes = {ann_id: True for ann_id in liked_announcements}
+        
+        context = {
+            'announcements': announcements,
+            'complete_profile': complete_profile,
+            'user_likes': user_likes,
+        }
+        
+        return render(request, 'announcements.html', context)
+
+@login_required
+def like_announcement(request, announcement_id):
+    """Handle liking/unliking an announcement"""
+    announcement = get_object_or_404(Announcement, id=announcement_id)
+    
+    # Check if user already liked this announcement
+    like_exists = AnnouncementLike.objects.filter(
+        announcement=announcement,
+        user=request.user
+    ).exists()
+    
+    if like_exists:
+        # Unlike
+        AnnouncementLike.objects.filter(
+            announcement=announcement,
+            user=request.user
+        ).delete()
+        announcement.likes -= 1
+        announcement.save()
+        messages.success(request, 'Announcement unliked')
+    else:
+        # Like
+        AnnouncementLike.objects.create(
+            announcement=announcement,
+            user=request.user
+        )
+        announcement.likes += 1
+        announcement.save()
+        messages.success(request, 'Announcement liked')
+    
+    return redirect('announcements')
+
+
+@login_required
+def delete_announcement(request, announcement_id):
+    """Delete an announcement (admin only)"""
+    if not request.user.is_staff:
+        messages.error(request, 'Access denied. Admins only.')
+        return redirect('announcements')
+    
+    announcement = get_object_or_404(Announcement, id=announcement_id)
+    
+    # Optional: Check if the current user is the creator or superuser
+    if request.user != announcement.created_by and not request.user.is_superuser:
+        messages.error(request, 'You can only delete your own announcements')
+        return redirect('announcements')
+    
+    if request.method == 'POST':
+        announcement.delete()
+        messages.success(request, 'Announcement deleted successfully')
+    
+    return redirect('announcements')
+
+
+@login_required
+def edit_announcement(request, announcement_id):
+    """Edit an announcement (admin only)"""
+    if not request.user.is_staff:
+        messages.error(request, 'Access denied. Admins only.')
+        return redirect('announcements')
+    
+    announcement = get_object_or_404(Announcement, id=announcement_id)
+    
+    # Optional: Check if the current user is the creator or superuser
+    if request.user != announcement.created_by and not request.user.is_superuser:
+        messages.error(request, 'You can only edit your own announcements')
+        return redirect('announcements')
+    
+    if request.method == 'POST':
+        announcement.title = request.POST.get('title')
+        announcement.content = request.POST.get('content')
+        announcement.link = request.POST.get('link')
+        
+        # Handle image update
+        if request.FILES.get('image'):
+            announcement.image = request.FILES.get('image')
+        
+        announcement.save()
+        messages.success(request, 'Announcement updated successfully')
+        return redirect('announcements')
+    
+    # GET request - show edit form (you'll need an edit template)
+    context = {
+        'announcement': announcement,
+    }
+    return render(request, 'edit_announcement.html', context)
+
+
+
+
+def admin_signup(request):
+    if request.method == 'POST':
+        # Get form data
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        staff_id = request.POST.get('staff_id')
+        department = request.POST.get('department')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        profile_picture = request.FILES.get('profile_picture')
+        
+        # Basic validation
+        if password != confirm_password:
+            messages.error(request, 'Passwords do not match')
+            return redirect('admin_signup')
+        
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username already taken')
+            return redirect('admin_signup')
+        
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Email already registered')
+            return redirect('admin_signup')
+        
+        if AdminProfile.objects.filter(staff_id=staff_id).exists():
+            messages.error(request, 'Staff ID already exists')
+            return redirect('admin_signup')
+        
+        # Create User
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name
+        )
+        
+        # Mark as staff (admin)
+        user.is_staff = True
+        user.save()
+        
+        # Create AdminProfile
+        admin_profile = AdminProfile(
+            user=user,
+            staff_id=staff_id,
+            department=department
+        )
+        
+        if profile_picture:
+            admin_profile.profile_picture = profile_picture
+        
+        admin_profile.save()
+        
+        messages.success(request, 'Admin account created successfully! Please login.')
+        return redirect('admin_login')
+    
+    # GET request - show the form
+    return render(request, 'admin_signup.html')
+
+
+def admin_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None and user.is_staff:  # Check if user is staff/admin
+            auth_login(request, user)
+            messages.success(request, 'Login successful!')
+            return redirect('admin_dashboard')  
+        else:
+            messages.error(request, 'Invalid credentials or not an admin')
+            return redirect('admin_login')
+    
+    return render(request, 'admin_login.html')
+
+
+@login_required
+def admin_dashboard(request):
+    # Check if user is admin/staff
+    if not request.user.is_staff:
+        messages.error(request, 'Access denied. Admins only.')
+        return redirect('home')
+    
+    # Get statistics for the dashboard
+    total_announcements = Announcement.objects.count()
+    total_events = Event.objects.count()
+    total_resources = Resource.objects.count()
+    total_users = User.objects.count()
+    
+    # Get recent announcements
+    recent_announcements = Announcement.objects.all().order_by('-created_at')[:5]
+    
+    # Get user's admin profile
+    try:
+        admin_profile = AdminProfile.objects.get(user=request.user)
+    except AdminProfile.DoesNotExist:
+        admin_profile = None
+    
+    context = {
+        'announcements': recent_announcements,
+        'total_announcements': total_announcements,
+        'total_events': total_events,
+        'total_resources': total_resources,
+        'total_users': total_users,
+        'admin_profile': admin_profile,
+        'user': request.user,
+    }
+    
+    return render(request, 'admin_dashboard.html', context)
