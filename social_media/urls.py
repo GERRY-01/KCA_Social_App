@@ -21,4 +21,8 @@ urlpatterns = [
     path('admin_signup', views.admin_signup, name='admin_signup'),
     path('admin_login', views.admin_login, name='admin_login'),
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
+    path('follow/<int:user_id>/', views.follow_user, name='follow_user'),
+    path('unfollow/<int:user_id>/', views.unfollow_user, name='unfollow_user'),
+    path('accept_follow/<int:user_id>/', views.accept_follow, name='accept_follow'),
+    path('decline_follow/<int:user_id>/', views.decline_follow, name='decline_follow'),
 ]

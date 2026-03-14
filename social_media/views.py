@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .models import Profile, CompleteProfile, Post, Comments,Resource,Event,AdminProfile,Announcement,AnnouncementLike
+from .models import Profile, CompleteProfile, Post, Comments, Resource, Event, AdminProfile, Announcement, AnnouncementLike, Follow
 import random
 import calendar
 from datetime import datetime
@@ -13,16 +13,68 @@ from django.utils import timezone
 # Create your views here.
 @login_required
 def home(request):
+    # Handle regular user profile (may not exist for admins)
+    try:
+        user_profile = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        user_profile = None
     
-    user_profile = Profile.objects.get(user=request.user)
-    try :
+    try:
         complete_profile = CompleteProfile.objects.get(user=request.user)
     except CompleteProfile.DoesNotExist:
         complete_profile = None
 
     posts = Post.objects.all().order_by('-created_at')
+    
+    # Get all users except current user
     all_users = User.objects.exclude(id=request.user.id)
-    suggested_users = random.sample(list(all_users), min(3, all_users.count()))
+    
+    # Get users that the current user has any relationship with (accepted or pending)
+    following = Follow.objects.filter(
+        follower=request.user
+    ).values_list('followed_id', flat=True)
+    
+    # Get status of each follow for more detailed display
+    follow_status = {}
+    for follow in Follow.objects.filter(follower=request.user):
+        follow_status[follow.followed_id] = follow.status
+    
+    # ADD THIS LINE - Attach follow status to each post
+    for post in posts:
+        post.follow_status = follow_status.get(post.user.id, None)
+    
+    # Get pending follow requests for the current user
+    pending_requests = Follow.objects.filter(
+        followed=request.user,
+        status='pending'
+    ).select_related('follower')
+    
+    # Get follower counts for each user (accepted only)
+    follower_counts = {}
+    for user in all_users:
+        follower_counts[user.id] = Follow.objects.filter(
+            followed=user,
+            status='accepted'
+        ).count()
+    
+    # Get suggested users (users not followed yet and not pending)
+    if all_users.exists():
+        # Exclude users with pending requests
+        pending_user_ids = pending_requests.values_list('follower_id', flat=True)
+        suggested_users_list = all_users.exclude(
+            id__in=following
+        ).exclude(
+            id__in=pending_user_ids
+        )
+        
+        if suggested_users_list.exists():
+            sample_size = min(3, suggested_users_list.count())
+            suggested_users = random.sample(list(suggested_users_list), sample_size)
+        else:
+            suggested_users = []
+    else:
+        suggested_users = []
+    
     all_suggestions = all_users
 
     context = {
@@ -31,7 +83,11 @@ def home(request):
         'complete_profile': complete_profile,
         'posts': posts,
         'suggested_users': suggested_users,
-        'all_suggestions': all_suggestions
+        'all_suggestions': all_suggestions,
+        'following': following,
+        'follow_status': follow_status,
+        'follower_counts': follower_counts,
+        'pending_requests': pending_requests,
     }
     return render(request, 'home.html', context)
 
@@ -83,7 +139,7 @@ def complete_profile(request):
         year = request.POST.get("year")
         bio = request.POST.get("bio")
 
-         # Optional: handle profile picture if added
+        # Optional: handle profile picture if added
         profile_picture = request.FILES.get("profilePicture")
 
         profile, created = CompleteProfile.objects.get_or_create(user=request.user)
@@ -110,7 +166,11 @@ def login(request):
 
         if user is not None:
             auth_login(request, user)
-            return redirect('home')
+            # Redirect admin to admin dashboard, regular users to home
+            if user.is_staff:
+                return redirect('admin_dashboard')
+            else:
+                return redirect('home')
         else:
             messages.error(request, 'Invalid username or password')
     return render(request, 'login.html')
@@ -123,7 +183,7 @@ def create_post(request):
         
         if not caption:
             messages.error(request, 'Caption is required')
-            return render(request, 'home.html')
+            return redirect('home')
         
         post = Post(user=user, caption=caption, media=media)
         post.save()
@@ -131,7 +191,7 @@ def create_post(request):
         messages.success(request, 'Post created successfully')
 
         return redirect('home')
-    return render(request, 'home.html')
+    return redirect('home')
 
 def logout(request):
     auth_logout(request)
@@ -152,11 +212,56 @@ def profile(request):
 
     posts = Post.objects.filter(user=request.user).order_by('-created_at')
     
+    # Get followers and following counts
+    followers_count = Follow.objects.filter(followed=request.user).count()
+    following_count = Follow.objects.filter(follower=request.user).count()
+    
     return render(request, 'profile.html', {
         'user_profile': user_profile,
         'complete_profile': complete_profile,
-        'user': request.user ,
-        'posts': posts
+        'user': request.user,
+        'posts': posts,
+        'followers_count': followers_count,
+        'following_count': following_count,
+    })
+
+@login_required
+def user_profile(request, user_id):
+    """View another user's profile"""
+    profile_user = get_object_or_404(User, id=user_id)
+    
+    try:
+        user_profile = Profile.objects.get(user=profile_user)
+    except Profile.DoesNotExist:
+        user_profile = None
+    
+    try:
+        complete_profile = CompleteProfile.objects.get(user=profile_user)
+    except CompleteProfile.DoesNotExist:
+        complete_profile = None
+
+    posts = Post.objects.filter(user=profile_user).order_by('-created_at')
+    
+    # Get followers and following counts
+    followers_count = Follow.objects.filter(followed=profile_user).count()
+    following_count = Follow.objects.filter(follower=profile_user).count()
+    
+    # Check if current user follows this profile
+    is_following = False
+    if request.user.is_authenticated:
+        is_following = Follow.objects.filter(
+            follower=request.user,
+            followed=profile_user
+        ).exists()
+    
+    return render(request, 'user_profile.html', {
+        'profile_user': profile_user,
+        'user_profile': user_profile,
+        'complete_profile': complete_profile,
+        'posts': posts,
+        'followers_count': followers_count,
+        'following_count': following_count,
+        'is_following': is_following,
     })
 
 @login_required
@@ -177,11 +282,18 @@ def add_comment(request, post_id):
     
     return redirect('home')
 
-
 @login_required
 def view_all_suggestions(request):
     # Get all users except current user
     all_users = User.objects.exclude(id=request.user.id)
+    
+    # Get users that the current user is following
+    following = Follow.objects.filter(follower=request.user).values_list('followed_id', flat=True)
+    
+    # Get follower counts
+    follower_counts = {}
+    for user in all_users:
+        follower_counts[user.id] = Follow.objects.filter(followed=user).count()
     
     # Paginate results (show 10 per page)
     paginator = Paginator(all_users, 10)
@@ -190,7 +302,9 @@ def view_all_suggestions(request):
     
     return render(request, 'suggestions.html', {
         'page_obj': page_obj,
-        'user': request.user
+        'user': request.user,
+        'following': following,
+        'follower_counts': follower_counts,
     })
 
 @login_required
@@ -239,10 +353,17 @@ def resources(request):
         messages.success(request, 'Resource shared successfully!')
         return redirect('resources')
     
-    # GET request - fetch and display resources
+    # GET request - fetch and display resources with filter
     else:
-        # Get all resources ordered by most recent
-        resources = Resource.objects.all().order_by('-uploaded_at')
+        # Get filter parameter from URL
+        filter_type = request.GET.get('filter', 'all')
+        
+        # Base queryset
+        resources_list = Resource.objects.all().order_by('-uploaded_at')
+        
+        # Apply filter if needed
+        if filter_type == 'my_uploads':
+            resources_list = resources_list.filter(uploaded_by=request.user)
         
         # Get user's complete profile for the sidebar
         try:
@@ -253,71 +374,29 @@ def resources(request):
         # Get resources uploaded by the current user
         my_uploads = Resource.objects.filter(uploaded_by=request.user)
         my_uploads_count = my_uploads.count()
-        
-        # Get total resources count
         total_resources = Resource.objects.count()
         
-        # Get category counts for the filter buttons
+        # Category counts
         category_counts = {}
         for category_code, category_name in Resource.CATEGORY_CHOICES:
-            count = Resource.objects.filter(category=category_code).count()
-            category_counts[category_code] = count
+            safe_key = category_code.replace('-', '_')
+            if filter_type == 'my_uploads':
+                count = Resource.objects.filter(category=category_code, uploaded_by=request.user).count()
+            else:
+                count = Resource.objects.filter(category=category_code).count()
+            category_counts[safe_key] = count
         
         context = {
-            'resources': resources,
+            'resources': resources_list,
             'complete_profile': complete_profile,
             'my_uploads': my_uploads,
             'my_uploads_count': my_uploads_count,
             'total_resources': total_resources,
             'category_counts': category_counts,
+            'current_filter': filter_type,
         }
         
         return render(request, 'resources.html', context)
-
-
-@login_required
-def resources(request):
-    # Get filter parameter from URL
-    filter_type = request.GET.get('filter', 'all')
-    
-    # Base queryset
-    resources = Resource.objects.all().order_by('-uploaded_at')
-    
-    # Apply filter if needed
-    if filter_type == 'my_uploads':
-        resources = resources.filter(uploaded_by=request.user)
-    
-    # Rest of your context remains the same
-    try:
-        complete_profile = CompleteProfile.objects.get(user=request.user)
-    except CompleteProfile.DoesNotExist:
-        complete_profile = None
-    
-    my_uploads = Resource.objects.filter(uploaded_by=request.user)
-    my_uploads_count = my_uploads.count()
-    total_resources = Resource.objects.count()
-    
-    # Category counts
-    category_counts = {}
-    for category_code, category_name in Resource.CATEGORY_CHOICES:
-        safe_key = category_code.replace('-', '_')
-        if filter_type == 'my_uploads':
-            count = Resource.objects.filter(category=category_code, uploaded_by=request.user).count()
-        else:
-            count = Resource.objects.filter(category=category_code).count()
-        category_counts[safe_key] = count
-    
-    context = {
-        'resources': resources,
-        'complete_profile': complete_profile,
-        'my_uploads': my_uploads,
-        'my_uploads_count': my_uploads_count,
-        'total_resources': total_resources,
-        'category_counts': category_counts,
-        'current_filter': filter_type,  # Pass current filter to template
-    }
-    
-    return render(request, 'resources.html', context)
 
 def events(request):
     # Handle POST request - saving new event
@@ -373,7 +452,7 @@ def events(request):
                 pass
         
         # Get all upcoming events
-        events = Event.objects.filter(date__gte=timezone.now().date()).order_by('date', 'time')
+        events_list = Event.objects.filter(date__gte=timezone.now().date()).order_by('date', 'time')
         
         # Get events for the current month
         month_events = Event.objects.filter(
@@ -435,7 +514,7 @@ def events(request):
             category_counts[safe_key] = count
         
         context = {
-            'events': events,
+            'events': events_list,
             'past_events': past_events,
             'complete_profile': complete_profile,
             'my_events': my_events,
@@ -461,8 +540,6 @@ def events(request):
         
         return render(request, 'events.html', context)
     
-
-
 @login_required
 def announcements(request):
     # Handle POST request - saving new announcement (only admins can post)
@@ -499,7 +576,7 @@ def announcements(request):
     # GET request - fetch and display announcements (everyone can view)
     else:
         # Get all announcements ordered by most recent
-        announcements = Announcement.objects.all().order_by('-created_at')
+        announcements_list = Announcement.objects.all().order_by('-created_at')
         
         # Get user's complete profile for the sidebar
         try:
@@ -516,7 +593,7 @@ def announcements(request):
             user_likes = {ann_id: True for ann_id in liked_announcements}
         
         context = {
-            'announcements': announcements,
+            'announcements': announcements_list,
             'complete_profile': complete_profile,
             'user_likes': user_likes,
         }
@@ -555,7 +632,6 @@ def like_announcement(request, announcement_id):
     
     return redirect('announcements')
 
-
 @login_required
 def delete_announcement(request, announcement_id):
     """Delete an announcement (admin only)"""
@@ -565,7 +641,7 @@ def delete_announcement(request, announcement_id):
     
     announcement = get_object_or_404(Announcement, id=announcement_id)
     
-    # Optional: Check if the current user is the creator or superuser
+    # Check if the current user is the creator or superuser
     if request.user != announcement.created_by and not request.user.is_superuser:
         messages.error(request, 'You can only delete your own announcements')
         return redirect('announcements')
@@ -576,7 +652,6 @@ def delete_announcement(request, announcement_id):
     
     return redirect('announcements')
 
-
 @login_required
 def edit_announcement(request, announcement_id):
     """Edit an announcement (admin only)"""
@@ -586,7 +661,7 @@ def edit_announcement(request, announcement_id):
     
     announcement = get_object_or_404(Announcement, id=announcement_id)
     
-    # Optional: Check if the current user is the creator or superuser
+    # Check if the current user is the creator or superuser
     if request.user != announcement.created_by and not request.user.is_superuser:
         messages.error(request, 'You can only edit your own announcements')
         return redirect('announcements')
@@ -604,14 +679,11 @@ def edit_announcement(request, announcement_id):
         messages.success(request, 'Announcement updated successfully')
         return redirect('announcements')
     
-    # GET request - show edit form (you'll need an edit template)
+    # GET request - show edit form
     context = {
         'announcement': announcement,
     }
     return render(request, 'edit_announcement.html', context)
-
-
-
 
 def admin_signup(request):
     if request.method == 'POST':
@@ -674,7 +746,6 @@ def admin_signup(request):
     # GET request - show the form
     return render(request, 'admin_signup.html')
 
-
 def admin_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -691,7 +762,6 @@ def admin_login(request):
             return redirect('admin_login')
     
     return render(request, 'admin_login.html')
-
 
 @login_required
 def admin_dashboard(request):
@@ -726,3 +796,127 @@ def admin_dashboard(request):
     }
     
     return render(request, 'admin_dashboard.html', context)
+
+@login_required
+def follow_user(request, user_id):
+    """Follow a user - creates a pending request"""
+    user_to_follow = get_object_or_404(User, id=user_id)
+    
+    # Don't allow following yourself
+    if request.user == user_to_follow:
+        messages.error(request, "You cannot follow yourself")
+        return redirect(request.META.get('HTTP_REFERER', 'home'))
+    
+    # Check if there's an existing follow relationship
+    existing_follow = Follow.objects.filter(
+        follower=request.user,
+        followed=user_to_follow
+    ).first()
+    
+    if existing_follow:
+        if existing_follow.status == 'pending':
+            messages.info(request, f"Follow request already sent to {user_to_follow.get_full_name()}")
+        elif existing_follow.status == 'accepted':
+            messages.info(request, f"You already follow {user_to_follow.get_full_name()}")
+        else:  # declined - create new request
+            existing_follow.status = 'pending'
+            existing_follow.save()
+            messages.success(request, f"Follow request sent to {user_to_follow.get_full_name()}")
+    else:
+        # Create new follow request with pending status
+        Follow.objects.create(
+            follower=request.user,
+            followed=user_to_follow,
+            status='pending'
+        )
+        messages.success(request, f"Follow request sent to {user_to_follow.get_full_name()}")
+    
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+@login_required
+def unfollow_user(request, user_id):
+    """Unfollow a user (only works for accepted follows)"""
+    user_to_unfollow = get_object_or_404(User, id=user_id)
+    
+    follow = Follow.objects.filter(
+        follower=request.user,
+        followed=user_to_unfollow,
+        status='accepted'
+    ).first()
+    
+    if follow:
+        follow.delete()
+        messages.success(request, f"You have unfollowed {user_to_unfollow.get_full_name()}")
+    else:
+        messages.error(request, "You don't follow this user")
+    
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+@login_required
+def accept_follow(request, user_id):
+    """Accept a follow request and follow back"""
+    requester = get_object_or_404(User, id=user_id)
+    
+    # Get the pending follow request
+    follow_request = get_object_or_404(
+        Follow, 
+        follower=requester, 
+        followed=request.user,
+        status='pending'
+    )
+    
+    # Accept the request
+    follow_request.status = 'accepted'
+    follow_request.save()
+    
+    # Automatically follow back
+    reverse_follow, created = Follow.objects.get_or_create(
+        follower=request.user,
+        followed=requester,
+        defaults={'status': 'accepted'}
+    )
+    
+    if created:
+        messages.success(request, f"You are now following {requester.get_full_name()} back")
+    else:
+        if reverse_follow.status != 'accepted':
+            reverse_follow.status = 'accepted'
+            reverse_follow.save()
+        messages.success(request, f"You are now following {requester.get_full_name()} back")
+    
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+@login_required
+def decline_follow(request, user_id):
+    """Decline a follow request"""
+    requester = get_object_or_404(User, id=user_id)
+    
+    # Get the pending follow request
+    follow_request = get_object_or_404(
+        Follow, 
+        follower=requester, 
+        followed=request.user,
+        status='pending'
+    )
+    
+    # Decline the request
+    follow_request.status = 'declined'
+    follow_request.save()
+    
+    messages.info(request, f"Follow request from {requester.get_full_name()} declined")
+    
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+@login_required
+def get_follow_requests(request):
+    """Get all pending follow requests for the current user"""
+    pending_requests = Follow.objects.filter(
+        followed=request.user,
+        status='pending'
+    ).select_related('follower')
+    
+    return pending_requests

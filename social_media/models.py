@@ -217,3 +217,31 @@ class AnnouncementLike(models.Model):
     
     def __str__(self):
         return f"{self.user.username} liked {self.announcement.title}"
+
+class Follow(models.Model):
+    FOLLOW_STATUS = [
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('declined', 'Declined'),
+    ]
+    
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+    followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
+    status = models.CharField(max_length=10, choices=FOLLOW_STATUS, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ['follower', 'followed']
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.follower.username} follows {self.followed.username} - {self.status}"
+    
+    def accept(self):
+        self.status = 'accepted'
+        self.save()
+    
+    def decline(self):
+        self.status = 'declined'
+        self.save()
