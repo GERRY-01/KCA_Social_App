@@ -3,12 +3,14 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .models import Profile, CompleteProfile, Post, Comments, Resource, Event, AdminProfile, Announcement, AnnouncementLike, Follow
+from .models import Profile, CompleteProfile, Post, Comments, Resource, Event, AdminProfile, Announcement, AnnouncementLike, Follow,PostLike
 import random
 import calendar
 from datetime import datetime
 from django.core.paginator import Paginator
 from django.utils import timezone
+from django.http import JsonResponse
+
 
 # Create your views here.
 
@@ -27,9 +29,6 @@ def home(request):
 
     posts = Post.objects.all().order_by('-created_at')
     
-    # Get all users except current user
-    all_users = User.objects.exclude(id=request.user.id)
-    
     # Get users that the current user has any relationship with (accepted or pending)
     following = Follow.objects.filter(
         follower=request.user
@@ -43,6 +42,9 @@ def home(request):
     # Attach follow status to each post
     for post in posts:
         post.follow_status = follow_status.get(post.user.id, None)
+        # Add like count and user like status
+        post.likes_count = post.likes.count()
+        post.user_liked = post.likes.filter(user=request.user).exists()
     
     # Get pending follow requests for the current user
     pending_requests = Follow.objects.filter(
@@ -52,30 +54,26 @@ def home(request):
     
     # Get follower counts for each user (accepted only)
     follower_counts = {}
-    for user in all_users:
+    for user in User.objects.exclude(id=request.user.id):
         follower_counts[user.id] = Follow.objects.filter(
             followed=user,
             status='accepted'
         ).count()
     
-    # Get mutual followers (people you follow who also follow you back)
-    # Users that the current user follows (accepted only)
+    # Get mutual followers
     user_following = Follow.objects.filter(
         follower=request.user,
         status='accepted'
     ).values_list('followed_id', flat=True)
     
-    # Users that follow the current user (accepted only)
     user_followers = Follow.objects.filter(
         followed=request.user,
         status='accepted'
     ).values_list('follower_id', flat=True)
     
-    # Mutual followers (intersection of both sets)
     mutual_ids = set(user_following) & set(user_followers)
-    mutual_followers = User.objects.filter(id__in=mutual_ids)[:5]  # Limit to 5
+    mutual_followers = User.objects.filter(id__in=mutual_ids)[:5]
     
-    # Get complete profile and admin profile for profile pictures
     mutual_users_with_profiles = []
     for user in mutual_followers:
         user_data = {
@@ -92,16 +90,17 @@ def home(request):
                 pass
         mutual_users_with_profiles.append(user_data)
     
-    # Get suggested users (users not followed yet and not pending)
+    # Get suggested users
+    all_users = User.objects.exclude(id=request.user.id)
+    
     if all_users.exists():
-        # Exclude users with pending requests and mutual followers
         pending_user_ids = pending_requests.values_list('follower_id', flat=True)
         suggested_users_list = all_users.exclude(
             id__in=following
         ).exclude(
             id__in=pending_user_ids
         ).exclude(
-            id__in=mutual_ids  # Also exclude mutual followers from suggestions
+            id__in=mutual_ids
         )
         
         if suggested_users_list.exists():
@@ -125,7 +124,7 @@ def home(request):
         'follow_status': follow_status,
         'follower_counts': follower_counts,
         'pending_requests': pending_requests,
-        'mutual_followers': mutual_users_with_profiles,  # Add mutual followers to context
+        'mutual_followers': mutual_users_with_profiles,
     }
     return render(request, 'home.html', context)
 
@@ -958,3 +957,47 @@ def get_follow_requests(request):
     ).select_related('follower')
     
     return pending_requests
+
+
+@login_required
+def like_post(request, post_id):
+    """Like or unlike a post"""
+    post = get_object_or_404(Post, id=post_id)
+    
+    # Check if already liked
+    like_exists = PostLike.objects.filter(
+        post=post,
+        user=request.user
+    ).exists()
+    
+    if like_exists:
+        # Unlike
+        PostLike.objects.filter(
+            post=post,
+            user=request.user
+        ).delete()
+        liked = False
+        message = 'Post unliked'
+    else:
+        # Like
+        PostLike.objects.create(
+            post=post,
+            user=request.user
+        )
+        liked = True
+        message = 'Post liked'
+    
+    # Get updated like count
+    likes_count = post.likes.count()
+    
+    # Check if it's an AJAX request
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'liked': liked,
+            'likes_count': likes_count,
+            'success': True
+        })
+    else:
+        # Regular form submission - redirect back
+        messages.success(request, message)
+        return redirect(request.META.get('HTTP_REFERER', 'home'))

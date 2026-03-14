@@ -60,6 +60,16 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class PostLike(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_likes')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['post', 'user']  # Prevent duplicate likes
+    
+    def __str__(self):
+        return f"{self.user.username} liked post {self.post.id}"
 
 class Comments(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
