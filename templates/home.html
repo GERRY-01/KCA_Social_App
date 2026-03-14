@@ -524,6 +524,13 @@
             color: #dc2626;
             border-color: #fecaca;
         }
+        .post-action-btn.liked {
+            color: #f97316;
+        }
+
+        .post-action-btn.liked i {
+            color: #f97316;
+        }
     </style>
 </head>
 <body>
@@ -792,10 +799,11 @@
                     </div>
                     
                     <!-- Post Stats -->
+                    <!-- Post Stats -->
                     <div class="post-stats">
                         <div class="post-stat">
-                            <i class="far fa-heart"></i>
-                            <span>4.5k</span>
+                            <i class="{% if post.user_liked %}fas{% else %}far{% endif %} fa-heart" style="color: {% if post.user_liked %}#f97316{% endif %};"></i>
+                            <span>{{ post.likes_count }}</span>
                         </div>
                         <div class="post-stat">
                             <i class="far fa-comment"></i>
@@ -806,12 +814,16 @@
                             <span>1.75k</span>
                         </div>
                     </div>
-                    
+
                     <!-- Post Actions -->
                     <div class="post-actions">
-                        <button class="post-action-btn like-btn">
-                            <i class="far fa-heart"></i> Like
-                        </button>
+                        <form method="POST" action="{% url 'like_post' post.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="post-action-btn like-btn {% if post.user_liked %}liked{% endif %}">
+                                <i class="{% if post.user_liked %}fas{% else %}far{% endif %} fa-heart"></i>
+                                {% if post.user_liked %}Liked{% else %}Like{% endif %}
+                            </button>
+                        </form>
                         <button class="post-action-btn comment-btn" onclick="toggleComments('{{ post.id }}')">
                             <i class="far fa-comment"></i> Comment
                         </button>
@@ -819,7 +831,6 @@
                             <i class="far fa-share-square"></i> Share
                         </button>
                     </div>
-
                     <!-- COMMENTS SECTION -->
                     <div class="post-comments-section" id="comments-{{ post.id }}">
                         <div class="comments-header">
