@@ -239,7 +239,7 @@
             height: 45px;
             border-radius: 50%;
             overflow: hidden;
-            background: linear-gradient(135deg, #667eea, #764ba2); /* Purple gradient for initials */
+            background: linear-gradient(135deg, #667eea, #764ba2);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -260,7 +260,7 @@
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            background: linear-gradient(135deg, #667eea, #764ba2); /* Purple gradient */
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
         }
 
@@ -282,7 +282,6 @@
             color: var(--gray-400);
         }
 
-        /* Suggestion Follow Button - Orange Theme */
         .suggestion-follow-btn {
             background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
             color: white;
@@ -311,7 +310,6 @@
             box-shadow: 0 4px 10px rgba(249, 115, 22, 0.4);
         }
 
-        /* Following state for suggestion button */
         .suggestion-follow-btn.following {
             background: #f97316;
             color: white;
@@ -327,7 +325,6 @@
             content: "\f235";
         }
 
-        /* Initials styling for various components */
         .sidebar-profile-initials {
             width: 80px;
             height: 80px;
@@ -420,7 +417,6 @@
             text-decoration: underline;
         }
 
-        /* Follow/Unfollow button styles - Orange Theme */
         .post-follow-btn {
             background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
             color: white;
@@ -456,7 +452,6 @@
             color: #666;
         }
 
-        /* Following button state - Orange theme */
         .post-follow-btn.following {
             background: #f97316;
             color: white;
@@ -488,6 +483,47 @@
                 box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
             }
         }
+
+        .request-accept-btn {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .request-accept-btn:hover {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            transform: translateY(-1px);
+        }
+
+        .request-decline-btn {
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .request-decline-btn:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
     </style>
 </head>
 <body>
@@ -507,7 +543,7 @@
 
                 <div class="sidebar-stats">
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-number">24</span>
+                        <span class="sidebar-stat-number">{{ user.posts.count }}</span>
                         <span class="sidebar-stat-label">Posts</span>
                     </div>
                     <div class="sidebar-stat">
@@ -685,22 +721,24 @@
                                     </a>
                                 </h4>
                                 
-                                {% if post.user != request.user %}
-                                    {% if post.user.id in following %}
-                                        <form method="POST" action="{% url 'unfollow_user' post.user.id %}" style="display: inline;">
-                                            {% csrf_token %}
-                                            <button type="submit" class="post-follow-btn following">
-                                                <i class="fas fa-user-check"></i> Following
-                                            </button>
-                                        </form>
-                                    {% else %}
-                                        <form method="POST" action="{% url 'follow_user' post.user.id %}" style="display: inline;">
-                                            {% csrf_token %}
-                                            <button type="submit" class="post-follow-btn">
-                                                <i class="fas fa-user-plus"></i> Follow
-                                            </button>
-                                        </form>
-                                    {% endif %}
+                               {% if post.follow_status == 'accepted' %}
+                                    <form method="POST" action="{% url 'unfollow_user' post.user.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="post-follow-btn following">
+                                            <i class="fas fa-user-check"></i> Following
+                                        </button>
+                                    </form>
+                                {% elif post.follow_status == 'pending' %}
+                                    <button class="post-follow-btn" style="background: #999; cursor: not-allowed; opacity: 0.7;" disabled>
+                                        <i class="fas fa-clock"></i> Requested
+                                    </button>
+                                {% else %}
+                                    <form method="POST" action="{% url 'follow_user' post.user.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="post-follow-btn">
+                                            <i class="fas fa-user-plus"></i> Follow
+                                        </button>
+                                    </form>
                                 {% endif %}
                             </div>
                             
@@ -835,33 +873,56 @@
         <!-- RIGHT SIDEBAR -->
         <aside id="right-sidebar-container">
             <div class="right-requests-section">
-                <h3 class="right-section-title">Requests</h3>
+                <h3 class="right-section-title">
+                    Follow Requests 
+                    {% if pending_requests.count > 0 %}
+                    <span style="background: #f97316; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 8px;">
+                        {{ pending_requests.count }} new
+                    </span>
+                    {% endif %}
+                </h3>
                 
+                {% for request in pending_requests %}
                 <div class="request-item">
                     <div class="request-user-info">
-                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Amanda" class="request-user-img">
+                        {% if request.follower.completeprofile and request.follower.completeprofile.profile_picture %}
+                            <img src="{{ request.follower.completeprofile.profile_picture.url }}" alt="{{ request.follower.username }}" class="request-user-img">
+                        {% elif request.follower.admin_profile and request.follower.admin_profile.profile_picture %}
+                            <img src="{{ request.follower.admin_profile.profile_picture.url }}" alt="{{ request.follower.username }}" class="request-user-img">
+                        {% else %}
+                            <div class="request-user-img" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                                {{ request.follower.first_name|first|upper }}{{ request.follower.last_name|first|upper }}
+                            </div>
+                        {% endif %}
                         <div class="request-text">
-                            <span class="request-name">Amanda Smith</span> wants to add your friends
+                            <span class="request-name">{{ request.follower.first_name }} {{ request.follower.last_name }}</span> wants to follow you
                         </div>
                     </div>
                     <div class="request-actions">
-                        <button class="request-accept-btn">Accept</button>
-                        <button class="request-decline-btn">Decline</button>
+                        <form method="POST" action="{% url 'accept_follow' request.follower.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="request-accept-btn">
+                                <i class="fas fa-check"></i> Follow Back
+                            </button>
+                        </form>
+                        <form method="POST" action="{% url 'decline_follow' request.follower.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="request-decline-btn">
+                                <i class="fas fa-times"></i> Decline
+                            </button>
+                        </form>
                     </div>
                 </div>
+                {% empty %}
+                <div style="text-align: center; padding: 20px; color: #999;">
+                    <i class="fas fa-user-friends" style="font-size: 24px; margin-bottom: 10px;"></i>
+                    <p>No follow requests</p>
+                </div>
+                {% endfor %}
                 
-                <div class="request-item">
-                    <div class="request-user-info">
-                        <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Rosa" class="request-user-img">
-                        <div class="request-text">
-                            <span class="request-name">Rosa Paula</span> wants to add your friends
-                        </div>
-                    </div>
-                    <div class="request-actions">
-                        <button class="request-accept-btn">Accept</button>
-                        <button class="request-decline-btn">Decline</button>
-                    </div>
-                </div>
+                {% if pending_requests.count > 0 %}
+                <a href="#" class="view-all-link">[View All Requests]</a>
+                {% endif %}
             </div>
 
             <div class="right-suggestions-section">
@@ -1039,7 +1100,6 @@
             commentsSection.classList.remove('active');
         }
 
-        // Update all comment timestamps every minute
         function updateTimestamps() {
             document.querySelectorAll('.post-comment-time').forEach(function(element) {
                 const created = element.getAttribute('data-created');
@@ -1067,10 +1127,7 @@
             });
         }
 
-        // Run every minute
         setInterval(updateTimestamps, 60000);
-
-        // Run once on page load
         document.addEventListener('DOMContentLoaded', updateTimestamps);
     </script>
 </body>
