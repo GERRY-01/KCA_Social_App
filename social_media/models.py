@@ -155,3 +155,65 @@ class Event(models.Model):
     
     def __str__(self):
         return f"{self.title} - {self.date}"
+    
+# Add this to your existing models.py
+
+class AdminProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_profile')
+    
+    DEPARTMENT_CHOICES = [
+        ('computing', 'Faculty of Computing & Informatics'),
+        ('business', 'School of Business'),
+        ('education', 'School of Education'),
+        ('arts', 'School of Arts & Social Sciences'),
+        ('registry', 'Registry'),
+        ('finance', 'Finance Department'),
+        ('hr', 'Human Resources'),
+        ('library', 'Library Services'),
+        ('it', 'IT Services'),
+    ]
+    
+    staff_id = models.CharField(max_length=50, unique=True)
+    department = models.CharField(max_length=50, choices=DEPARTMENT_CHOICES)
+    profile_picture = models.ImageField(upload_to='admin_profiles/', blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.user.get_full_name()} - {self.staff_id}"
+    
+
+class Announcement(models.Model):
+    """Model for admin announcements"""
+    
+    # Basic Information
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    
+    # Optional fields
+    image = models.ImageField(upload_to='announcements/', blank=True, null=True)
+    link = models.URLField(blank=True, null=True, help_text="Optional external link")
+    
+    # Metadata
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='announcements')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    # Engagement
+    likes = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ['-created_at']  # Most recent first
+    
+    def __str__(self):
+        return self.title
+
+
+class AnnouncementLike(models.Model):
+    announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE, related_name='likes_detail')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['announcement', 'user']  # One like per user per announcement
+    
+    def __str__(self):
+        return f"{self.user.username} liked {self.announcement.title}"
