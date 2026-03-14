@@ -876,15 +876,15 @@
 
                 <div class="sidebar-stats">
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-number">24</span>
+                        <span class="sidebar-stat-number">{{ user.posts.count }}</span>
                         <span class="sidebar-stat-label">Posts</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-number">180</span>
+                        <span class="sidebar-stat-number">{{ user.followers.count }}</span>
                         <span class="sidebar-stat-label">Followers</span>
                     </div>
                     <div class="sidebar-stat">
-                        <span class="sidebar-stat-number">150</span>
+                        <span class="sidebar-stat-number">{{ user.following.count }}</span>
                         <span class="sidebar-stat-label">Following</span>
                     </div>
                 </div>
@@ -893,9 +893,8 @@
             <nav class="sidebar-navigation">
                 <ul class="sidebar-nav-list">
                     <li><a href="{% url 'home' %}" class="sidebar-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-bullhorn"></i> Announcements</a></li>
-                    <li><a href="#" class="sidebar-nav-link active"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
-                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-users"></i> Clubs & Communities</a></li>
+                    <li><a href="{% url 'announcements' %}" class="sidebar-nav-link"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                    <li><a href="{% url 'events' %}" class="sidebar-nav-link active"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
                     <li><a href="{% url 'resources' %}" class="sidebar-nav-link"><i class="fas fa-book"></i> Resources</a></li>
                     <li><a href="{% url 'profile' %}" class="sidebar-nav-link"><i class="fas fa-user"></i> My Profile</a></li>
@@ -906,22 +905,6 @@
                     </li>
                 </ul>
             </nav>
-
-            <div class="sidebar-connections">
-                <h4 class="sidebar-section-title">Connections</h4>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/women/65.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Alice Mwangi</span>
-                </div>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/men/66.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Brian Otieno</span>
-                </div>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/women/67.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Faith Njeri</span>
-                </div>
-            </div>
         </aside>
 
         <!-- Main Content -->

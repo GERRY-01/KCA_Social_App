@@ -825,7 +825,6 @@
                     </li>
                     <li><a href="{% url 'announcements' %}" class="sidebar-nav-link active"><i class="fas fa-bullhorn"></i> Announcements</a></li>
                     <li><a href="{% url 'events' %}" class="sidebar-nav-link"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
-                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-users"></i> Clubs & Communities</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
                     <li><a href="{% url 'resources' %}" class="sidebar-nav-link"><i class="fas fa-book"></i> Resources</a></li>
                     <li><a href="{% url 'profile' %}" class="sidebar-nav-link"><i class="fas fa-user"></i> My Profile</a></li>
@@ -839,39 +838,11 @@
                     </li>
                 </ul>
             </nav>
-
-            <div class="sidebar-connections">
-                <h4 class="sidebar-section-title">Staff Members</h4>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/women/65.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Dr. Jane Wanjiku</span>
-                </div>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/men/66.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Prof. John Otieno</span>
-                </div>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/women/67.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Ms. Faith Njeri</span>
-                </div>
-            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="announcements-main">
             <div class="announcements-container">
-                <!-- Messages -->
-                {% if messages %}
-                <div class="messages-container">
-                    {% for message in messages %}
-                    <div class="message {{ message.tags }}">
-                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
-                        {{ message }}
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
                 <!-- Header Section -->
                 <div class="announcements-header">
                     <div class="header-title">
