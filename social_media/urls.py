@@ -14,4 +14,11 @@ urlpatterns = [
     path('suggestions/', views.view_all_suggestions, name='suggestions'),
     path('resources', views.resources, name='resources'),
     path('events', views.events, name='events'),
+    path('announcements/', views.announcements, name='announcements'),
+    path('announcements/like/<int:announcement_id>/', views.like_announcement, name='like_announcement'),
+    path('announcements/delete/<int:announcement_id>/', views.delete_announcement, name='delete_announcement'),
+    path('announcements/edit/<int:announcement_id>/', views.edit_announcement, name='edit_announcement'),
+    path('admin_signup', views.admin_signup, name='admin_signup'),
+    path('admin_login', views.admin_login, name='admin_login'),
+    path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
 ]
