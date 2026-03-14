@@ -1,0 +1,1210 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements - KCAU Social</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px -3px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+
+        /* Main Layout */
+        .dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        #sidebar-container {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-profile {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-profile-initials {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .sidebar-username {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-role {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-stats {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .sidebar-stat {
+            text-align: center;
+        }
+
+        .sidebar-stat-number {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .sidebar-stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .sidebar-nav-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .sidebar-nav-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            gap: 0.75rem;
+        }
+
+        .sidebar-nav-link:hover,
+        .sidebar-nav-link.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .sidebar-nav-link i {
+            width: 20px;
+        }
+
+        .sidebar-connections {
+            margin-top: auto;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-connection-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 10px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .sidebar-connection-item:hover {
+            background: var(--gray-100);
+        }
+
+        .sidebar-connection-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .sidebar-connection-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        /* Main Content */
+        .announcements-main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .announcements-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Messages */
+        .messages-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Header Section */
+        .announcements-header {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 2rem;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-title h1 i {
+            color: var(--primary);
+            background: var(--gray-100);
+            padding: 0.5rem;
+            border-radius: 12px;
+        }
+
+        .header-title p {
+            color: var(--gray-500);
+            font-size: 1rem;
+        }
+
+        /* Post Button - Only visible to admins */
+        .post-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .post-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.5);
+        }
+
+        .post-btn i {
+            font-size: 1.1rem;
+        }
+
+        .post-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+            background: var(--gray-400);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-header h2 i {
+            color: var(--primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--gray-400);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: var(--gray-100);
+            color: var(--danger);
+        }
+
+        .announcement-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: var(--gray-100);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--gray-300);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--gray-100);
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .file-upload-area i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-area p {
+            color: var(--gray-600);
+            margin-bottom: 0.25rem;
+        }
+
+        .file-upload-area small {
+            color: var(--gray-400);
+            font-size: 0.85rem;
+        }
+
+        .file-info {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #eff6ff;
+            border-radius: 8px;
+            color: var(--primary);
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .file-info.active {
+            display: block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem;
+            border-radius: 16px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.5);
+        }
+
+        /* Announcements Feed */
+        .announcements-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .announcement-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s;
+            border: 1px solid var(--gray-200);
+        }
+
+        .announcement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .announcement-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .announcer-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .announcer-info h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .announcer-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--gray-500);
+            font-size: 0.85rem;
+        }
+
+        .announcer-meta i {
+            margin-right: 0.25rem;
+        }
+
+        .announcement-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .announcement-content {
+            color: var(--gray-600);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .announcement-image {
+            margin-bottom: 1.5rem;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid var(--gray-200);
+        }
+
+        .announcement-image img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .announcement-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--gray-200);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .like-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .like-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            font-size: 1rem;
+        }
+
+        .like-count i {
+            font-size: 1.2rem;
+            color: var(--gray-400);
+        }
+
+        .like-button {
+            background: none;
+            border: 2px solid var(--gray-200);
+            border-radius: 30px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .like-button:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .like-button.liked {
+            background: linear-gradient(135deg, var(--danger), #e11d48);
+            border-color: transparent;
+            color: white;
+        }
+
+        .like-button.liked i {
+            color: white;
+        }
+
+        .like-button.liked:hover {
+            opacity: 0.9;
+        }
+
+        .view-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        /* Admin actions - Only visible to admins */
+        .admin-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .admin-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 2px solid var(--gray-200);
+            background: white;
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .admin-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .admin-btn.delete:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .admin-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .admin-btn.disabled:hover {
+            border-color: var(--gray-200);
+            color: var(--gray-500);
+        }
+
+        .external-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            border: 2px solid var(--gray-200);
+            color: var(--gray-600);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .external-link-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .empty-state p {
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            #sidebar-container {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            #sidebar-container.active {
+                transform: translateX(0);
+            }
+
+            .announcements-main {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .announcement-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .admin-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- LEFT SIDEBAR - Same as resources page -->
+        <aside id="sidebar-container">
+            <div class="sidebar-profile">
+                {% if complete_profile and complete_profile.profile_picture %}
+                    <img src="{{ complete_profile.profile_picture.url }}" alt="Profile Picture" class="sidebar-profile-img">
+                {% else %}
+                    <div class="sidebar-profile-initials">
+                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                    </div>
+                {% endif %}
+                <h3 class="sidebar-username">{{ user.first_name }} {{ user.last_name }}</h3>
+                <p class="sidebar-role">@{{ user.username }}</p>
+
+                <div class="sidebar-stats">
+                    <!-- <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">{{ announcements.count }}</span>
+                        <span class="sidebar-stat-label">Announcements</span>
+                    </div> -->
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">{{ user_likes|length }}</span>
+                        <span class="sidebar-stat-label">Liked</span>
+                    </div>
+                    <div class="sidebar-stat">
+                        <span class="sidebar-stat-number">{{ user.is_staff|yesno:"Admin,Student" }}</span>
+                        <span class="sidebar-stat-label">Role</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-navigation">
+                <ul class="sidebar-nav-list">
+                    <li>
+                        {% if user.is_staff %}
+                            <a href="{% url 'admin_dashboard' %}" class="sidebar-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        {% else %}
+                            <a href="{% url 'home' %}" class="sidebar-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        {% endif %}
+                    </li>
+                    <li><a href="{% url 'announcements' %}" class="sidebar-nav-link active"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                    <li><a href="{% url 'events' %}" class="sidebar-nav-link"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-users"></i> Clubs & Communities</a></li>
+                    <li><a href="#" class="sidebar-nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
+                    <li><a href="{% url 'resources' %}" class="sidebar-nav-link"><i class="fas fa-book"></i> Resources</a></li>
+                    <li><a href="{% url 'profile' %}" class="sidebar-nav-link"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li>
+                        <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="sidebar-nav-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-connections">
+                <h4 class="sidebar-section-title">Staff Members</h4>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/women/65.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Dr. Jane Wanjiku</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/men/66.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Prof. John Otieno</span>
+                </div>
+                <div class="sidebar-connection-item">
+                    <img src="https://randomuser.me/api/portraits/women/67.jpg" class="sidebar-connection-img">
+                    <span class="sidebar-connection-name">Ms. Faith Njeri</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="announcements-main">
+            <div class="announcements-container">
+                <!-- Messages -->
+                {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Header Section -->
+                <div class="announcements-header">
+                    <div class="header-title">
+                        <h1>
+                            <i class="fas fa-bullhorn"></i> 
+                            Announcements
+                        </h1>
+                        <p>Official communications from the university administration</p>
+                    </div>
+                    
+                    <!-- Post Button - Only clickable for admins, visible to all but disabled for non-admins -->
+                    {% if user.is_staff %}
+                    <button class="post-btn" onclick="openPostModal()">
+                        <i class="fas fa-plus-circle"></i> Post Announcement
+                    </button>
+                    {% else %}
+                    <button class="post-btn disabled" disabled title="Only admins can post announcements">
+                        <i class="fas fa-lock"></i> Post Announcement
+                    </button>
+                    {% endif %}
+                </div>
+
+                <!-- Post Announcement Modal (only for admins) -->
+                {% if user.is_staff %}
+                <div class="modal" id="postModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>
+                                <i class="fas fa-bullhorn"></i>
+                                Post New Announcement
+                            </h2>
+                            <button class="close-modal" onclick="closePostModal()">&times;</button>
+                        </div>
+
+                        <form class="announcement-form" method="POST" action="{% url 'announcements' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-heading"></i> Title <span style="color: var(--danger);">*</span></label>
+                                <input type="text" name="title" placeholder="e.g., Important Update: Semester Schedule Changes" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-align-left"></i> Content <span style="color: var(--danger);">*</span></label>
+                                <textarea name="content" rows="6" placeholder="Write your announcement here..." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-image"></i> Image (Optional)</label>
+                                <div class="file-upload-area" onclick="document.getElementById('imageInput').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload an image</p>
+                                    <small>PNG, JPG, GIF up to 5MB</small>
+                                    <input type="file" id="imageInput" name="image" accept="image/*" style="display: none;" onchange="updateImageName(this)">
+                                </div>
+                                <div id="imageInfo" class="file-info"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-link"></i> External Link (Optional)</label>
+                                <input type="url" name="link" placeholder="https://example.com/more-info">
+                            </div>
+
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-paper-plane"></i> Publish Announcement
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Edit Announcement Modal -->
+                <div class="modal" id="editModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>
+                                <i class="fas fa-edit"></i>
+                                Edit Announcement
+                            </h2>
+                            <button class="close-modal" onclick="closeEditModal()">&times;</button>
+                        </div>
+
+                        <form class="announcement-form" method="POST" action="" id="editForm" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-heading"></i> Title <span style="color: var(--danger);">*</span></label>
+                                <input type="text" name="title" id="editTitle" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-align-left"></i> Content <span style="color: var(--danger);">*</span></label>
+                                <textarea name="content" id="editContent" rows="6" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-image"></i> Image (Optional)</label>
+                                <div class="file-upload-area" onclick="document.getElementById('editImageInput').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload new image</p>
+                                    <small>PNG, JPG, GIF up to 5MB</small>
+                                    <input type="file" id="editImageInput" name="image" accept="image/*" style="display: none;" onchange="updateEditImageName(this)">
+                                </div>
+                                <div id="editImageInfo" class="file-info"></div>
+                                <div id="currentImage" style="font-size: 0.85rem; color: var(--gray-500); margin-top: 0.5rem;"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-link"></i> External Link (Optional)</label>
+                                <input type="url" name="link" id="editLink" placeholder="https://example.com/more-info">
+                            </div>
+
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i> Update Announcement
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Announcements Feed -->
+                <div class="announcements-feed">
+                    {% for announcement in announcements %}
+                    <!-- Announcement Card -->
+                    <div class="announcement-card" id="announcement-{{ announcement.id }}">
+                        <div class="announcement-header">
+                            <div class="announcer-avatar">
+                                {{ announcement.created_by.first_name|first|upper }}{{ announcement.created_by.last_name|first|upper }}
+                            </div>
+                            <div class="announcer-info">
+                                <h4>
+                                    {{ announcement.created_by.get_full_name|default:announcement.created_by.username }}
+                                    <span class="admin-tag">Admin</span>
+                                </h4>
+                                <div class="announcer-meta">
+                                    <span><i class="far fa-clock"></i> {{ announcement.created_at|date:"F j, Y" }} • {{ announcement.created_at|time:"g:i A" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 class="announcement-title">{{ announcement.title }}</h3>
+                        
+                        <div class="announcement-content">
+                            {{ announcement.content|linebreaks }}
+                        </div>
+
+                        {% if announcement.image %}
+                        <div class="announcement-image">
+                            <img src="{{ announcement.image.url }}" alt="{{ announcement.title }}">
+                        </div>
+                        {% endif %}
+
+                        <div class="announcement-footer">
+                            <div class="like-section">
+                                <a href="{% url 'like_announcement' announcement.id %}" class="like-button {% if announcement.id in user_likes %}liked{% endif %}">
+                                    <i class="{% if announcement.id in user_likes %}fas{% else %}far{% endif %} fa-heart"></i>
+                                    {% if announcement.id in user_likes %}Liked{% else %}Like{% endif %}
+                                </a>
+                                <span class="like-count">
+                                    <i class="far fa-heart"></i> {{ announcement.likes }}
+                                </span>
+                            </div>
+                            
+                            <div class="view-count">
+                                <i class="far fa-eye"></i> {{ announcement.views }} views
+                            </div>
+
+                            {% if announcement.link %}
+                            <a href="{{ announcement.link }}" target="_blank" class="external-link-btn">
+                                <i class="fas fa-external-link-alt"></i> Learn More
+                            </a>
+                            {% endif %}
+
+                            <!-- Admin Actions - Only functional for admins, visible but disabled for non-admins -->
+                            <div class="admin-actions">
+                                {% if user.is_staff %}
+                                <button class="admin-btn" onclick="editAnnouncement({{ announcement.id }}, '{{ announcement.title|escapejs }}', '{{ announcement.content|escapejs }}', '{{ announcement.link|default:''|escapejs }}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form method="POST" action="{% url 'delete_announcement' announcement.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this announcement? This action cannot be undone.');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="admin-btn delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                                {% else %}
+                                <button class="admin-btn disabled" title="Only admins can edit" disabled>
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="admin-btn delete disabled" title="Only admins can delete" disabled>
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <!-- Empty State -->
+                    <div class="empty-state">
+                        <i class="fas fa-bullhorn"></i>
+                        <h3>No Announcements Yet</h3>
+                        <p>There are no announcements at the moment. Check back later!</p>
+                        {% if user.is_staff %}
+                        <button class="post-btn" onclick="openPostModal()" style="margin: 1rem auto 0;">
+                            <i class="fas fa-plus-circle"></i> Post First Announcement
+                        </button>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Modal functions
+        function openPostModal() {
+            document.getElementById('postModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePostModal() {
+            document.getElementById('postModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // Reset form
+            const form = document.querySelector('#postModal .announcement-form');
+            if (form) form.reset();
+            const imageInfo = document.getElementById('imageInfo');
+            if (imageInfo) {
+                imageInfo.classList.remove('active');
+                imageInfo.innerHTML = '';
+            }
+        }
+
+        function openEditModal() {
+            document.getElementById('editModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // Reset form
+            const form = document.getElementById('editForm');
+            if (form) form.reset();
+            const editImageInfo = document.getElementById('editImageInfo');
+            if (editImageInfo) {
+                editImageInfo.classList.remove('active');
+                editImageInfo.innerHTML = '';
+            }
+            const currentImage = document.getElementById('currentImage');
+            if (currentImage) currentImage.innerHTML = '';
+        }
+
+        // Edit announcement function (only works for admins)
+        function editAnnouncement(id, title, content, link) {
+            {% if user.is_staff %}
+            document.getElementById('editTitle').value = title;
+            document.getElementById('editContent').value = content;
+            document.getElementById('editLink').value = link || '';
+            
+            // Set the form action
+            document.getElementById('editForm').action = `/announcements/edit/${id}/`;
+            
+            openEditModal();
+            {% endif %}
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const postModal = document.getElementById('postModal');
+            const editModal = document.getElementById('editModal');
+            
+            if (event.target == postModal) {
+                closePostModal();
+            }
+            if (event.target == editModal) {
+                closeEditModal();
+            }
+        }
+
+        // Update image name when selected (for post modal)
+        function updateImageName(input) {
+            const imageInfo = document.getElementById('imageInfo');
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                imageInfo.innerHTML = `📎 Selected: ${file.name} (${fileSize} MB)`;
+                imageInfo.classList.add('active');
+            } else {
+                imageInfo.innerHTML = '';
+                imageInfo.classList.remove('active');
+            }
+        }
+
+        // Update image name when selected (for edit modal)
+        function updateEditImageName(input) {
+            const imageInfo = document.getElementById('editImageInfo');
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                imageInfo.innerHTML = `📎 Selected: ${file.name} (${fileSize} MB)`;
+                imageInfo.classList.add('active');
+            } else {
+                imageInfo.innerHTML = '';
+                imageInfo.classList.remove('active');
+            }
+        }
+
+        // Escape key to close modals
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const postModal = document.getElementById('postModal');
+                const editModal = document.getElementById('editModal');
+                
+                if (postModal && postModal.classList.contains('active')) {
+                    closePostModal();
+                }
+                if (editModal && editModal.classList.contains('active')) {
+                    closeEditModal();
+                }
+            }
+        });
+
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.message').forEach(msg => {
+                msg.style.transition = 'opacity 0.5s';
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

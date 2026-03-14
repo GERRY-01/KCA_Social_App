@@ -1,0 +1,839 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - KCAU Social</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px -3px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            box-shadow: var(--shadow-md);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-brand h1 {
+            font-size: 1.5rem;
+            color: var(--gray-800);
+            font-weight: 700;
+        }
+
+        .nav-brand span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--gray-600);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--gray-100);
+            border-radius: 30px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-details {
+            line-height: 1.3;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 2px solid var(--gray-200);
+            border-radius: 30px;
+            padding: 0.5rem 1.2rem;
+            color: var(--gray-600);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Main Container */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .welcome-text h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .welcome-stats {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            line-height: 1.2;
+        }
+
+        .stat-info p {
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        /* Action Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .action-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .action-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+
+        .action-card h3 {
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .action-card p {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        /* Recent Announcements */
+        .recent-announcements {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.3rem;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .view-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .announcement-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .recent-announcement {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--gray-100);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .recent-announcement:hover {
+            background: var(--gray-200);
+        }
+
+        .announcement-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .announcement-info {
+            flex: 1;
+        }
+
+        .announcement-info h4 {
+            color: var(--gray-800);
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .announcement-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--gray-500);
+            font-size: 0.8rem;
+        }
+
+        .announcement-meta i {
+            margin-right: 0.25rem;
+        }
+
+        .announcement-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-new {
+            background: #dbeafe;
+            color: var(--primary);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .quick-action-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: var(--gray-100);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-action-item:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .quick-action-item:hover i,
+        .quick-action-item:hover span {
+            color: white;
+        }
+
+        .quick-action-item i {
+            width: 20px;
+            color: var(--primary);
+            transition: color 0.3s;
+        }
+
+        .quick-action-item span {
+            color: var(--gray-700);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        /* Recent Activities */
+        .recent-activities {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            margin-top: 1.5rem;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            background: #dbeafe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-text {
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            color: var(--gray-500);
+            font-size: 0.75rem;
+        }
+
+        /* Messages */
+        .messages-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid,
+            .action-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .user-menu {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .stats-grid,
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="nav-logo">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h1>KCAU <span>Admin</span></h1>
+        </div>
+
+        <div class="nav-links">
+            <a href="#" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="{% url 'announcements' %}" class="nav-link"><i class="fas fa-bullhorn"></i> Announcements</a>
+            <a href="{% url 'events' %}" class="nav-link"><i class="fas fa-calendar-alt"></i> Events</a>
+            <a href="{% url 'resources' %}" class="nav-link"><i class="fas fa-book"></i> Resources</a>
+        </div>
+
+        <div class="user-menu">
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                </div>
+                <div class="user-details">
+                    <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                    <div class="user-role">
+                        {% if user.is_superuser %}Super Admin{% else %}Administrator{% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Messages -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="welcome-text">
+                <h2>Welcome back, {{ user.first_name }}! 👋</h2>
+                <p>Here's what's happening across your platform today.</p>
+            </div>
+            <div class="welcome-stats">
+                <div class="stat">
+                    <span class="stat-number">{{ announcements.count }}</span>
+                    <span class="stat-label">Total Announcements</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">{{ total_events|default:"0" }}</span>
+                    <span class="stat-label">Upcoming Events</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">{{ total_resources|default:"0" }}</span>
+                    <span class="stat-label">Resources</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ announcements.count }}</h3>
+                    <p>Announcements</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_events|default:"0" }}</h3>
+                    <p>Events</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_users|default:"0" }}</h3>
+                    <p>Users</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_resources|default:"0" }}</h3>
+                    <p>Resources</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action Grid -->
+        <div class="action-grid">
+            <div class="action-card" onclick="window.location.href='{% url 'announcements' %}'">
+                <div class="action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h3>New Announcement</h3>
+                <p>Post an important update</p>
+            </div>
+
+            <div class="action-card" onclick="window.location.href='{% url 'events' %}'">
+                <div class="action-icon">
+                    <i class="fas fa-calendar-plus"></i>
+                </div>
+                <h3>Create Event</h3>
+                <p>Schedule campus event</p>
+            </div>
+
+            <div class="action-card" onclick="window.location.href='{% url 'resources' %}'">
+                <div class="action-icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <h3>Share Resource</h3>
+                <p>Upload study materials</p>
+            </div>
+
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>View Reports</h3>
+                <p>Analytics & insights</p>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Recent Announcements -->
+            <div class="recent-announcements">
+                <div class="section-header">
+                    <h2><i class="fas fa-bullhorn" style="color: var(--primary);"></i> Recent Announcements</h2>
+                    <a href="{% url 'announcements' %}" class="view-all">View All →</a>
+                </div>
+
+                <div class="announcement-list">
+                    {% for announcement in announcements|slice:":5" %}
+                    <div class="recent-announcement">
+                        <div class="announcement-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="announcement-info">
+                            <h4>{{ announcement.title|truncatechars:50 }}</h4>
+                            <div class="announcement-meta">
+                                <span><i class="far fa-clock"></i> {{ announcement.created_at|timesince }} ago</span>
+                                <span><i class="far fa-heart"></i> {{ announcement.likes }}</span>
+                            </div>
+                        </div>
+                        {% if announcement.created_at|timesince|slice:":2" <= "1" %}
+                        <span class="announcement-badge badge-new">New</span>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <p style="text-align: center; color: var(--gray-500); padding: 2rem;">No announcements yet</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="section-header">
+                    <h2><i class="fas fa-bolt" style="color: var(--primary);"></i> Quick Actions</h2>
+                </div>
+
+                <div class="action-list">
+                    <div class="quick-action-item" onclick="window.location.href='{% url 'announcements' %}'">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Post New Announcement</span>
+                    </div>
+                    <div class="quick-action-item" onclick="window.location.href='{% url 'events' %}'">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>Create New Event</span>
+                    </div>
+                    <div class="quick-action-item" onclick="window.location.href='{% url 'resources' %}'">
+                        <i class="fas fa-book"></i>
+                        <span>Share Resource</span>
+                    </div>
+                    <div class="quick-action-item">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Manage Users</span>
+                    </div>
+                    <div class="quick-action-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </div>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="recent-activities">
+                    <div class="section-header">
+                        <h2><i class="fas fa-history"></i> Recent Activity</h2>
+                    </div>
+
+                    <div class="activity-list">
+                        {% for announcement in announcements|slice:":3" %}
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-text">You posted "{{ announcement.title|truncatechars:30 }}"</div>
+                                <div class="activity-time">{{ announcement.created_at|timesince }} ago</div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p style="text-align: center; color: var(--gray-500);">No recent activity</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

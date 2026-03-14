@@ -1,0 +1,667 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - KCAU Social</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #eab308;
+            --primary-dark: #ca8a04;
+            --primary-light: #facc15;
+            --secondary: #fde047;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1a1a1a;
+            --dark-100: #2a2a2a;
+            --dark-200: #333333;
+            --dark-300: #404040;
+            --dark-400: #4d4d4d;
+            --light: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 40px -3px rgba(234, 179, 8, 0.15);
+            --shadow-xl: 0 20px 25px -5px rgba(234, 179, 8, 0.2);
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a0a;
+            background-image: radial-gradient(circle at 10% 20%, rgba(234, 179, 8, 0.03) 0%, transparent 30%),
+                              radial-gradient(circle at 90% 80%, rgba(234, 179, 8, 0.03) 0%, transparent 30%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 1300px;
+            height: 800px;
+            background: var(--dark);
+            border-radius: 40px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            display: flex;
+            border: 1px solid var(--dark-300);
+        }
+
+        /* Left Side - Form */
+        .form-side {
+            flex: 1.2;
+            padding: 3.5rem;
+            overflow-y: auto;
+            background: var(--dark);
+        }
+
+        .form-side::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .form-side::-webkit-scrollbar-track {
+            background: var(--dark-200);
+            border-radius: 10px;
+        }
+
+        .form-side::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .kca-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(234, 179, 8, 0.4);
+            border: 3px solid var(--primary);
+            overflow: hidden;
+            padding: 5px;
+        }
+
+        .kca-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .logo-text h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .logo-text p {
+            color: var(--gray-500);
+            font-size: 0.95rem;
+        }
+
+        .form-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .form-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--gray-400);
+            font-size: 1rem;
+        }
+
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1.2rem;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .admin-badge i {
+            color: var(--primary);
+        }
+
+        /* Form Styles */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--gray-300);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .required-star {
+            color: var(--primary);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--gray-500);
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid var(--dark-300);
+            border-radius: 16px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: var(--dark-100);
+            color: white;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--dark-200);
+            box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.15);
+        }
+
+        .input-wrapper input:focus + .input-icon {
+            color: var(--primary);
+        }
+
+        .input-wrapper input::placeholder {
+            color: var(--gray-600);
+        }
+
+        /* Form Options */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .remember-me span {
+            color: var(--gray-400);
+            font-size: 0.95rem;
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .forgot-password:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+        }
+
+        /* Login Button */
+        .login-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: black;
+            border: none;
+            border-radius: 16px;
+            padding: 1.1rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin: 1rem 0 1.2rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(234, 179, 8, 0.5);
+        }
+
+        /* Signup Link */
+        .signup-link {
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 0.95rem;
+        }
+
+        .signup-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.2rem;
+        }
+
+        .back-link a {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .back-link a:hover {
+            color: var(--primary);
+        }
+
+        /* Right Side - Content */
+        .content-side {
+            flex: 1;
+            background: linear-gradient(135deg, var(--dark-100), var(--dark));
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            border-left: 1px solid var(--dark-300);
+        }
+
+        .content-wrapper {
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .content-wrapper h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .content-wrapper h2 span {
+            color: var(--primary);
+        }
+
+        .content-wrapper p {
+            color: var(--gray-400);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+        }
+
+        .admin-quote {
+            background: var(--dark-200);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--dark-300);
+            position: relative;
+        }
+
+        .admin-quote i {
+            color: var(--primary);
+            font-size: 2rem;
+            opacity: 0.3;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+        }
+
+        .admin-quote p {
+            color: var(--gray-300);
+            font-size: 1.1rem;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .admin-quote-author {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .admin-quote-title {
+            color: var(--gray-500);
+            font-size: 0.85rem;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            text-align: left;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            background: var(--dark-200);
+            border-radius: 12px;
+            border: 1px solid var(--dark-300);
+        }
+
+        .feature-item i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .feature-item span {
+            color: var(--gray-300);
+            font-size: 0.95rem;
+        }
+
+        /* Error message */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.5rem;
+            color: #ef4444;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Success message */
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.5rem;
+            color: #22c55e;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .login-wrapper {
+                flex-direction: column;
+                height: auto;
+                max-width: 500px;
+            }
+
+            .content-side {
+                display: none;
+            }
+
+            .form-side {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <!-- Left Side - Form -->
+        <div class="form-side">
+            <div class="logo-area">
+                <div class="kca-logo">
+                    <img src="{% static 'images/kca_logo.png' %}" alt="KCA University Logo">
+                </div>
+                <div class="logo-text">
+                    <h2>KCA University</h2>
+                    <p>Admin Portal</p>
+                </div>
+            </div>
+
+            <div class="form-header">
+                <h1>Welcome Back</h1>
+                <p>Sign in to access the admin dashboard</p>
+                <div class="admin-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    Authorized Personnel Only
+                </div>
+            </div>
+
+            <!-- Error message (show if there's an error) -->
+            {% if error %}
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <!-- Success message (show after logout or password reset) -->
+            {% if success %}
+            <div class="success-message">
+                <i class="fas fa-check-circle"></i>
+                {{ success }}
+            </div>
+            {% endif %}
+
+            <form class="login-form" method="POST" action="{% url 'admin_login' %}">
+                {% csrf_token %}
+                
+                <!-- Email/Username Field -->
+                <div class="form-group">
+                    <label>
+                        <i class="far fa-envelope"></i> Email or Username <span class="required-star">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" name="username" placeholder="Enter your email or username" required autofocus>
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-lock"></i> Password <span class="required-star">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" name="password" id="password" placeholder="Enter your password" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword()" style="position: absolute; right: 1rem; color: var(--gray-500); cursor: pointer;"></i>
+                    </div>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="" class="forgot-password">Forgot password?</a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In to Dashboard
+                </button>
+
+                <!-- Signup Link -->
+                <div class="signup-link">
+                    Don't have an admin account? <a href="{% url 'admin_signup' %}">Request access</a>
+                </div>
+
+                <!-- Back Link -->
+                <div class="back-link">
+                    <a href="{% url 'home' %}">
+                        <i class="fas fa-arrow-left"></i> Back to KCAU Social
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Side - Content -->
+        <div class="content-side">
+            <div class="content-wrapper">
+                <div class="welcome-badge">
+                    <i class="fas fa-crown"></i>
+                    Admin Dashboard
+                </div>
+
+                <h2>Welcome to the <span>Administration</span> Portal</h2>
+                <p>Access powerful tools to manage the KCAU Social platform</p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Post official announcements</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Manage campus events</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Monitor user activity</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Access analytics dashboard</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const password = document.getElementById('password');
+            const toggleIcon = document.querySelector('.toggle-password');
+            
+            if (password.type === 'password') {
+                password.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                password.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Input animations
+        document.querySelectorAll('.input-wrapper input').forEach(field => {
+            field.addEventListener('focus', () => {
+                field.parentElement.querySelector('.input-icon').style.color = 'var(--primary)';
+            });
+            
+            field.addEventListener('blur', () => {
+                if (!field.value) {
+                    field.parentElement.querySelector('.input-icon').style.color = 'var(--gray-500)';
+                }
+            });
+        });
+
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.error-message, .success-message').forEach(msg => {
+                if (msg) {
+                    msg.style.transition = 'opacity 0.5s';
+                    msg.style.opacity = '0';
+                    setTimeout(() => {
+                        if (msg && msg.parentNode) {
+                            msg.remove();
+                        }
+                    }, 500);
+                }
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

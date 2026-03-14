@@ -1,0 +1,911 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sign Up - KCAU Social</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #eab308;
+            --primary-dark: #ca8a04;
+            --primary-light: #facc15;
+            --secondary: #fde047;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1a1a1a;
+            --dark-100: #2a2a2a;
+            --dark-200: #333333;
+            --dark-300: #404040;
+            --dark-400: #4d4d4d;
+            --light: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 40px -3px rgba(234, 179, 8, 0.15);
+            --shadow-xl: 0 20px 25px -5px rgba(234, 179, 8, 0.2);
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a0a;
+            background-image: radial-gradient(circle at 10% 20%, rgba(234, 179, 8, 0.03) 0%, transparent 30%),
+                              radial-gradient(circle at 90% 80%, rgba(234, 179, 8, 0.03) 0%, transparent 30%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .signup-wrapper {
+            width: 100%;
+            max-width: 1300px;
+            height: 850px;
+            background: var(--dark);
+            border-radius: 40px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            display: flex;
+            border: 1px solid var(--dark-300);
+        }
+
+        /* Left Side - Form */
+        .form-side {
+            flex: 1.2;
+            padding: 3.5rem;
+            overflow-y: auto;
+            background: var(--dark);
+        }
+
+        .form-side::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .form-side::-webkit-scrollbar-track {
+            background: var(--dark-200);
+            border-radius: 10px;
+        }
+
+        .form-side::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+     .kca-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: white; /* White background for the logo */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(234, 179, 8, 0.4);
+            border: 3px solid var(--primary); /* Yellow border */
+            overflow: hidden;
+            padding: 5px;
+        }
+
+        .kca-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        .logo-text h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .logo-text p {
+            color: var(--gray-500);
+            font-size: 0.95rem;
+        }
+
+        .form-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .form-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--gray-400);
+            font-size: 1rem;
+        }
+
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1.2rem;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .admin-badge i {
+            color: var(--primary);
+        }
+
+        /* Form Styles */
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--gray-300);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .required-star {
+            color: var(--primary);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--gray-500);
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid var(--dark-300);
+            border-radius: 16px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: var(--dark-100);
+            color: white;
+        }
+
+        .input-wrapper select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23eab308' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 18px;
+        }
+
+        .input-wrapper select option {
+            background: var(--dark-100);
+            color: white;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--dark-200);
+            box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.15);
+        }
+
+        .input-wrapper input:focus + .input-icon {
+            color: var(--primary);
+        }
+
+        .input-wrapper input::placeholder {
+            color: var(--gray-600);
+        }
+
+        /* Password Strength */
+        .password-strength {
+            display: flex;
+            gap: 0.3rem;
+            margin: 0.5rem 0 0.25rem;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 5px;
+            background: var(--dark-300);
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        .strength-bar.active:nth-child(1) { background: var(--danger); }
+        .strength-bar.active:nth-child(2) { background: var(--warning); }
+        .strength-bar.active:nth-child(3) { background: var(--primary); }
+        .strength-bar.active:nth-child(4) { background: var(--success); }
+
+        .password-requirements {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.6rem;
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--gray-500);
+        }
+
+        .requirement i {
+            font-size: 0.8rem;
+        }
+
+        .requirement.met {
+            color: var(--success);
+        }
+
+        .password-match {
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            min-height: 22px;
+        }
+
+        /* Terms Checkbox */
+        .terms-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+
+        .terms-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .terms-checkbox span {
+            color: var(--gray-400);
+            font-size: 0.95rem;
+        }
+
+        .terms-checkbox a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+
+        /* Sign Up Button */
+        .signup-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: black;
+            border: none;
+            border-radius: 16px;
+            padding: 1.1rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin: 1rem 0 1.2rem;
+        }
+
+        .signup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(234, 179, 8, 0.5);
+        }
+
+        .login-link {
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 0.95rem;
+        }
+
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.2rem;
+        }
+
+        .back-link a {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .back-link a:hover {
+            color: var(--primary);
+        }
+
+        /* Right Side - Content */
+        .content-side {
+            flex: 1;
+            background: linear-gradient(135deg, var(--dark-100), var(--dark));
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            border-left: 1px solid var(--dark-300);
+        }
+
+        .content-wrapper {
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .content-wrapper h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .content-wrapper h2 span {
+            color: var(--primary);
+        }
+
+        .content-wrapper p {
+            color: var(--gray-400);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            text-align: left;
+            margin-bottom: 2.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--dark-200);
+            border-radius: 16px;
+            border: 1px solid var(--dark-300);
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(234, 179, 8, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .feature-text h4 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .feature-text p {
+            color: var(--gray-500);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--dark-300);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--gray-500);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .signup-wrapper {
+                flex-direction: column;
+                height: auto;
+                max-width: 600px;
+            }
+
+            .content-side {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-wrapper">
+        <!-- Left Side - Form -->
+        <div class="form-side">
+            <div class="logo-area">
+                <div class="kca-logo">
+                    <img src="{% static 'images/kca_logo.png' %}" alt="KCA University Logo">
+                </div>
+                <div class="logo-text">
+                    <h2>KCA University</h2>
+                    <p>Admin Registration Portal</p>
+                </div>
+            </div>
+
+            <div class="form-header">
+                <h1>Create Account</h1>
+                <p>Fill in your details to register as an administrator</p>
+                <div class="admin-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    Authorized Personnel Only
+                </div>
+            </div>
+
+            <form class="signup-form" method="POST" action="{% url 'admin_signup' %}">
+                {% csrf_token %}
+                
+                <!-- Personal Information -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>
+                            First Name <span class="required-star">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" name="first_name" placeholder="Enter first name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Last Name <span class="required-star">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" name="last_name" placeholder="Enter last name" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label>
+                        Email Address <span class="required-star">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="far fa-envelope input-icon"></i>
+                        <input type="email" name="email" placeholder="name@kcau.ac.ke" required>
+                    </div>
+                </div>
+
+                <!-- Staff ID -->
+                <div class="form-group">
+                    <label>
+                        Staff ID <span class="required-star">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-id-card input-icon"></i>
+                        <input type="text" name="staff_id" placeholder="Enter your staff ID" required>
+                    </div>
+                </div>
+
+                <!-- Department -->
+                <div class="form-group">
+                    <label>
+                        Department <span class="required-star">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-building input-icon"></i>
+                        <select name="department" required>
+                            <option value="">Select department</option>
+                            <option value="computing">Faculty of Computing & Informatics</option>
+                            <option value="business">School of Business</option>
+                            <option value="education">School of Education</option>
+                            <option value="arts">School of Arts & Social Sciences</option>
+                            <option value="registry">Registry</option>
+                            <option value="finance">Finance Department</option>
+                            <option value="hr">Human Resources</option>
+                            <option value="library">Library Services</option>
+                            <option value="it">IT Services</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div class="form-group">
+                    <label>
+                        Username <span class="required-star">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-at input-icon"></i>
+                        <input type="text" name="username" placeholder="Choose a username" required>
+                    </div>
+                </div>
+
+
+<!-- Profile Picture -->
+<div class="form-group">
+    <label>
+        <i class="fas fa-camera"></i> Profile Picture
+    </label>
+    <div class="file-upload-area" onclick="document.getElementById('profileImage').click()" style="border: 2px dashed var(--dark-300); border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; background: var(--dark-200);">
+        <i class="fas fa-cloud-upload-alt" style="color: var(--primary); font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
+        <span style="color: var(--gray-400);">Click to upload profile picture</span>
+        <input type="file" id="profileImage" name="profile_picture" accept="image/*" style="display: none;" onchange="updateFileName(this)">
+        <div id="fileInfo" style="font-size: 0.8rem; color: var(--primary); margin-top: 0.5rem;"></div>
+    </div>
+    <p style="font-size: 0.7rem; color: var(--gray-600); margin-top: 0.2rem;">
+        <i class="fas fa-info-circle"></i> JPG, PNG, GIF (Max 2MB)
+    </p>
+</div>
+
+
+             
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label>
+                        Password <span class="required-star">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" name="password" id="password" placeholder="Create a strong password" required>
+                    </div>
+                    
+                    <div class="password-strength">
+                        <div class="strength-bar" id="strength1"></div>
+                        <div class="strength-bar" id="strength2"></div>
+                        <div class="strength-bar" id="strength3"></div>
+                        <div class="strength-bar" id="strength4"></div>
+                    </div>
+
+                    <div class="password-requirements">
+                        <div class="requirement" id="req-length">
+                            <i class="far fa-circle"></i> 8+ characters
+                        </div>
+                        <div class="requirement" id="req-number">
+                            <i class="far fa-circle"></i> Contains number
+                        </div>
+                        <div class="requirement" id="req-uppercase">
+                            <i class="far fa-circle"></i> Uppercase letter
+                        </div>
+                        <div class="requirement" id="req-special">
+                            <i class="far fa-circle"></i> Special character
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label>
+                        Confirm Password <span class="required-star">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" name="confirm_password" id="confirmPassword" placeholder="Re-enter password" required>
+                    </div>
+                    <div class="password-match" id="passwordMatch"></div>
+                </div>
+
+                <!-- Terms -->
+                <label class="terms-checkbox">
+                    <input type="checkbox" name="terms" required>
+                    <span>
+                        I agree to the <a href="#">Terms of Service</a> and 
+                        <a href="#">Privacy Policy</a>
+                    </span>
+                </label>
+
+                <!-- Sign Up Button -->
+                <button type="submit" class="signup-btn">
+                    <i class="fas fa-user-shield"></i>
+                    Register as Administrator
+                </button>
+
+                <!-- Login Link -->
+                <div class="login-link">
+                    Already have an account? <a href="{% url 'admin_login' %}">Sign in</a>
+                </div>
+
+                <!-- Back Link -->
+                <div class="back-link">
+                    <a href="{% url 'home' %}">
+                        <i class="fas fa-arrow-left"></i> Back to KCAU Social
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Side - Content -->
+        <div class="content-side">
+            <div class="content-wrapper">
+                <div class="welcome-badge">
+                    <i class="fas fa-crown"></i>
+                    Welcome to Admin Dashboard
+                </div>
+
+                <h2>Manage <span>KCAU Social</span> Platform</h2>
+                <p>Access powerful administrative tools to manage announcements, events, and users across the university community.</p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Post Announcements</h4>
+                            <p>Share official updates with students and staff</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Manage Events</h4>
+                            <p>Create and oversee campus events</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>User Management</h4>
+                            <p>Monitor and manage user accounts</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Analytics</h4>
+                            <p>Track platform engagement and growth</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number">5K+</span>
+                        <span class="stat-label">Students</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">200+</span>
+                        <span class="stat-label">Staff</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Events</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password strength checker
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        
+        const reqLength = document.getElementById('req-length');
+        const reqNumber = document.getElementById('req-number');
+        const reqUppercase = document.getElementById('req-uppercase');
+        const reqSpecial = document.getElementById('req-special');
+        
+        const strengthBars = [
+            document.getElementById('strength1'),
+            document.getElementById('strength2'),
+            document.getElementById('strength3'),
+            document.getElementById('strength4')
+        ];
+
+        function checkPasswordStrength() {
+            const pwd = password.value;
+            let strength = 0;
+
+            if (pwd.length >= 8) {
+                strength++;
+                updateRequirement(reqLength, true);
+            } else {
+                updateRequirement(reqLength, false);
+            }
+
+            if (/\d/.test(pwd)) {
+                strength++;
+                updateRequirement(reqNumber, true);
+            } else {
+                updateRequirement(reqNumber, false);
+            }
+
+            if (/[A-Z]/.test(pwd)) {
+                strength++;
+                updateRequirement(reqUppercase, true);
+            } else {
+                updateRequirement(reqUppercase, false);
+            }
+
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(pwd)) {
+                strength++;
+                updateRequirement(reqSpecial, true);
+            } else {
+                updateRequirement(reqSpecial, false);
+            }
+
+            strengthBars.forEach((bar, index) => {
+                if (index < strength) {
+                    bar.classList.add('active');
+                } else {
+                    bar.classList.remove('active');
+                }
+            });
+        }
+
+        function updateRequirement(element, met) {
+            const icon = element.querySelector('i');
+            const text = element.innerHTML.split('>')[2];
+            
+            if (met) {
+                element.innerHTML = '<i class="fas fa-check-circle"></i>' + text;
+                element.classList.add('met');
+            } else {
+                element.innerHTML = '<i class="far fa-circle"></i>' + text;
+                element.classList.remove('met');
+            }
+        }
+
+        function checkPasswordMatch() {
+            const matchDiv = document.getElementById('passwordMatch');
+            if (confirmPassword.value) {
+                if (password.value === confirmPassword.value) {
+                    matchDiv.innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Passwords match';
+                    matchDiv.style.color = '#22c55e';
+                } else {
+                    matchDiv.innerHTML = '<i class="fas fa-exclamation-circle" style="color: #ef4444;"></i> Passwords do not match';
+                    matchDiv.style.color = '#ef4444';
+                }
+            } else {
+                matchDiv.innerHTML = '';
+            }
+        }
+
+        password.addEventListener('input', checkPasswordStrength);
+        password.addEventListener('input', checkPasswordMatch);
+        confirmPassword.addEventListener('input', checkPasswordMatch);
+
+        // Input animations
+        document.querySelectorAll('.input-wrapper input, .input-wrapper select').forEach(field => {
+            field.addEventListener('focus', () => {
+                field.parentElement.querySelector('.input-icon').style.color = 'var(--primary)';
+            });
+            
+            field.addEventListener('blur', () => {
+                if (!field.value) {
+                    field.parentElement.querySelector('.input-icon').style.color = 'var(--gray-500)';
+                }
+            });
+        });
+
+        function updateFileName(input) {
+            const fileInfo = document.getElementById('fileInfo');
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                fileInfo.innerHTML = `<i class="fas fa-check-circle"></i> ${file.name} (${fileSize} MB)`;
+            } else {
+                fileInfo.innerHTML = '';
+            }
+        }
+    </script>
+</body>
+</html>
