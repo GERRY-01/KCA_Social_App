@@ -578,18 +578,30 @@
 
             <div class="sidebar-connections">
                 <h4 class="sidebar-section-title">Connections</h4>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/women/65.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Alice Mwangi</span>
+                {% for connection in mutual_followers %}
+                <div class="sidebar-connection-item" onclick="window.location.href='{% url 'user_profile' connection.user.id %}'" style="cursor: pointer;">
+                    {% if connection.complete_profile and connection.complete_profile.profile_picture %}
+                        <img src="{{ connection.complete_profile.profile_picture.url }}" alt="{{ connection.user.username }}" class="sidebar-connection-img">
+                    {% elif connection.admin_profile and connection.admin_profile.profile_picture %}
+                        <img src="{{ connection.admin_profile.profile_picture.url }}" alt="{{ connection.user.username }}" class="sidebar-connection-img">
+                    {% else %}
+                        <div class="sidebar-connection-img" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 16px; text-transform: uppercase;">
+                            {{ connection.user.first_name|first|upper }}{{ connection.user.last_name|first|upper }}
+                        </div>
+                    {% endif %}
+                    <span class="sidebar-connection-name">{{ connection.user.first_name }} {{ connection.user.last_name }}</span>
                 </div>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/men/66.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Brian Otieno</span>
+                {% empty %}
+                <div style="text-align: center; padding: 15px; color: #999;">
+                    <i class="fas fa-user-friends" style="font-size: 24px; margin-bottom: 10px;"></i>
+                    <p>No mutual connections yet</p>
+                    <p style="font-size: 12px;">Follow people and they follow you back to see them here</p>
                 </div>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/women/67.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Faith Njeri</span>
-                </div>
+                {% endfor %}
+                
+                {% if mutual_followers|length > 3 %}
+                <a href="#" class="view-all-link" style="display: block; text-align: center; margin-top: 10px; color: #667eea; text-decoration: none; font-size: 13px;">View All Connections</a>
+                {% endif %}
             </div>
         </aside>
 
@@ -720,7 +732,7 @@
                                         {{post.user.first_name}} {{post.user.last_name}}
                                     </a>
                                 </h4>
-                                
+                            {% if post.user != request.user %}
                                {% if post.follow_status == 'accepted' %}
                                     <form method="POST" action="{% url 'unfollow_user' post.user.id %}" style="display: inline;">
                                         {% csrf_token %}
@@ -740,6 +752,7 @@
                                         </button>
                                     </form>
                                 {% endif %}
+                            {% endif %}
                             </div>
                             
                             <p class="post-time">
