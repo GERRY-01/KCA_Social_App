@@ -11,6 +11,7 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 
 # Create your views here.
+
 @login_required
 def home(request):
     # Handle regular user profile (may not exist for admins)
@@ -39,7 +40,7 @@ def home(request):
     for follow in Follow.objects.filter(follower=request.user):
         follow_status[follow.followed_id] = follow.status
     
-    # ADD THIS LINE - Attach follow status to each post
+    # Attach follow status to each post
     for post in posts:
         post.follow_status = follow_status.get(post.user.id, None)
     
@@ -57,14 +58,50 @@ def home(request):
             status='accepted'
         ).count()
     
+    # Get mutual followers (people you follow who also follow you back)
+    # Users that the current user follows (accepted only)
+    user_following = Follow.objects.filter(
+        follower=request.user,
+        status='accepted'
+    ).values_list('followed_id', flat=True)
+    
+    # Users that follow the current user (accepted only)
+    user_followers = Follow.objects.filter(
+        followed=request.user,
+        status='accepted'
+    ).values_list('follower_id', flat=True)
+    
+    # Mutual followers (intersection of both sets)
+    mutual_ids = set(user_following) & set(user_followers)
+    mutual_followers = User.objects.filter(id__in=mutual_ids)[:5]  # Limit to 5
+    
+    # Get complete profile and admin profile for profile pictures
+    mutual_users_with_profiles = []
+    for user in mutual_followers:
+        user_data = {
+            'user': user,
+            'complete_profile': None,
+            'admin_profile': None
+        }
+        try:
+            user_data['complete_profile'] = CompleteProfile.objects.get(user=user)
+        except CompleteProfile.DoesNotExist:
+            try:
+                user_data['admin_profile'] = AdminProfile.objects.get(user=user)
+            except AdminProfile.DoesNotExist:
+                pass
+        mutual_users_with_profiles.append(user_data)
+    
     # Get suggested users (users not followed yet and not pending)
     if all_users.exists():
-        # Exclude users with pending requests
+        # Exclude users with pending requests and mutual followers
         pending_user_ids = pending_requests.values_list('follower_id', flat=True)
         suggested_users_list = all_users.exclude(
             id__in=following
         ).exclude(
             id__in=pending_user_ids
+        ).exclude(
+            id__in=mutual_ids  # Also exclude mutual followers from suggestions
         )
         
         if suggested_users_list.exists():
@@ -88,6 +125,7 @@ def home(request):
         'follow_status': follow_status,
         'follower_counts': follower_counts,
         'pending_requests': pending_requests,
+        'mutual_followers': mutual_users_with_profiles,  # Add mutual followers to context
     }
     return render(request, 'home.html', context)
 
