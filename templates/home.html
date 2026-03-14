@@ -800,10 +800,10 @@
                     
                     <!-- Post Stats -->
                     <!-- Post Stats -->
-                    <div class="post-stats">
+                    <div class="post-stats" id="post-stats-{{ post.id }}">
                         <div class="post-stat">
                             <i class="{% if post.user_liked %}fas{% else %}far{% endif %} fa-heart" style="color: {% if post.user_liked %}#f97316{% endif %};"></i>
-                            <span>{{ post.likes_count }}</span>
+                            <span class="likes-count">{{ post.likes_count }}</span>  <!-- Added class here -->
                         </div>
                         <div class="post-stat">
                             <i class="far fa-comment"></i>
@@ -816,14 +816,15 @@
                     </div>
 
                     <!-- Post Actions -->
+                    <!-- Post Actions -->
                     <div class="post-actions">
-                        <form method="POST" action="{% url 'like_post' post.id %}" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="post-action-btn like-btn {% if post.user_liked %}liked{% endif %}">
-                                <i class="{% if post.user_liked %}fas{% else %}far{% endif %} fa-heart"></i>
-                                {% if post.user_liked %}Liked{% else %}Like{% endif %}
-                            </button>
-                        </form>
+                        <button class="post-action-btn like-btn {% if post.user_liked %}liked{% endif %}" 
+                                data-post-id="{{ post.id }}"
+                                data-liked="{% if post.user_liked %}true{% else %}false{% endif %}"
+                                onclick="likePost(this)">
+                            <i class="{% if post.user_liked %}fas{% else %}far{% endif %} fa-heart"></i>
+                            <span class="like-text">{% if post.user_liked %}Liked{% else %}Like{% endif %}</span>
+                        </button>
                         <button class="post-action-btn comment-btn" onclick="toggleComments('{{ post.id }}')">
                             <i class="far fa-comment"></i> Comment
                         </button>
@@ -831,6 +832,7 @@
                             <i class="far fa-share-square"></i> Share
                         </button>
                     </div>
+
                     <!-- COMMENTS SECTION -->
                     <div class="post-comments-section" id="comments-{{ post.id }}">
                         <div class="comments-header">
@@ -1153,6 +1155,69 @@
 
         setInterval(updateTimestamps, 60000);
         document.addEventListener('DOMContentLoaded', updateTimestamps);
+
+
+function likePost(button) {
+    const postId = button.dataset.postId;
+    
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+    
+    const icon = button.querySelector('i');
+    const likeText = button.querySelector('.like-text');
+    const statsDiv = document.getElementById(`post-stats-${postId}`);
+    const likesCountSpan = statsDiv.querySelector('.likes-count');
+    const heartIcon = statsDiv.querySelector('.fa-heart');
+    
+    fetch(`/like/${postId}/`, {  // Using your existing like_post URL
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'  // This tells Django it's AJAX
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.liked) {
+            button.classList.add('liked');
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            likeText.textContent = 'Liked';
+            heartIcon.style.color = '#f97316';
+            heartIcon.classList.remove('far');
+            heartIcon.classList.add('fas');
+            button.dataset.liked = 'true';
+        } else {
+            button.classList.remove('liked');
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            likeText.textContent = 'Like';
+            heartIcon.style.color = '';
+            heartIcon.classList.remove('fas');
+            heartIcon.classList.add('far');
+            button.dataset.liked = 'false';
+        }
+        likesCountSpan.textContent = data.likes_count;
+    })
+    .catch(error => console.error('Error:', error));
+}
     </script>
 </body>
 </html>
