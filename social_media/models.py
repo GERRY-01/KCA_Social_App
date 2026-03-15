@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 # Create your models here.
 
 class Profile(models.Model):
@@ -255,3 +255,68 @@ class Follow(models.Model):
     def decline(self):
         self.status = 'declined'
         self.save()
+
+class Conversation(models.Model):
+    """Model for tracking conversations between users"""
+    participants = models.ManyToManyField(User, related_name='conversations')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-updated_at']
+    
+    def __str__(self):
+        return f"Conversation {self.id} between {', '.join([p.username for p in self.participants.all()])}"
+    
+    def get_other_participant(self, user):
+        """Get the other participant in a two-person conversation"""
+        return self.participants.exclude(id=user.id).first()
+    
+    def last_message(self):
+        """Get the last message in this conversation"""
+        return self.messages.order_by('-timestamp').first()
+    
+    def unread_count(self, user):
+        """Get count of unread messages for a user in this conversation"""
+        return self.messages.filter(
+            ~models.Q(sender=user),
+            read=False
+        ).count()
+
+
+class Message(models.Model):
+    """Model for individual messages"""
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+    read_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['timestamp']
+    
+    def __str__(self):
+        return f"Message from {self.sender.username} to {self.recipient.username} at {self.timestamp}"
+    
+    def mark_as_read(self):
+        """Mark message as read"""
+        if not self.read:
+            self.read = True
+            self.read_at = timezone.now()
+            self.save()
+
+
+class MessageNotification(models.Model):
+    """Model for tracking message notifications"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='message_notifications')
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Notification for {self.user.username} about message {self.message.id}"

@@ -28,4 +28,11 @@ urlpatterns = [
     path('profile/<int:user_id>/', views.user_profile, name='user_profile'),
     path('like/<int:post_id>/', views.like_post, name='like_post'),
     path('update_profile/', views.update_profile, name='update_profile'),
+    # Message URLs
+    path('messages/', views.messages_page, name='messages'),
+    path('messages/conversation/<int:user_id>/', views.get_conversation, name='get_conversation'),
+    path('messages/send/', views.send_message, name='send_message'),
+    path('messages/unread/', views.get_unread_count, name='get_unread_count'),
+    path('messages/recent/', views.get_recent_conversations, name='get_recent_conversations'),
+    path('messages/search-users/', views.search_users, name='search_users'),
 ]

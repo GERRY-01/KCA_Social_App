@@ -3,13 +3,15 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .models import Profile, CompleteProfile, Post, Comments, Resource, Event, AdminProfile, Announcement, AnnouncementLike, Follow,PostLike
+from .models import Profile, CompleteProfile, Post, Comments, Resource, Event, AdminProfile, Announcement, AnnouncementLike, Follow,PostLike, Conversation, Message, MessageNotification
 import random
 import calendar
 from datetime import datetime
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.db.models import Q, Max
 
 
 # Create your views here.
@@ -29,6 +31,9 @@ def home(request):
 
     posts = Post.objects.all().order_by('-created_at')
     
+    # Get all users except current user
+    all_users = User.objects.exclude(id=request.user.id)
+    
     # Get users that the current user has any relationship with (accepted or pending)
     following = Follow.objects.filter(
         follower=request.user
@@ -42,7 +47,6 @@ def home(request):
     # Attach follow status to each post
     for post in posts:
         post.follow_status = follow_status.get(post.user.id, None)
-        # Add like count and user like status
         post.likes_count = post.likes.count()
         post.user_liked = post.likes.filter(user=request.user).exists()
     
@@ -54,7 +58,7 @@ def home(request):
     
     # Get follower counts for each user (accepted only)
     follower_counts = {}
-    for user in User.objects.exclude(id=request.user.id):
+    for user in all_users:
         follower_counts[user.id] = Follow.objects.filter(
             followed=user,
             status='accepted'
@@ -90,9 +94,38 @@ def home(request):
                 pass
         mutual_users_with_profiles.append(user_data)
     
-    # Get suggested users
-    all_users = User.objects.exclude(id=request.user.id)
+    # Get recent conversations for messages sidebar
+    recent_conversations = []
+    conversations = Conversation.objects.filter(
+        participants=request.user
+    ).order_by('-updated_at')[:3]  # Get top 3 most recent
     
+    for conv in conversations:
+        other_user = conv.get_other_participant(request.user)
+        last_msg = conv.last_message()
+        
+        # Get profile picture or initials
+        profile_pic = None
+        initials = f"{other_user.first_name[0]}{other_user.last_name[0]}" if other_user.first_name and other_user.last_name else other_user.username[:2].upper()
+        
+        try:
+            if hasattr(other_user, 'completeprofile') and other_user.completeprofile.profile_picture:
+                profile_pic = other_user.completeprofile.profile_picture.url
+            elif hasattr(other_user, 'admin_profile') and other_user.admin_profile.profile_picture:
+                profile_pic = other_user.admin_profile.profile_picture.url
+        except:
+            pass
+        
+        recent_conversations.append({
+            'other_user': other_user,
+            'last_message': last_msg.content if last_msg else 'No messages yet',
+            'last_message_time': last_msg.timestamp if last_msg else conv.updated_at,
+            'unread_count': conv.unread_count(request.user),
+            'profile_pic': profile_pic,
+            'initials': initials,
+        })
+    
+    # Get suggested users
     if all_users.exists():
         pending_user_ids = pending_requests.values_list('follower_id', flat=True)
         suggested_users_list = all_users.exclude(
@@ -125,6 +158,7 @@ def home(request):
         'follower_counts': follower_counts,
         'pending_requests': pending_requests,
         'mutual_followers': mutual_users_with_profiles,
+        'recent_conversations': recent_conversations,  # Add this to context
     }
     return render(request, 'home.html', context)
 
@@ -1072,3 +1106,275 @@ def update_profile(request):
         return redirect('profile')
     
     return redirect('profile')
+
+@login_required
+def messages_page(request):
+    """Main messages page showing all conversations"""
+    # Get all conversations for the current user
+    conversations = Conversation.objects.filter(
+        participants=request.user
+    ).order_by('-updated_at')
+    
+    # Prepare conversation data
+    conversation_data = []
+    for conv in conversations:
+        other_user = conv.get_other_participant(request.user)
+        last_msg = conv.last_message()
+        
+        # Get profile picture or initials for the other user
+        profile_pic = None
+        initials = f"{other_user.first_name[0]}{other_user.last_name[0]}" if other_user.first_name and other_user.last_name else other_user.username[:2].upper()
+        
+        try:
+            if hasattr(other_user, 'completeprofile') and other_user.completeprofile.profile_picture:
+                profile_pic = other_user.completeprofile.profile_picture.url
+        except:
+            pass
+            
+        conversation_data.append({
+            'conversation': conv,
+            'other_user': other_user,
+            'last_message': last_msg.content if last_msg else 'No messages yet',
+            'last_message_time': last_msg.timestamp if last_msg else conv.updated_at,
+            'unread_count': conv.unread_count(request.user),
+            'profile_pic': profile_pic,
+            'initials': initials,
+        })
+    
+    context = {
+        'conversations': conversation_data,
+    }
+    return render(request, 'messages.html', context)
+
+
+@login_required
+def get_conversation(request, user_id):
+    """Get or create a conversation with another user and return messages"""
+    other_user = get_object_or_404(User, id=user_id)
+    
+    # Don't allow messaging yourself
+    if other_user == request.user:
+        return JsonResponse({'error': 'Cannot message yourself'}, status=400)
+    
+    # Find existing conversation
+    conversation = Conversation.objects.filter(
+        participants=request.user
+    ).filter(
+        participants=other_user
+    ).first()
+    
+    # Create new conversation if it doesn't exist
+    if not conversation:
+        conversation = Conversation.objects.create()
+        conversation.participants.add(request.user, other_user)
+    
+    # Get messages
+    messages = conversation.messages.all().order_by('timestamp')
+    
+    # Mark messages as read
+    unread_messages = messages.filter(recipient=request.user, read=False)
+    for msg in unread_messages:
+        msg.mark_as_read()
+    
+    # Get other user's profile picture
+    profile_pic = None
+    try:
+        if hasattr(other_user, 'completeprofile') and other_user.completeprofile.profile_picture:
+            profile_pic = other_user.completeprofile.profile_picture.url
+        elif hasattr(other_user, 'admin_profile') and other_user.admin_profile.profile_picture:
+            profile_pic = other_user.admin_profile.profile_picture.url
+    except:
+        pass
+    
+    # Format messages for JSON response
+    messages_data = []
+    for msg in messages:
+        messages_data.append({
+            'id': msg.id,
+            'sender_id': msg.sender.id,
+            'sender_name': msg.sender.get_full_name() or msg.sender.username,
+            'content': msg.content,
+            'timestamp': msg.timestamp.strftime('%I:%M %p'),
+            'date': msg.timestamp.strftime('%B %d, %Y'),
+            'read': msg.read,
+            'is_me': msg.sender == request.user,
+        })
+    
+    # Check if user is online (you'll need to implement this)
+    is_online = False  # Replace with actual online check
+    last_seen = "Last seen recently"  # Replace with actual last seen
+    
+    return JsonResponse({
+        'conversation_id': conversation.id,
+        'other_user': {
+            'id': other_user.id,
+            'name': other_user.get_full_name() or other_user.username,
+            'username': other_user.username,
+            'profile_pic': profile_pic,  # Add this line
+        },
+        'messages': messages_data,
+        'is_online': is_online,
+        'last_seen': last_seen,
+    })
+
+@login_required
+@require_POST
+def send_message(request):
+    """Send a new message"""
+    recipient_id = request.POST.get('recipient_id')
+    content = request.POST.get('content')
+    
+    if not recipient_id or not content:
+        return JsonResponse({'error': 'Missing required fields'}, status=400)
+    
+    recipient = get_object_or_404(User, id=recipient_id)
+    
+    # Find or create conversation
+    conversation = Conversation.objects.filter(
+        participants=request.user
+    ).filter(
+        participants=recipient
+    ).first()
+    
+    if not conversation:
+        conversation = Conversation.objects.create()
+        conversation.participants.add(request.user, recipient)
+    
+    # Create message
+    message = Message.objects.create(
+        conversation=conversation,
+        sender=request.user,
+        recipient=recipient,
+        content=content
+    )
+    
+    # Update conversation timestamp
+    conversation.save()  # This updates the updated_at field
+    
+    # Create notification
+    MessageNotification.objects.create(
+        user=recipient,
+        message=message
+    )
+    
+    return JsonResponse({
+        'success': True,
+        'message_id': message.id,
+        'timestamp': message.timestamp.strftime('%I:%M %p'),
+        'date': message.timestamp.strftime('%B %d, %Y'),
+    })
+
+
+@login_required
+def get_unread_count(request):
+    """Get total unread messages and per-conversation counts"""
+    total_unread = Message.objects.filter(
+        recipient=request.user,
+        read=False
+    ).count()
+    
+    # Get per-conversation unread counts
+    conversations = Conversation.objects.filter(participants=request.user)
+    conv_data = []
+    for conv in conversations:
+        other_user = conv.get_other_participant(request.user)
+        unread = conv.unread_count(request.user)
+        if unread > 0:
+            # Get profile picture
+            profile_pic = None
+            try:
+                if hasattr(other_user, 'completeprofile') and other_user.completeprofile.profile_picture:
+                    profile_pic = other_user.completeprofile.profile_picture.url
+                elif hasattr(other_user, 'admin_profile') and other_user.admin_profile.profile_picture:
+                    profile_pic = other_user.admin_profile.profile_picture.url
+            except:
+                pass
+            
+            conv_data.append({
+                'user_id': other_user.id,
+                'user_name': other_user.get_full_name() or other_user.username,
+                'profile_pic': profile_pic,  # Add this line
+                'unread_count': unread
+            })
+    
+    return JsonResponse({
+        'unread_count': total_unread,
+        'conversations': conv_data
+    })
+
+@login_required
+def get_recent_conversations(request):
+    """Get recent conversations for the sidebar"""
+    conversations = Conversation.objects.filter(
+        participants=request.user
+    ).order_by('-updated_at')[:10]
+    
+    data = []
+    for conv in conversations:
+        other_user = conv.get_other_participant(request.user)
+        last_msg = conv.last_message()
+        
+        # Get profile picture
+        profile_pic = None
+        try:
+            if hasattr(other_user, 'completeprofile') and other_user.completeprofile.profile_picture:
+                profile_pic = other_user.completeprofile.profile_picture.url
+            elif hasattr(other_user, 'admin_profile') and other_user.admin_profile.profile_picture:
+                profile_pic = other_user.admin_profile.profile_picture.url
+        except:
+            pass
+        
+        data.append({
+            'id': conv.id,
+            'other_user_id': other_user.id,
+            'other_user_name': other_user.get_full_name() or other_user.username,
+            'profile_pic': profile_pic,  # Add this line
+            'last_message': last_msg.content if last_msg else '',
+            'last_message_time': last_msg.timestamp.strftime('%I:%M %p') if last_msg else '',
+            'unread_count': conv.unread_count(request.user),
+        })
+    
+    return JsonResponse({'conversations': data})
+@login_required
+def search_users(request):
+    """Search for users to start a conversation"""
+    query = request.GET.get('q', '')
+    
+    if len(query) < 2:
+        return JsonResponse({'users': []})
+    
+    # Search users by name or username, excluding current user
+    users = User.objects.filter(
+        Q(first_name__icontains=query) |
+        Q(last_name__icontains=query) |
+        Q(username__icontains=query)
+    ).exclude(
+        id=request.user.id
+    )[:10]  # Limit to 10 results
+    
+    user_data = []
+    for user in users:
+        # Get initials
+        first_initial = user.first_name[0] if user.first_name else ''
+        last_initial = user.last_name[0] if user.last_name else ''
+        initials = (first_initial + last_initial).upper() or user.username[0].upper()
+        
+        # Get profile picture if available
+        profile_pic = None
+        try:
+            if hasattr(user, 'completeprofile') and user.completeprofile.profile_picture:
+                profile_pic = user.completeprofile.profile_picture.url
+        except:
+            pass
+        
+        user_data.append({
+            'id': user.id,
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'full_name': user.get_full_name() or user.username,
+            'initials': initials,
+            'profile_pic': profile_pic,
+        })
+    
+    return JsonResponse({'users': user_data})
