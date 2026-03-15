@@ -637,18 +637,6 @@
 
     <!-- Main Dashboard Container -->
     <div class="dashboard-container">
-        <!-- Messages -->
-        {% if messages %}
-        <div class="messages-container">
-            {% for message in messages %}
-            <div class="message {{ message.tags }}">
-                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
         <!-- Welcome Banner -->
         <div class="welcome-banner">
             <div class="welcome-text">

@@ -40,7 +40,13 @@
             <!-- NAVIGATION LINKS -->
             <nav class="sidebar-navigation">
                 <ul class="sidebar-nav-list">
-                    <li><a href="{% url 'home' %}" class="sidebar-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li>
+                        {% if user.is_staff %}
+                            <a href="{% url 'admin_dashboard' %}" class="sidebar-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        {% else %}
+                            <a href="{% url 'home' %}" class="sidebar-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        {% endif %}
+                    </li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-bullhorn"></i> Announcements</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-calendar-alt"></i> Events & Calendar</a></li>
                     <li><a href="#" class="sidebar-nav-link"><i class="fas fa-users"></i> Clubs & Communities</a></li>
@@ -57,28 +63,6 @@
                     </li>
                 </ul>
             </nav>
-
-            <!-- FRIENDS / CONNECTIONS -->
-            <div class="sidebar-connections">
-                <h4 class="sidebar-section-title">Connections</h4>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/women/65.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Alice Mwangi</span>
-                </div>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/men/66.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Brian Otieno</span>
-                </div>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/women/67.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">Faith Njeri</span>
-                </div>
-                <div class="sidebar-connection-item">
-                    <img src="https://randomuser.me/api/portraits/men/68.jpg" class="sidebar-connection-img">
-                    <span class="sidebar-connection-name">James Kimani</span>
-                </div>
-                <a href="#" class="sidebar-view-all">View All Connections</a>
-            </div>
         </aside>
 
       <!-- MAIN CONTENT - PROFILE PAGE -->
