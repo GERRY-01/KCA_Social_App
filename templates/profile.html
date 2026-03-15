@@ -276,7 +276,7 @@
                         </div>
                         <div class="friend-list">
                             {% for connection in mutual_followers %}
-                            <div class="friend-item" onclick="window.location.href='{% url 'user_profile' connection.user.id %}'" style="cursor: pointer;">
+                            <div class="friend-item" style="cursor: pointer;">
                                 <div class="friend-avatar">
                                     {% if connection.complete_profile and connection.complete_profile.profile_picture %}
                                         <img src="{{ connection.complete_profile.profile_picture.url }}" alt="{{ connection.user.first_name }}">

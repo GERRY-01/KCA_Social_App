@@ -586,7 +586,7 @@
             <div class="sidebar-connections">
                 <h4 class="sidebar-section-title">Connections</h4>
                 {% for connection in mutual_followers %}
-                <div class="sidebar-connection-item" onclick="window.location.href='{% url 'user_profile' connection.user.id %}'" style="cursor: pointer;">
+                <div class="sidebar-connection-item" style="cursor: pointer;">
                     {% if connection.complete_profile and connection.complete_profile.profile_picture %}
                         <img src="{{ connection.complete_profile.profile_picture.url }}" alt="{{ connection.user.username }}" class="sidebar-connection-img">
                     {% elif connection.admin_profile and connection.admin_profile.profile_picture %}
