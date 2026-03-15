@@ -231,10 +231,19 @@ def create_post(request):
     return redirect('home')
 
 def logout(request):
+    # Check if the user was an admin before logging out
+    was_admin = request.user.is_staff if request.user.is_authenticated else False
+    
     auth_logout(request)
     messages.success(request, 'Logged out successfully')
-    return redirect('login')
+    
+    # Redirect admins to admin login, regular users to regular login
+    if was_admin:
+        return redirect('admin_login')
+    else:
+        return redirect('login')
 
+@login_required
 def profile(request):
     # Get or create profile (similar to home view)
     try:
@@ -250,8 +259,39 @@ def profile(request):
     posts = Post.objects.filter(user=request.user).order_by('-created_at')
     
     # Get followers and following counts
-    followers_count = Follow.objects.filter(followed=request.user).count()
-    following_count = Follow.objects.filter(follower=request.user).count()
+    followers_count = Follow.objects.filter(followed=request.user, status='accepted').count()
+    following_count = Follow.objects.filter(follower=request.user, status='accepted').count()
+    
+    # Get mutual followers (people you follow who also follow you back)
+    user_following = Follow.objects.filter(
+        follower=request.user,
+        status='accepted'
+    ).values_list('followed_id', flat=True)
+    
+    user_followers = Follow.objects.filter(
+        followed=request.user,
+        status='accepted'
+    ).values_list('follower_id', flat=True)
+    
+    mutual_ids = set(user_following) & set(user_followers)
+    mutual_followers = User.objects.filter(id__in=mutual_ids)[:5]
+    
+    # Get profile info for mutual followers
+    mutual_users_with_profiles = []
+    for user in mutual_followers:
+        user_data = {
+            'user': user,
+            'complete_profile': None,
+            'admin_profile': None
+        }
+        try:
+            user_data['complete_profile'] = CompleteProfile.objects.get(user=user)
+        except CompleteProfile.DoesNotExist:
+            try:
+                user_data['admin_profile'] = AdminProfile.objects.get(user=user)
+            except AdminProfile.DoesNotExist:
+                pass
+        mutual_users_with_profiles.append(user_data)
     
     return render(request, 'profile.html', {
         'user_profile': user_profile,
@@ -260,8 +300,8 @@ def profile(request):
         'posts': posts,
         'followers_count': followers_count,
         'following_count': following_count,
+        'mutual_followers': mutual_users_with_profiles,
     })
-
 @login_required
 def user_profile(request, user_id):
     """View another user's profile"""
@@ -1001,3 +1041,34 @@ def like_post(request, post_id):
         # Regular form submission - redirect back
         messages.success(request, message)
         return redirect(request.META.get('HTTP_REFERER', 'home'))
+    
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        # Update User basic info
+        user = request.user
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.save()
+        
+        # Update or create CompleteProfile
+        try:
+            profile = CompleteProfile.objects.get(user=user)
+        except CompleteProfile.DoesNotExist:
+            profile = CompleteProfile(user=user)
+        
+        # Update profile fields
+        profile.bio = request.POST.get('bio')
+        profile.campus = request.POST.get('campus')
+        profile.program = request.POST.get('program')
+        
+        # Handle profile picture upload
+        if request.FILES.get('profile_picture'):
+            profile.profile_picture = request.FILES.get('profile_picture')
+        
+        profile.save()
+        
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('profile')
+    
+    return redirect('profile')
