@@ -264,6 +264,53 @@ def create_post(request):
         return redirect('home')
     return redirect('home')
 
+@login_required
+def edit_post(request, post_id):
+    """Edit a post (only by the post author)"""
+    post = get_object_or_404(Post, id=post_id)
+    
+    # Check if user is the post author
+    if post.user != request.user:
+        messages.error(request, 'You can only edit your own posts')
+        return redirect('home')
+    
+    if request.method == 'POST':
+        caption = request.POST.get('caption')
+        media = request.FILES.get('media')
+        
+        if not caption:
+            messages.error(request, 'Caption is required')
+            return redirect('home')
+        
+        post.caption = caption
+        if media:
+            post.media = media
+        post.save()
+        
+        messages.success(request, 'Post updated successfully')
+        return redirect('home')
+    
+    # GET request - show edit form
+    return render(request, 'edit_post.html', {'post': post})
+
+@login_required
+def delete_post(request, post_id):
+    """Delete a post (only by the post author)"""
+    post = get_object_or_404(Post, id=post_id)
+    
+    # Check if user is the post author
+    if post.user != request.user:
+        messages.error(request, 'You can only delete your own posts')
+        return redirect('home')
+    
+    if request.method == 'POST':
+        post.delete()
+        messages.success(request, 'Post deleted successfully')
+        return redirect('home')
+    
+    # GET request - show confirmation
+    return render(request, 'delete_post.html', {'post': post})
+
 def logout(request):
     # Check if the user was an admin before logging out
     was_admin = request.user.is_staff if request.user.is_authenticated else False
@@ -1336,6 +1383,63 @@ def get_recent_conversations(request):
     
     return JsonResponse({'conversations': data})
 @login_required
+def search(request):
+    query = request.GET.get('q', '').strip()
+    results = {
+        'users': [],
+        'posts': [],
+    }
+    
+    if query:
+        # Search users
+        users = User.objects.filter(
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(username__icontains=query)
+        ).exclude(id=request.user.id)[:10]
+        
+        for user in users:
+            user_data = {
+                'user': user,
+                'complete_profile': None,
+                'admin_profile': None,
+                'followers_count': Follow.objects.filter(followed=user, status='accepted').count(),
+            }
+            try:
+                user_data['complete_profile'] = CompleteProfile.objects.get(user=user)
+            except CompleteProfile.DoesNotExist:
+                try:
+                    user_data['admin_profile'] = AdminProfile.objects.get(user=user)
+                except AdminProfile.DoesNotExist:
+                    pass
+            results['users'].append(user_data)
+        
+        # Search posts
+        posts = Post.objects.filter(
+            Q(caption__icontains=query)
+        ).select_related('user').order_by('-created_at')[:20]
+        
+        for post in posts:
+            results['posts'].append({
+                'post': post,
+                'user_profile': None,
+                'admin_profile': None,
+            })
+            try:
+                results['posts'][-1]['user_profile'] = CompleteProfile.objects.get(user=post.user)
+            except CompleteProfile.DoesNotExist:
+                try:
+                    results['posts'][-1]['admin_profile'] = AdminProfile.objects.get(user=post.user)
+                except AdminProfile.DoesNotExist:
+                    pass
+    
+    context = {
+        'query': query,
+        'results': results,
+    }
+    return render(request, 'search_results.html', context)
+
+@login_required
 def search_users(request):
     """Search for users to start a conversation"""
     query = request.GET.get('q', '')
@@ -1378,3 +1482,4 @@ def search_users(request):
         })
     
     return JsonResponse({'users': user_data})
+    return render(request, 'search_results.html', context)

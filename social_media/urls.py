@@ -9,6 +9,8 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('create_post/', views.create_post, name='create_post'),
+    path('post/<int:post_id>/edit/', views.edit_post, name='edit_post'),
+    path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
     path('profile/', views.profile, name='profile'),
     path('post/<int:post_id>/add_comment/', views.add_comment, name='add_comment'),
     path('suggestions/', views.view_all_suggestions, name='suggestions'),
@@ -35,4 +37,5 @@ urlpatterns = [
     path('messages/unread/', views.get_unread_count, name='get_unread_count'),
     path('messages/recent/', views.get_recent_conversations, name='get_recent_conversations'),
     path('messages/search-users/', views.search_users, name='search_users'),
+    path('search/', views.search, name='search'),
 ]
