@@ -562,6 +562,81 @@
             min-width: 32px;
             padding: 0 6px;
         }
+        /* Messages section styling */
+        .right-messages-section {
+            margin-top: 20px;
+        }
+
+        .message-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid var(--gray-200);
+            transition: background 0.3s;
+        }
+
+        .message-item:hover {
+            background: var(--gray-100);
+        }
+
+        .message-item.unread {
+            background: #f0f7ff;
+        }
+
+        .message-user-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .message-user-name {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 0.95rem;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+
+        .message-preview {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .view-all-link {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .view-all-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -1037,43 +1112,35 @@
             </div>
 
             <div class="right-messages-section">
-                <h3 class="right-section-title">Messages</h3>
-                
-                <div class="message-item unread">
-                    <img src="https://randomuser.me/api/portraits/women/39.jpg" alt="Sarah" class="message-user-img">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-user-name">Sarah Johnson</span>
-                            <span class="message-time">2 min ago</span>
-                        </div>
-                        <p class="message-preview">Hey! Are we still meeting for study group?</p>
+            <h3 class="right-section-title">Messages</h3>
+            
+            {% for conv in recent_conversations %}
+            <div class="message-item {% if conv.unread_count > 0 %}unread{% endif %}" onclick="window.location.href='{% url 'messages' %}'" style="cursor: pointer;">
+                {% if conv.profile_pic %}
+                    <img src="{{ conv.profile_pic }}" alt="{{ conv.other_user.first_name }}" class="message-user-img">
+                {% else %}
+                    <div class="message-user-img" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px;">
+                        {{ conv.initials }}
                     </div>
-                </div>
-                
-                <div class="message-item">
-                    <img src="https://randomuser.me/api/portraits/men/40.jpg" alt="Mike" class="message-user-img">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-user-name">Mike Chen</span>
-                            <span class="message-time">30 min ago</span>
-                        </div>
-                        <p class="message-preview">Thanks for the notes!</p>
+                {% endif %}
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-user-name">{{ conv.other_user.first_name }} {{ conv.other_user.last_name }}</span>
+                        <span class="message-time">{{ conv.last_message_time|timesince }} ago</span>
                     </div>
+                    <p class="message-preview">{{ conv.last_message|truncatechars:40 }}</p>
                 </div>
-                
-                <div class="message-item unread">
-                    <img src="https://randomuser.me/api/portraits/women/41.jpg" alt="Emma" class="message-user-img">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-user-name">Emma Davis</span>
-                            <span class="message-time">1 hour ago</span>
-                        </div>
-                        <p class="message-preview">Can you send me the project files?</p>
-                    </div>
-                </div>
-                
-                <a href="#" class="view-all-link">[View All Messages]</a>
             </div>
+            {% empty %}
+            <div style="text-align: center; padding: 20px; color: var(--gray-500);">
+                <i class="fas fa-comments" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <p>No messages yet</p>
+                <p style="font-size: 12px;">Start a conversation with someone!</p>
+            </div>
+            {% endfor %}
+            
+            <a href="{% url 'messages' %}" class="view-all-link">[View All Messages]</a>
+        </div>
 
             <div class="follower-count-section">
                 <div class="follower-number">147.75K</div>
