@@ -738,30 +738,7 @@
                 </button>
             </div>
 
-            <div class="create-post-container">
-                <div class="create-post-header">
-                    {% if complete_profile and complete_profile.profile_picture %}
-                    <img src="{{ complete_profile.profile_picture.url }}" alt="User" class="create-post-user-img">
-                    {% else %}
-                    <div class="create-post-initials">
-                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
-                    </div>
-                    {% endif %}
-                    <input type="text" placeholder="What's on your mind, {{user.username}}?" class="create-post-input">
-                </div>
-                <div class="create-post-options">
-                    <button class="post-option-btn">
-                        <i class="fas fa-image"></i> Photo/Video
-                    </button>
-                    <button class="post-option-btn">
-                        <i class="fas fa-calendar-alt"></i> Event
-                    </button>
-                    <button class="post-option-btn">
-                        <i class="fas fa-poll"></i> Poll
-                    </button>
-                    <button class="post-publish-btn">Publish</button>
-                </div>
-            </div>
+           
 
             <div class="simple-post-modal" id="simplePostModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
                 <div class="simple-modal-content" style="background: white; width: 500px; max-width: 90%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
@@ -801,38 +778,6 @@
                 </div>
             </div>
 
-            <div class="stories-container">
-                <h3 class="stories-title">Stories</h3>
-                <div class="stories-scroll">
-                    <div class="story-item add-story">
-                        <div class="story-circle">
-                            <i class="fas fa-plus"></i>
-                        </div>
-                        <p class="story-name">Add Story</p>
-                    </div>
-                    
-                    <div class="story-item">
-                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Kate" class="story-img">
-                        <p class="story-name">Kate Lynch</p>
-                    </div>
-                    <div class="story-item">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Katie" class="story-img">
-                        <p class="story-name">Katie Vogel</p>
-                    </div>
-                    <div class="story-item">
-                        <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Kariya" class="story-img">
-                        <p class="story-name">Kariya Vogel</p>
-                    </div>
-                    <div class="story-item">
-                        <img src="https://randomuser.me/api/portraits/women/46.jpg" alt="Kelly" class="story-img">
-                        <p class="story-name">Kelly Doretha</p>
-                    </div>
-                    <div class="story-item">
-                        <img src="https://randomuser.me/api/portraits/women/47.jpg" alt="Shelley" class="story-img">
-                        <p class="story-name">Shelley Clark</p>
-                    </div>
-                </div>
-            </div>
 
             <!-- Feed Posts -->
             <div class="feed-posts-container">
