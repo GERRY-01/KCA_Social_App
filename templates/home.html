@@ -531,6 +531,37 @@
         .post-action-btn.liked i {
             color: #f97316;
         }
+       /* Message badge styling */
+        .unread-badge {
+            background: #ef4444;  /* Red color */
+            color: white;
+            border-radius: 50%;    /* Perfect circle */
+            min-width: 22px;       /* Slightly larger for better visibility */
+            height: 22px;          /* Equal to min-width for perfect circle */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0 2px;        /* Minimal padding since it's a circle */
+            margin-left: auto;
+            margin-top: 18px; 
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3); /* Optional: subtle shadow */
+            line-height: 1;
+            text-align: center;
+        }
+
+        /* If the number is two digits, ensure it still fits */
+        .unread-badge.count-2 {
+            min-width: 26px;
+        }
+
+        /* If the number is three digits, make it a pill shape but still rounded */
+        .unread-badge.count-3 {
+            border-radius: 20px;
+            min-width: 32px;
+            padding: 0 6px;
+        }
     </style>
 </head>
 <body>
@@ -1223,6 +1254,27 @@ function likePost(button) {
     })
     .catch(error => console.error('Error:', error));
 }
+
+// Check for unread messages every 10 seconds
+function checkUnreadMessages() {
+    fetch('/messages/unread/')
+        .then(response => response.json())
+        .then(data => {
+            const badge = document.getElementById('messageBadge');
+            if (data.unread_count > 0) {
+                badge.textContent = data.unread_count;
+                badge.style.display = 'inline-flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        })
+        .catch(error => console.error('Error checking messages:', error));
+}
+
+// Check every 10 seconds
+setInterval(checkUnreadMessages, 10000);
+// Check immediately on page load
+document.addEventListener('DOMContentLoaded', checkUnreadMessages);
     </script>
 </body>
 </html>
