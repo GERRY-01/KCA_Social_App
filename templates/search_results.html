@@ -10,131 +10,284 @@
     <link rel="stylesheet" href="{% static 'css/right_sidebar.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        .search-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px -3px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Middle Feed Container - Override for search */
+        #middle-feed-container {
+            flex: 1;
+            margin-left: 280px;
+            margin-right: 300px;
+            padding: 2rem;
+            position: relative;
         }
 
         .search-header {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
             text-align: center;
-            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .search-header h1 {
-            color: #1e293b;
-            font-size: 2rem;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .search-query {
-            color: #667eea;
-            font-size: 1.2rem;
-            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.5rem 2rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-md);
         }
 
         .search-section {
-            margin-bottom: 40px;
+            margin-bottom: 3rem;
         }
 
         .section-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e2e8f0;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 0 0.5rem;
         }
 
         .section-icon {
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 8px;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 14px;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-md);
         }
 
         .section-title {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--gray-800);
             margin: 0;
         }
 
-        .user-result {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: white;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
 
-        .user-result:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        .user-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+            border: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .user-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .user-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .user-avatar-wrapper {
+            position: relative;
+            flex-shrink: 0;
         }
 
         .user-avatar {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #667eea;
+            border: 3px solid var(--primary);
+            box-shadow: var(--shadow-md);
         }
 
         .user-avatar-initials {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 600;
+            border: 3px solid white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
         }
 
         .user-info h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin: 0 0 5px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .user-info p {
-            color: #64748b;
-            margin: 0 0 5px;
+        .user-info .username {
+            color: var(--gray-500);
             font-size: 0.9rem;
+            margin-bottom: 0.5rem;
         }
 
         .user-stats {
-            font-size: 0.8rem;
-            color: #94a3b8;
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
         }
 
-        .post-result {
+        .user-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .user-stats i {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .follow-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .posts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .post-card {
             background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+            border: 1px solid var(--gray-200);
+        }
+
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
         .post-header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
         }
 
         .post-user-avatar {
@@ -142,86 +295,219 @@
             height: 50px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #667eea;
+            border: 2px solid var(--primary);
+        }
+
+        .post-user-avatar-initials {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .post-user-info {
+            flex: 1;
         }
 
         .post-user-info h4 {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            color: #1e293b;
-            margin: 0 0 3px;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
         }
 
-        .post-user-info p {
-            font-size: 0.8rem;
-            color: #64748b;
-            margin: 0;
+        .post-user-info h4 a {
+            color: inherit;
+            text-decoration: none;
         }
 
-        .post-content p {
-            font-size: 1rem;
+        .post-user-info h4 a:hover {
+            color: var(--primary);
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--gray-500);
+            font-size: 0.85rem;
+        }
+
+        .post-meta i {
+            margin-right: 0.25rem;
+        }
+
+        .post-content {
+            color: var(--gray-700);
             line-height: 1.6;
-            color: #334155;
-            margin: 15px 0;
+            margin-bottom: 1rem;
         }
 
         .post-media {
-            border-radius: 12px;
+            margin-top: 1rem;
+            border-radius: 16px;
             overflow: hidden;
-            margin: 15px 0;
+            border: 2px solid var(--gray-200);
         }
 
         .post-media img {
             width: 100%;
-            height: auto;
+            max-height: 400px;
+            object-fit: cover;
             display: block;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .post-stats i {
+            color: var(--primary);
+            margin-right: 0.5rem;
         }
 
         .no-results {
             text-align: center;
-            padding: 60px 20px;
-            color: #64748b;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
         }
 
         .no-results i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
+            font-size: 5rem;
+            color: var(--gray-300);
+            margin-bottom: 1.5rem;
+        }
+
+        .no-results h3 {
+            font-size: 1.8rem;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results p {
+            color: var(--gray-500);
+            font-size: 1.1rem;
+        }
+
+        .search-tips {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--gray-100);
+            border-radius: 16px;
+            text-align: left;
+        }
+
+        .search-tips h4 {
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-tips ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .search-tips li {
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-tips li i {
+            color: var(--primary);
+            font-size: 0.9rem;
         }
 
         .back-btn {
             position: fixed;
             top: 20px;
-            left: 20px;
-            background: #667eea;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
+            left: 300px;
+            background: white;
+            color: var(--gray-700);
+            padding: 0.75rem 1.25rem;
+            border-radius: 30px;
             text-decoration: none;
             font-weight: 600;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.5rem;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s;
         }
 
         .back-btn:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
+            background: var(--primary);
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        .back-btn i {
+            font-size: 0.9rem;
+        }
+
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            #middle-feed-container {
+                margin-right: 0;
+            }
+            
+            .back-btn {
+                left: 20px;
+            }
         }
 
         @media (max-width: 768px) {
-            .search-container {
-                padding: 15px;
+            #middle-feed-container {
+                margin-left: 0;
+                padding: 1rem;
             }
 
-            .user-result {
-                padding: 12px;
+            .search-header h1 {
+                font-size: 2rem;
             }
 
-            .post-result {
-                padding: 15px;
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .back-btn {
+                top: 10px;
+                left: 10px;
+                padding: 0.5rem 1rem;
             }
         }
     </style>
@@ -280,14 +566,14 @@
         <!-- MIDDLE CONTENT -->
         <main id="middle-feed-container">
             <a href="{% url 'home' %}" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Back
+                <i class="fas fa-arrow-left"></i> Back to Home
             </a>
 
             <div class="search-container">
                 <div class="search-header">
                     <h1>Search Results</h1>
                     {% if query %}
-                        <p class="search-query">Results for "{{ query }}"</p>
+                        <span class="search-query">"{{ query }}"</span>
                     {% endif %}
                 </div>
 
@@ -298,30 +584,39 @@
                             <i class="fas fa-users"></i>
                         </div>
                         <h2 class="section-title">People</h2>
+                        <span style="margin-left: auto; color: var(--gray-500);">{{ results.users|length }} found</span>
                     </div>
 
-                    {% for user_result in results.users %}
-                    <a href="{% url 'user_profile' user_result.user.id %}" class="user-result">
-                        <div class="user-avatar">
-                            {% if user_result.complete_profile and user_result.complete_profile.profile_picture %}
-                                <img src="{{ user_result.complete_profile.profile_picture.url }}" alt="{{ user_result.user.first_name }}">
-                            {% elif user_result.admin_profile and user_result.admin_profile.profile_picture %}
-                                <img src="{{ user_result.admin_profile.profile_picture.url }}" alt="{{ user_result.user.first_name }}">
-                            {% else %}
-                                <div class="user-avatar-initials">
-                                    {{ user_result.user.first_name|first|upper }}{{ user_result.user.last_name|first|upper }}
-                                </div>
+                    <div class="results-grid">
+                        {% for user_result in results.users %}
+                        <a href="{% url 'user_profile' user_result.user.id %}" class="user-card">
+                            {% if user_result.is_following %}
+                                <span class="follow-badge">Following</span>
                             {% endif %}
-                        </div>
-                        <div class="user-info">
-                            <h3>{{ user_result.user.first_name }} {{ user_result.user.last_name }}</h3>
-                            <p>@{{ user_result.user.username }}</p>
-                            <div class="user-stats">
-                                <span>{{ user_result.followers_count }} follower{{ user_result.followers_count|pluralize }}</span>
+                            <div class="user-avatar-wrapper">
+                                {% if user_result.complete_profile and user_result.complete_profile.profile_picture %}
+                                    <img src="{{ user_result.complete_profile.profile_picture.url }}" alt="{{ user_result.user.first_name }}" class="user-avatar">
+                                {% elif user_result.admin_profile and user_result.admin_profile.profile_picture %}
+                                    <img src="{{ user_result.admin_profile.profile_picture.url }}" alt="{{ user_result.user.first_name }}" class="user-avatar">
+                                {% else %}
+                                    <div class="user-avatar-initials">
+                                        {{ user_result.user.first_name|first|upper }}{{ user_result.user.last_name|first|upper }}
+                                    </div>
+                                {% endif %}
                             </div>
-                        </div>
-                    </a>
-                    {% endfor %}
+                            <div class="user-info">
+                                <h3>{{ user_result.user.first_name }} {{ user_result.user.last_name }}</h3>
+                                <div class="username">@{{ user_result.user.username }}</div>
+                                <div class="user-stats">
+                                    <span><i class="fas fa-users"></i> {{ user_result.followers_count }}</span>
+                                    {% if user_result.complete_profile.program %}
+                                        <span><i class="fas fa-graduation-cap"></i> {{ user_result.complete_profile.get_program_display|truncatechars:15 }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
                 </div>
                 {% endif %}
 
@@ -332,42 +627,53 @@
                             <i class="fas fa-stream"></i>
                         </div>
                         <h2 class="section-title">Posts</h2>
+                        <span style="margin-left: auto; color: var(--gray-500);">{{ results.posts|length }} found</span>
                     </div>
 
-                    {% for post_result in results.posts %}
-                    <div class="post-result">
-                        <div class="post-header">
-                            <a href="{% url 'user_profile' post_result.post.user.id %}">
-                                {% if post_result.user_profile and post_result.user_profile.profile_picture %}
-                                    <img src="{{ post_result.user_profile.profile_picture.url }}" alt="{{ post_result.post.user.first_name }}" class="post-user-avatar">
-                                {% elif post_result.admin_profile and post_result.admin_profile.profile_picture %}
-                                    <img src="{{ post_result.admin_profile.profile_picture.url }}" alt="{{ post_result.post.user.first_name }}" class="post-user-avatar">
-                                {% else %}
-                                    <div class="user-avatar-initials" style="width: 50px; height: 50px; font-size: 20px;">
-                                        {{ post_result.post.user.first_name|first|upper }}{{ post_result.post.user.last_name|first|upper }}
+                    <div class="posts-list">
+                        {% for post_result in results.posts %}
+                        <div class="post-card">
+                            <div class="post-header">
+                                <a href="{% url 'user_profile' post_result.post.user.id %}">
+                                    {% if post_result.user_profile and post_result.user_profile.profile_picture %}
+                                        <img src="{{ post_result.user_profile.profile_picture.url }}" alt="{{ post_result.post.user.first_name }}" class="post-user-avatar">
+                                    {% elif post_result.admin_profile and post_result.admin_profile.profile_picture %}
+                                        <img src="{{ post_result.admin_profile.profile_picture.url }}" alt="{{ post_result.post.user.first_name }}" class="post-user-avatar">
+                                    {% else %}
+                                        <div class="post-user-avatar-initials">
+                                            {{ post_result.post.user.first_name|first|upper }}{{ post_result.post.user.last_name|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                </a>
+                                <div class="post-user-info">
+                                    <h4>
+                                        <a href="{% url 'user_profile' post_result.post.user.id %}">
+                                            {{ post_result.post.user.first_name }} {{ post_result.post.user.last_name }}
+                                        </a>
+                                    </h4>
+                                    <div class="post-meta">
+                                        <span><i class="far fa-clock"></i> {{ post_result.post.created_at|timesince }} ago</span>
                                     </div>
-                                {% endif %}
-                            </a>
-                            <div class="post-user-info">
-                                <h4>
-                                    <a href="{% url 'user_profile' post_result.post.user.id %}" style="color: #1e293b; text-decoration: none;">
-                                        {{ post_result.post.user.first_name }} {{ post_result.post.user.last_name }}
-                                    </a>
-                                </h4>
-                                <p>@{{ post_result.post.user.username }} · {{ post_result.post.created_at|timesince }} ago</p>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="post-content">
-                            <p>{{ post_result.post.caption }}</p>
+                            <div class="post-content">
+                                <p>{{ post_result.post.caption }}</p>
+                            </div>
+
                             {% if post_result.post.media %}
                             <div class="post-media">
                                 <img src="{{ post_result.post.media.url }}" alt="Post media">
                             </div>
                             {% endif %}
+
+                            <div class="post-stats">
+                                <span><i class="fas fa-heart"></i> {{ post_result.post.likes.count }}</span>
+                                <span><i class="fas fa-comment"></i> {{ post_result.post.comments.count }}</span>
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
                 {% endif %}
 
@@ -375,7 +681,17 @@
                 <div class="no-results">
                     <i class="fas fa-search"></i>
                     <h3>No results found</h3>
-                    <p>Try searching with different keywords</p>
+                    <p>We couldn't find anything matching "{{ query }}"</p>
+                    
+                    <div class="search-tips">
+                        <h4><i class="fas fa-lightbulb"></i> Search tips</h4>
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> Check your spelling</li>
+                            <li><i class="fas fa-check-circle"></i> Try more general keywords</li>
+                            <li><i class="fas fa-check-circle"></i> Search for usernames or names</li>
+                            <li><i class="fas fa-check-circle"></i> Try searching for a specific program or course</li>
+                        </ul>
+                    </div>
                 </div>
                 {% endif %}
 

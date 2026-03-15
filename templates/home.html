@@ -849,7 +849,7 @@
                         <div class="post-user-info">
                             <div class="post-name-row">
                                 <h4 class="post-username">
-                                    <a href="" class="post-user-link">
+                                    <a href="{% if post.user == request.user %}{% url 'profile' %}{% else %}{% url 'user_profile' post.user.id %}{% endif %}" class="post-user-link">
                                         {{post.user.first_name}} {{post.user.last_name}}
                                     </a>
                                 </h4>
