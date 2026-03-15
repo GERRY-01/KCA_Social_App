@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post - KCAU Social</title>
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/middle.css' %}">
+    <link rel="stylesheet" href="{% static 'css/right_sidebar.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .edit-post-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .edit-post-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .edit-post-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .edit-post-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .current-media {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .current-media img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .file-input-label i {
+            margin-right: 10px;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-post-container">
+        <div class="edit-post-header">
+            <h2><i class="fas fa-edit"></i> Edit Post</h2>
+        </div>
+
+        <div class="edit-post-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="caption"><i class="fas fa-comment"></i> Caption</label>
+                    <textarea name="caption" id="caption" placeholder="What's on your mind?" required>{{ post.caption }}</textarea>
+                </div>
+
+                {% if post.media %}
+                <div class="current-media">
+                    <strong>Current Media:</strong>
+                    {% if post.media.url|slice:".mp4"|lower == ".mp4" or post.media.url|slice:".mov"|lower == ".mov" or post.media.url|slice:".avi"|lower == ".avi" %}
+                        <video controls style="max-width: 100%; border-radius: 8px; margin-top: 10px;">
+                            <source src="{{ post.media.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% else %}
+                        <img src="{{ post.media.url }}" alt="Current media">
+                    {% endif %}
+                    <p><em>Upload new media to replace the current one, or leave empty to keep it.</em></p>
+                </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="media"><i class="fas fa-camera"></i> Media (Optional)</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="media" id="media" class="file-input" accept="image/*,video/*">
+                        <label for="media" class="file-input-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Choose new image or video</span>
+                        </label>
+                        <div id="file-name" class="file-name"></div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <a href="{% url 'home' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Post
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // File input handling
+        document.getElementById('media').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileNameDiv = document.getElementById('file-name');
+
+            if (file) {
+                fileNameDiv.textContent = `Selected: ${file.name}`;
+            } else {
+                fileNameDiv.textContent = '';
+            }
+        });
+    </script>
+</body>
+</html>

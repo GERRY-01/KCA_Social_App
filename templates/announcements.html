@@ -1060,6 +1060,9 @@
     </div>
 
     <script>
+        // Check if user is admin
+        const isAdmin = {{ user.is_staff|lower }};
+        
         // Modal functions
         function openPostModal() {
             document.getElementById('postModal').classList.add('active');
@@ -1103,16 +1106,18 @@
 
         // Edit announcement function (only works for admins)
         function editAnnouncement(id, title, content, link) {
-            {% if user.is_staff %}
-            document.getElementById('editTitle').value = title;
-            document.getElementById('editContent').value = content;
-            document.getElementById('editLink').value = link || '';
-            
-            // Set the form action
-            document.getElementById('editForm').action = `/announcements/edit/${id}/`;
-            
-            openEditModal();
-            {% endif %}
+            if (isAdmin) {
+                document.getElementById('editTitle').value = title;
+                document.getElementById('editContent').value = content;
+                document.getElementById('editLink').value = link || '';
+                
+                // Set the form action
+                document.getElementById('editForm').action = `/announcements/edit/${id}/`;
+                
+                openEditModal();
+            } else {
+                alert('You do not have permission to edit announcements.');
+            }
         }
 
         // Close modal when clicking outside

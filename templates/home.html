@@ -726,10 +726,13 @@
         <!-- MIDDLE FEED SECTION -->
         <main id="middle-feed-container">
             <div class="feed-search-container">
-                <div class="feed-search-box">
+                <form action="{% url 'search' %}" method="GET" class="feed-search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search posts, people, or clubs..." class="feed-search-input">
-                </div>
+                    <input type="text" name="q" placeholder="Search posts, people, or clubs..." class="feed-search-input" value="{{ request.GET.q }}">
+                    <button type="submit" style="background: none; border: none; cursor: pointer;">
+                        <i class="fas fa-search" style="color: #65676b;"></i>
+                    </button>
+                </form>
                 <button class="feed-create-post-btn">
                     <i class="fas fa-plus"></i> Create Post
                 </button>
@@ -886,15 +889,17 @@
                         </div>
 
                         <div class="post-options-container">
+                            {% if post.user == request.user %}
                             <i class="fas fa-ellipsis-h post-more-btn"></i>
                             <div class="post-dropdown-menu">
-                                <button class="dropdown-item edit-post-btn">
+                                <a href="{% url 'edit_post' post.id %}" class="dropdown-item">
                                     <i class="fas fa-edit"></i> Edit Post
-                                </button>
-                                <button class="dropdown-item delete-post-btn">
+                                </a>
+                                <a href="{% url 'delete_post' post.id %}" class="dropdown-item delete-link">
                                     <i class="fas fa-trash"></i> Delete Post
-                                </button>
+                                </a>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                     
